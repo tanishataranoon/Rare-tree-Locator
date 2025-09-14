@@ -1,0 +1,23 @@
+body {
+    background-color: #f4f9f4;
+    font-family: Arial, sans-serif;
+}
+
+.card {
+    border-radius: 15px;
+    border: none;
+}
+
+.card h3 {
+    font-weight: bold;
+    color: #2f4f2f;
+}
+
+.btn-success {
+    background-color: #6b8e23;
+    border: none;
+}
+
+.btn-success:hover {
+    background-color: #556b2f;
+}

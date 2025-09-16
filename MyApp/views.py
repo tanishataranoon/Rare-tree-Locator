@@ -6,6 +6,8 @@ from django.contrib.auth.forms import AuthenticationForm, UserCreationForm
 # Home page view
 def HomePage(request):
     return render(request, 'HomePage.html')
+def blog(request):
+    return render(request, "blog/blog.html")
   
 # Header view
 ##def header(request):

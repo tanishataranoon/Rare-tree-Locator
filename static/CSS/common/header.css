@@ -1,0 +1,147 @@
+/* Reset */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: Arial, sans-serif;
+}
+
+/* Navbar */
+.navbar {
+  background: white;
+  border-bottom: 1px solid #e5e7eb;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+  position: relative;
+  z-index: 1000;
+}
+
+.container {
+  max-width: 1200px;
+  margin: auto;
+  padding: 0 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  height: 64px;
+}
+
+/* Logo */
+.logo {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+}
+.logo .icon {
+  width: 28px;
+  height: 28px;
+  margin-right: 8px;
+  color: #3A7D44;
+}
+.logo-text {
+  font-size: 1.25rem;
+  font-weight: bold;
+  color: #3A7D44;
+}
+
+/* Nav links */
+.nav-links {
+  display: flex;
+  gap: 20px;
+}
+.nav-links button {
+  background: none;
+  border: none;
+  padding: 8px 12px;
+  font-size: 1rem;
+  color: #4b5563;
+  cursor: pointer;
+  border-radius: 6px;
+  transition: all 0.2s ease;
+}
+.nav-links button:hover {
+  color: #3A7D44;
+}
+.nav-links button.active {
+  background: #ecfdf5;
+  color: #3A7D44;
+}
+
+/* Actions */
+.actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.icon-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #4b5563;
+  padding: 6px;
+  border-radius: 6px;
+}
+.icon-btn:hover {
+  color: #3A7D44;
+}
+.signup-btn {
+  background: #3A7D44;
+  color: white;
+  padding: 8px 16px;
+  border: none;
+  border-radius: 9999px;
+  cursor: pointer;
+  font-weight: bold;
+}
+.signup-btn:hover {
+  background: #2f5f34;
+}
+
+/* Mobile */
+.mobile-menu {
+  display: none;
+}
+
+/* Mobile Dropdown */
+.mobile-dropdown {
+  display: none;
+  flex-direction: column;
+  background: white;
+  border-top: 1px solid #e5e7eb;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+}
+.mobile-dropdown button {
+  background: none;
+  border: none;
+  padding: 14px;
+  font-size: 1rem;
+  color: #4b5563;
+  text-align: left;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+.mobile-dropdown button:hover {
+  background: #ecfdf5;
+  color: #3A7D44;
+}
+.mobile-dropdown button.active {
+  background: #ecfdf5;
+  color: #3A7D44;
+}
+.nav-links button.active {
+  color: green;
+  font-weight: bold;
+  border-bottom: 2px solid green;
+}
+
+
+@media (max-width: 768px) {
+  .nav-links {
+    display: none;
+  }
+  .mobile-menu {
+    display: inline-block;
+  }
+}

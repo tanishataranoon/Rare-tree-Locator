@@ -1,11 +1,18 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth import login as auth_login, authenticate, logout as auth_logout
+from TreeApp.models import *
 from django.contrib.auth.forms import AuthenticationForm, UserCreationForm
 
 # Home page view
 def HomePage(request):
     return render(request, 'HomePage.html')
-
+  
+# Header view
+##def header(request):
+    return render(request, 'Common/header.html')
+# Footer view
+##def footer(request):
+    return render(request, 'Common/footer.html')
 # Login view
 def login_view(request):
     if request.method == "POST":

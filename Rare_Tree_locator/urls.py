@@ -4,6 +4,7 @@ from MyApp import views as myapp_views
 from .import settings
 from django.conf.urls.static import static
 
+
 urlpatterns = [
     path("", include("TreeApp.urls")),
     path('admin/', admin.site.urls),

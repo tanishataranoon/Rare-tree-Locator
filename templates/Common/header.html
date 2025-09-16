@@ -1,0 +1,57 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Rare Tree Locator</title>
+
+  <!-- CSS -->
+  <link rel="stylesheet" href="{% static 'css/common/header.css' %}">
+
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body>
+  <nav class="navbar">
+    <div class="container">
+      <!-- Logo -->
+      <div class="logo" onclick="navigate('home')">
+        <i data-lucide="tree-pine" class="icon"></i>
+        <span class="logo-text">Rare Tree Locator</span>
+      </div>
+
+      <!-- Desktop Navigation -->
+      <div class="nav-links">
+        <button onclick="navigate('home')" id="nav-home">Home</button>
+        <button onclick="navigate('trees')" id="nav-trees">Trees</button>
+        <button onclick="navigate('blog')" id="nav-blog">Blog</button>
+      </div>
+
+      <!-- User Actions -->
+      <div class="actions">
+        <button class="icon-btn" onclick="navigate('profile')">
+          <i data-lucide="user"></i>
+        </button>
+        <button class="signup-btn" onclick="navigate('signup')">Sign Up</button>
+        <button class="icon-btn mobile-menu" onclick="toggleMenu()">
+          <i data-lucide="menu"></i>
+        </button>
+      </div>
+    </div>
+
+    <!-- Mobile Dropdown -->
+    <div class="mobile-dropdown" id="mobileDropdown">
+      <button onclick="navigate('home')" id="m-nav-home">Home</button>
+      <button onclick="navigate('trees')" id="m-nav-trees">Trees</button>
+      <button onclick="navigate('blog')" id="m-nav-blog">Blog</button>
+    </div>
+  </nav>
+
+  <!-- JS -->
+  <script src="../static/js/index.js"></script>
+  <script>
+    lucide.createIcons(); // render icons
+  </script>
+</body>
+</html>

@@ -1,0 +1,56 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Rare Tree Locator</title>
+  <link rel="stylesheet" href="{% static 'css/common/footer.css' %}">
+</head>
+<body>
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="footer-container">
+      <div class="footer-grid">
+        <!-- Logo and Description -->
+        <div class="footer-logo-desc">
+          <div class="logo">
+            <img src="icons/tree-pine.svg" alt="Tree Logo" class="logo-icon">
+            <span class="logo-text">Rare Tree Locator</span>
+          </div>
+          <p class="description">
+            Discover and document rare trees around the world. Join our community 
+            of nature enthusiasts in preserving biodiversity for future generations.
+          </p>
+        </div>
+
+        <!-- Quick Links -->
+        <div class="footer-links">
+          <h3>Explore</h3>
+          <ul>
+            <li><button onclick="navigate('home')">Home</button></li>
+            <li><button onclick="navigate('trees')">Tree Categories</button></li>
+            <li><button onclick="navigate('blog')">Blog</button></li>
+          </ul>
+        </div>
+
+        <!-- Contact Links -->
+        <div class="footer-links">
+          <h3>Connect</h3>
+          <ul>
+            <li><button onclick="alert('About clicked')">About</button></li>
+            <li><button onclick="alert('Contact clicked')">Contact</button></li>
+            <li><button onclick="navigate('signup')">Join Community</button></li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="footer-bottom">
+        <p>© 2025 Rare Tree Locator. Made with 🌱 for nature conservation.</p>
+      </div>
+    </div>
+  </footer>
+
+  <script src="js/common/footer.js"></script>
+</body>
+</html>

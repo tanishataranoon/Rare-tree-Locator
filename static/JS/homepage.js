@@ -31,7 +31,7 @@ const treeContainer = document.getElementById('featured-trees');
 featuredTrees.forEach(tree => {
   const card = document.createElement('div');
   card.classList.add('tree-card');
-  card.onclick = () => navigate('trees');
+  card.onclick = () => navigate('trees'); // uses navigate() from header.js
   card.innerHTML = `
     <img src="${tree.image}" alt="${tree.name}">
     <div class="tree-info">
@@ -40,27 +40,6 @@ featuredTrees.forEach(tree => {
     </div>
   `;
   treeContainer.appendChild(card);
-});
+  card.onclick = () => navigate('trees');
 
-// Navigation function
-function navigate(page) {
-  switch(page) {
-    case 'home':
-      window.location.href = 'index.html';
-      break;
-    case 'trees':
-      window.location.href = 'trees.html';
-      break;
-    case 'profile':
-      window.location.href = 'profile.html';
-      break;
-    case 'blog':
-      window.location.href = 'blog.html';
-      break;
-    case 'signup':
-      window.location.href = 'signup.html';
-      break;
-    default:
-      console.log('Page not found:', page);
-  }
-}
+});

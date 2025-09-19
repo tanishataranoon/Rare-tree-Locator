@@ -8,6 +8,7 @@
   <link rel="stylesheet" href="{% static 'css/homepage.css' %}">
 </head>
 {% include 'Common/header.html' %}
+<script src="{% static 'JS/common/header.js' %}" defer></script>
 
 <body>
 
@@ -82,9 +83,10 @@
     </div>
   </section> -->
 
-  <script src="js/homepage.js"></script>
+  <script src="{% static 'JS/common/homepage.js' %}"></script>
 </body>
 {% include 'Common/footer.html' %}
+<script src="{% static 'JS/common/footer.js' %}" defer></script>
 </html>
 
 

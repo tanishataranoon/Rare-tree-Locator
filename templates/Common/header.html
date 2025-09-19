@@ -24,7 +24,7 @@
       <!-- Desktop Navigation -->
       <div class="nav-links">
         <button onclick="navigate('home')" id="nav-home">Home</button>
-        <button onclick="navigate('trees')" id="nav-trees">Trees</button>
+        <button onclick="navigate('TreeProfiles')" id="nav-TreeProfiles">Trees</button>
         <button onclick="navigate('blog')" id="nav-blog">Blog</button>
       </div>
 
@@ -43,13 +43,21 @@
     <!-- Mobile Dropdown -->
     <div class="mobile-dropdown" id="mobileDropdown">
       <button onclick="navigate('home')" id="m-nav-home">Home</button>
-      <button onclick="navigate('trees')" id="m-nav-trees">Trees</button>
+      <button onclick="navigate('TreeProfiles')" id="m-nav-TreeProfiles">Trees</button>
       <button onclick="navigate('blog')" id="m-nav-blog">Blog</button>
     </div>
   </nav>
 
   <!-- JS -->
-  <script src="../static/js/index.js"></script>
+  <div id="urls"
+    data-home="{% url 'HomePage' %}"
+    data-trees="{% url 'TreeProfiles' %}"
+    data-blog="#"
+    data-login="{% url 'login' %}"
+    data-signup="{% url 'signup' %}">
+</div>
+
+  <script src="{% static 'JS/common/header.js' %}"></script>
   <script>
     lucide.createIcons(); // render icons
   </script>

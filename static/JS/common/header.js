@@ -1,51 +1,34 @@
+// Get URLs from template
+const urls = document.getElementById("urls").dataset;
+
 function navigate(page) {
-  console.log("Navigating to:", page);
+  if (page === "home") window.location.href = urls.home;
+  if (page === "trees") window.location.href = urls.trees;
+  if (page === "blog") window.location.href = urls.blog;
+  if (page === "login") window.location.href = urls.login;
+  if (page === "signup") window.location.href = urls.signup;
+}
 
-  // Reset desktop nav
-  document.querySelectorAll(".nav-links button").forEach(btn => {
-    btn.classList.remove("active");
-  });
+// Highlight active nav on page load
+window.addEventListener("DOMContentLoaded", () => {
+  const path = window.location.pathname;
 
-  // Reset mobile nav
-  document.querySelectorAll(".mobile-dropdown button").forEach(btn => {
-    btn.classList.remove("active");
-  });
-
-  function navigate(page) {
-  // Remove old active classes
-  document.querySelectorAll(".nav-links button").forEach(btn => {
-    btn.classList.remove("active");
-  });
-
-  // Redirect pages
-  if (page === "home") {
-    window.location.href = "/template/homepage.html"; // homepage
-  }
-  if (page === "trees") {
-    window.location.href = "/template/Trees/TreeProfiles.html"; // trees page
-  }
-  if (page === "blog") {
-    window.location.href = "/template/blog.html"; // blog page
-  }
-
-  // Set active state
-  if (page === "home") {
+  if (path === urls.home || path === "/") {
     document.getElementById("nav-home")?.classList.add("active");
-  }
-  if (page === "trees") {
+    document.getElementById("m-nav-home")?.classList.add("active");
+  } else if (path.startsWith(urls.trees)) {
     document.getElementById("nav-trees")?.classList.add("active");
-  }
-  if (page === "blog") {
+    document.getElementById("m-nav-trees")?.classList.add("active");
+  } else if (path.startsWith(urls.blog)) {
     document.getElementById("nav-blog")?.classList.add("active");
+    document.getElementById("m-nav-blog")?.classList.add("active");
   }
-}
+});
 
-
-  // Close menu on navigation (mobile)
-  document.getElementById("mobileDropdown").style.display = "none";
-}
-
+// Toggle mobile menu
 function toggleMenu() {
   const dropdown = document.getElementById("mobileDropdown");
-  dropdown.style.display = dropdown.style.display === "flex" ? "none" : "flex";
+  if (dropdown) {
+    dropdown.style.display = dropdown.style.display === "flex" ? "none" : "flex";
+  }
 }

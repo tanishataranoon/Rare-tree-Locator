@@ -1,0 +1,68 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{% static 'css/blog/blog_list.css' %}">
+    <script src="{% static 'js/blog/blog_list.js' %}" defer></script>
+    <title>blog_list</title>
+</head>
+
+<body>
+    {% include 'Common/header.html' %}
+    {% block content %}
+
+    <div class="container">
+        <h1>Tree Discovery Blog</h1>
+        <p class="subtitle">
+            Stories, discoveries, and insights from our community of tree enthusiasts and conservation experts around
+            the world.
+        </p>
+
+        <button class="load-more">Featured Story</button>
+
+
+        <!-- Featured Post -->
+        <div class="featured-card">
+            <img src="{{ featured.image.url }}" alt="{{ featured.title }}">
+            <div class="overlay">
+                <a href="{% url 'blog_detail' featured.id %}">
+                    <h2>{{ featured.title }}</h2>
+                </a>
+                <p>{{ featured.content|truncatewords:25 }}</p>
+                <p class="author">By <a href="#">{{ featured.author.username }}</a></p>
+                <a href="{% url 'blog_detail' featured.id %}" class="btn">View Post</a>
+            </div>
+        </div>
+
+
+        <!-- Recent Posts -->
+        <h3>Recent Posts</h3>
+        <div class="grid">
+            {% for post in page_obj %}
+            <div class="card">
+                <a href="{% url 'blog_detail' post.id %}">
+                    <img src="{{ post.image.url }}" alt="{{ post.title }}">
+                    <h4>{{ post.title }}</h4>
+                </a>
+                <p>By <a href="#">{{ post.author.username }}</a></p>
+            </div>
+            {% endfor %}
+        </div>
+
+        <!-- Load More -->
+        <div class="load-more">
+            {% if page_obj.has_next %}
+            <a href="?page={{ page_obj.next_page_number }}">Load More Posts</a>
+            {% endif %}
+        </div>
+    </div>
+    {% endblock %}
+    {% include 'Common/footer.html' %}
+
+</body>
+
+</html>
+<!-- %url 'author_profile' post.author.id% -->

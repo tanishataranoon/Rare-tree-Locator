@@ -2,64 +2,32 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Rare Tree Locator</title>
-
-  <!-- CSS -->
-  <link rel="stylesheet" href="{% static 'css/common/header.css' %}">
-
-  <!-- Lucide Icons -->
-  <script src="https://unpkg.com/lucide@latest"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+   
+    <link rel="stylesheet" href="{% static 'CSS/common/header.css' %}">
 </head>
 <body>
-  <nav class="navbar">
-    <div class="container">
-      <!-- Logo -->
-      <div class="logo" onclick="navigate('home')">
-        <i data-lucide="tree-pine" class="icon"></i>
-        <span class="logo-text">Rare Tree Locator</span>
-      </div>
+    <header>
+        <div class="logo">
+            <img src="{% static 'images/logo.png' %}" alt="Logo">
+        </div>
+        <nav>
+            <ul class="nav-links">
+                <li><a href="#" class="active">Home</a></li>
+                <li><a href="#">Trees</a></li>
+                <li><a href="#">Map</a></li>
+                <li><a href="{% url 'blog_list' %}">Blog</a></li>
+                <li><a href="#">Contact</a></li>
+            </ul>
+        </nav>
+        <div class="menu-toggle" id="mobile-menu">
+            <span></span>
+            <span></span>
+            <span></span>
+        </div>
+    </header>
 
-      <!-- Desktop Navigation -->
-      <div class="nav-links">
-        <button onclick="navigate('home')" id="nav-home">Home</button>
-        <button onclick="navigate('TreeProfiles')" id="nav-TreeProfiles">Trees</button>
-        <button onclick="navigate('blog')" id="nav-blog">Blog</button>
-      </div>
-
-      <!-- User Actions -->
-      <div class="actions">
-        <button class="icon-btn" onclick="navigate('profile')">
-          <i data-lucide="user"></i>
-        </button>
-        <button class="signup-btn" onclick="navigate('signup')">Sign Up</button>
-        <button class="icon-btn mobile-menu" onclick="toggleMenu()">
-          <i data-lucide="menu"></i>
-        </button>
-      </div>
-    </div>
-
-    <!-- Mobile Dropdown -->
-    <div class="mobile-dropdown" id="mobileDropdown">
-      <button onclick="navigate('home')" id="m-nav-home">Home</button>
-      <button onclick="navigate('TreeProfiles')" id="m-nav-TreeProfiles">Trees</button>
-      <button onclick="navigate('blog')" id="m-nav-blog">Blog</button>
-    </div>
-  </nav>
-
-  <!-- JS -->
-  <div id="urls"
-    data-home="{% url 'HomePage' %}"
-    data-trees="{% url 'TreeProfiles' %}"
-    data-blog="#"
-    data-login="{% url 'login' %}"
-    data-signup="{% url 'signup' %}">
-</div>
-
-  <script src="{% static 'JS/common/header.js' %}"></script>
-  <script>
-    lucide.createIcons(); // render icons
-  </script>
+    <script src="{% static 'JS/common/header.js' %}"></script>
 </body>
 </html>

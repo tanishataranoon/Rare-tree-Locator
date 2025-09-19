@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'MyApp.apps.MyappConfig',  # Myapp is listed here
     'TreeApp.apps.TreeappConfig', # TreeApp is listed here
+    'BlogApp.apps.BlogappConfig', # BlogApp is listed here
 ]
 
 MIDDLEWARE = [

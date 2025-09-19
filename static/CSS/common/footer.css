@@ -1,93 +1,95 @@
-.footer {
-  background-color: #ffffff;
-  border-top: 1px solid #e5e7eb;
-  margin-top: 4rem;
-  padding: 3rem 1rem;
+/* Footer Overall */
+.footer { 
+  background: #215732;
+  color: #c2e089;
+  padding: 40px 20px 20px;
   font-family: Arial, sans-serif;
-  color: #4b5563;
 }
 
+/* Footer Container Grid */
 .footer-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 30px;
   max-width: 1200px;
   margin: 0 auto;
+  align-items: start;
 }
 
-.footer-grid {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 2rem;
-}
-
-@media (min-width: 768px) {
-  .footer-grid {
-    grid-template-columns: repeat(4, 1fr);
-  }
-  .footer-logo-desc {
-    grid-column: span 2;
-  }
+/* Each Section Titles */
+.footer-section h3 {
+  color: #c2e089;
+  margin-bottom: 12px;
+  font-size: 18px;
 }
 
 /* Logo Section */
-.logo {
+.logo-section {
   display: flex;
-  align-items: center;
-  margin-bottom: 1rem;
+  flex-direction: column;
+  align-items: center;    /* center horizontally */
+  justify-content: center; /* center vertically */
+  text-align: center;
 }
 
-.logo-icon {
-  width: 32px;
-  height: 32px;
-  margin-right: 0.5rem;
-  fill: #3A7D44;
+.footer-logo {
+  width: 120px;          /* size of the circle */
+  height: 120px;         /* must match width */
+  border-radius: 50%;    /* makes it round */
+  object-fit: cover;     /* crop image if needed */
+  display: block;
+  margin-bottom: 12px;
 }
 
-.logo-text {
-  font-size: 1.25rem;
-  font-weight: 600;
-  color: #3A7D44;
-}
-
-.description {
-  max-width: 400px;
-  color: #6b7280;
-}
-
-/* Links Section */
-.footer-links h3 {
-  font-weight: 600;
-  color: #111827;
-  margin-bottom: 1rem;
-}
-
-.footer-links ul {
-  list-style: none;
-  padding: 0;
+/* Paragraphs inside logo section */
+.logo-section p {
   margin: 0;
+  font-size: 14px;
 }
 
-.footer-links li {
-  margin-bottom: 0.5rem;
+/* Address Section */
+.footer-section p {
+  margin: 4px 0;
+  font-size: 14px;
 }
 
-.footer-links button {
-  background: none;
-  border: none;
-  color: #6b7280;
-  cursor: pointer;
-  font-size: 1rem;
-  transition: color 0.2s;
+/* Social Links */
+.social-links a {
+  display: inline-block;
+  margin-right: 12px;
+  color: #c2e089;
+  text-decoration: none;
+  font-weight: bold;
+  transition: color 0.3s;
 }
 
-.footer-links button:hover {
-  color: #16a34a;
+.social-links a:hover {
+  color: #fff;
 }
 
 /* Footer Bottom */
 .footer-bottom {
-  border-top: 1px solid #e5e7eb;
-  margin-top: 2rem;
-  padding-top: 2rem;
   text-align: center;
-  color: #6b7280;
-  font-size: 0.875rem;
+  border-top: 1px solid #c2e089;
+  margin-top: 25px;
+  padding-top: 15px;
+  font-size: 14px;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .footer-container {
+    grid-template-columns: 1fr; /* single column on mobile */
+    text-align: center;
+  }
+
+  .footer-logo {
+    width: 80px;
+    height: 80px;
+  }
+
+  .social-links a {
+    margin-right: 10px;
+    font-size: 13px;
+  }
 }

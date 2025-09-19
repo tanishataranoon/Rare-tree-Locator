@@ -3,4 +3,4 @@ from .models import *
 
 
 # Register your models here.
-admin.site.register([Tree,User,TreePhoto,BlogPost,Comment])
+admin.site.register([Tree,User,TreePhoto])

@@ -1,34 +1,34 @@
-// Get URLs from template
-const urls = document.getElementById("urls").dataset;
+const menuToggle = document.getElementById('mobile-menu');
+const navLinks = document.querySelector('.nav-links');
+const header = document.querySelector('header');
 
-function navigate(page) {
-  if (page === "home") window.location.href = urls.home;
-  if (page === "trees") window.location.href = urls.trees;
-  if (page === "blog") window.location.href = urls.blog;
-  if (page === "login") window.location.href = urls.login;
-  if (page === "signup") window.location.href = urls.signup;
-}
-
-// Highlight active nav on page load
-window.addEventListener("DOMContentLoaded", () => {
-  const path = window.location.pathname;
-
-  if (path === urls.home || path === "/") {
-    document.getElementById("nav-home")?.classList.add("active");
-    document.getElementById("m-nav-home")?.classList.add("active");
-  } else if (path.startsWith(urls.trees)) {
-    document.getElementById("nav-trees")?.classList.add("active");
-    document.getElementById("m-nav-trees")?.classList.add("active");
-  } else if (path.startsWith(urls.blog)) {
-    document.getElementById("nav-blog")?.classList.add("active");
-    document.getElementById("m-nav-blog")?.classList.add("active");
-  }
+// ===== Mobile menu toggle =====
+menuToggle.addEventListener('click', () => {
+  navLinks.classList.toggle('active');
 });
 
-// Toggle mobile menu
-function toggleMenu() {
-  const dropdown = document.getElementById("mobileDropdown");
-  if (dropdown) {
-    dropdown.style.display = dropdown.style.display === "flex" ? "none" : "flex";
+// ===== Active link highlighting =====
+const links = document.querySelectorAll('.nav-links a');
+links.forEach(link => {
+  link.addEventListener('click', () => {
+    links.forEach(l => l.classList.remove('active'));
+    link.classList.add('active');
+  });
+});
+
+// ===== Hide header on scroll down, show on scroll up =====
+let lastScrollTop = 0;
+
+window.addEventListener('scroll', function () {
+  let scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+
+  if (scrollTop > lastScrollTop) {
+    // scrolling down → hide header
+    header.style.top = "-100px"; // adjust if header height differs
+  } else {
+    // scrolling up → show header
+    header.style.top = "0";
   }
-}
+
+  lastScrollTop = scrollTop <= 0 ? 0 : scrollTop; // prevent negative scroll
+});

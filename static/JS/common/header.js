@@ -1,51 +1,34 @@
-function navigate(page) {
-  console.log("Navigating to:", page);
+const menuToggle = document.getElementById('mobile-menu');
+const navLinks = document.querySelector('.nav-links');
+const header = document.querySelector('header');
 
-  // Reset desktop nav
-  document.querySelectorAll(".nav-links button").forEach(btn => {
-    btn.classList.remove("active");
+// ===== Mobile menu toggle =====
+menuToggle.addEventListener('click', () => {
+  navLinks.classList.toggle('active');
+});
+
+// ===== Active link highlighting =====
+const links = document.querySelectorAll('.nav-links a');
+links.forEach(link => {
+  link.addEventListener('click', () => {
+    links.forEach(l => l.classList.remove('active'));
+    link.classList.add('active');
   });
+});
 
-  // Reset mobile nav
-  document.querySelectorAll(".mobile-dropdown button").forEach(btn => {
-    btn.classList.remove("active");
-  });
+// ===== Hide header on scroll down, show on scroll up =====
+let lastScrollTop = 0;
 
-  function navigate(page) {
-  // Remove old active classes
-  document.querySelectorAll(".nav-links button").forEach(btn => {
-    btn.classList.remove("active");
-  });
+window.addEventListener('scroll', function () {
+  let scrollTop = window.pageYOffset || document.documentElement.scrollTop;
 
-  // Redirect pages
-  if (page === "home") {
-    window.location.href = "/template/homepage.html"; // homepage
-  }
-  if (page === "trees") {
-    window.location.href = "/template/Trees/TreeProfiles.html"; // trees page
-  }
-  if (page === "blog") {
-    window.location.href = "/template/blog.html"; // blog page
+  if (scrollTop > lastScrollTop) {
+    // scrolling down → hide header
+    header.style.top = "-100px"; // adjust if header height differs
+  } else {
+    // scrolling up → show header
+    header.style.top = "0";
   }
 
-  // Set active state
-  if (page === "home") {
-    document.getElementById("nav-home")?.classList.add("active");
-  }
-  if (page === "trees") {
-    document.getElementById("nav-trees")?.classList.add("active");
-  }
-  if (page === "blog") {
-    document.getElementById("nav-blog")?.classList.add("active");
-  }
-}
-
-
-  // Close menu on navigation (mobile)
-  document.getElementById("mobileDropdown").style.display = "none";
-}
-
-function toggleMenu() {
-  const dropdown = document.getElementById("mobileDropdown");
-  dropdown.style.display = dropdown.style.display === "flex" ? "none" : "flex";
-}
+  lastScrollTop = scrollTop <= 0 ? 0 : scrollTop; // prevent negative scroll
+});

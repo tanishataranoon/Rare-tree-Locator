@@ -4,26 +4,33 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Rare Tree Locator - Home</title>
-  <link rel="stylesheet" href="{% static 'css/homepage.css' %}">
+  <title>Home</title>
+  <link rel="stylesheet" href="{% static 'CSS/homepage.css' %}">
 </head>
-{% include 'Common/header.html' %}
-
 <body>
 
-  <!-- Hero Section -->
-<section class="hero-section">
-  <div class="hero-content">
-    <h1>Discover Rare Trees Around the World</h1>
-    <p>
-      Join our community in documenting and preserving the world's most extraordinary trees.
-      Every discovery helps protect biodiversity for future generations.
-    </p>
-    <button class="btn-primary" onclick="navigate('trees')">
-      🌿 Explore Trees
-    </button>
+  {% include 'Common/header.html' %}
+
+<!-- ===== DIAGONAL SLIDESHOW SECTION ===== -->
+<div class="main-container">
+  <div class="slideshow">
+      <div class="slide active" style="background-image: url(&quot;{% static 'images/p_1.jpg' %}&quot;);"></div>
+      <div class="slide" style="background-image: url(&quot;{% static 'images/p_2.jpg' %}&quot;);"></div>
+      <div class="slide" style="background-image: url(&quot;{% static 'images/p_3.jpg' %}&quot;);"></div>
+
   </div>
-</section>
+
+  <div class="right-side">
+    <div>
+      <h1>Welcome to My Website</h1>
+      <p>
+        This is your homepage text. The left side shows a slideshow of photos 
+        with a diagonal design.
+      </p>
+    </div>
+  </div>
+</div>
+
   <!-- Search Bar -->
   <section class="search-section">
     <div class="container">
@@ -38,11 +45,11 @@
   <section class="map-section">
     <div class="map-content">
       <h2>Tree Locations Near You</h2>
-        <div class="map-content">
-          📍
-          <h3>Interactive Map</h3>
-          <p>Discover rare trees in your area</p>
-        </div>
+      <div class="map-content">
+        📍
+        <h3>Interactive Map</h3>
+        <p>Discover rare trees in your area</p>
+      </div>
     </div>
   </section>
 
@@ -64,27 +71,10 @@
     </div>
   </section>
 
-  <!-- Stats Section -->
-  <!-- <section class="stats-section">
-    <div class="container stats-grid">
-      <div>
-        <div class="stat-number">1,247</div>
-        <p>Trees Documented</p>
-      </div>
-      <div>
-        <div class="stat-number">850</div>
-        <p>Active Contributors</p>
-      </div>
-      <div>
-        <div class="stat-number">45</div>
-        <p>Countries Covered</p>
-      </div>
-    </div>
-  </section> -->
+  {% include 'Common/footer.html' %}
 
-  <script src="js/homepage.js"></script>
+  <!-- JS should load at the end of body -->
+  <script src="{% static 'JS/homepage.js' %}"></script>
+
 </body>
-{% include 'Common/footer.html' %}
 </html>
-
-

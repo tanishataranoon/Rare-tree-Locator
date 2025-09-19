@@ -27,6 +27,12 @@ body {
   font-size: 5rem;
   color: #3A7D44;
   margin-bottom: 1rem;
+  line-height: 1.1;
+}
+.hero-content h1 br:last-of-type + * {
+  display: block;
+  font-size: 2rem; /* smaller size for "World" */
+  font-weight: 600;
 }
 
 .hero-content p {

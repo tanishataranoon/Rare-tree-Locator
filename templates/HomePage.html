@@ -1,35 +1,38 @@
 {% load static %}
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Home</title>
   <link rel="stylesheet" href="{% static 'CSS/homepage.css' %}">
 </head>
+
 <body>
 
   {% include 'Common/header.html' %}
 
-<!-- ===== DIAGONAL SLIDESHOW SECTION ===== -->
-<div class="main-container">
-  <div class="slideshow">
+  <!-- ===== DIAGONAL SLIDESHOW SECTION ===== -->
+  <div class="main-container">
+    <div class="slideshow">
       <div class="slide active" style="background-image: url(&quot;{% static 'images/p_1.jpg' %}&quot;);"></div>
       <div class="slide" style="background-image: url(&quot;{% static 'images/p_2.jpg' %}&quot;);"></div>
       <div class="slide" style="background-image: url(&quot;{% static 'images/p_3.jpg' %}&quot;);"></div>
 
-  </div>
+    </div>
 
-  <div class="right-side">
-    <div>
-      <h1>Welcome to My Website</h1>
-      <p>
-        This is your homepage text. The left side shows a slideshow of photos 
-        with a diagonal design.
-      </p>
+    <div class="right-side">
+      <div>
+        <h1>Discover Rare Trees Around the
+          World</h1>
+        <p>
+          Join our community in documenting and preserving the world's most extraordinary trees. Every discovery helps
+          protect biodiversity for future generations.
+        </p>
+      </div>
     </div>
   </div>
-</div>
 
   <!-- Search Bar -->
   <section class="search-section">
@@ -77,4 +80,5 @@
   <script src="{% static 'JS/homepage.js' %}"></script>
 
 </body>
+
 </html>

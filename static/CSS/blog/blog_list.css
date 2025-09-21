@@ -17,6 +17,7 @@
     font-family: "Segoe UI", Tahoma, sans-serif;
     margin-top: 100px; /* adjust depending on header height */
 }
+
 .featured.title:hover {
     text-decoration: underline;  /* only shows underline on hover */
     color: green;                /* or any color you like */
@@ -44,6 +45,7 @@
     margin-bottom: 40px;
     min-height: 300px; /* more space so button fits */
     transition: transform 0.3s ease;
+    text-decoration: none; /* remove underline */
 }
 
 .featured-card:hover {
@@ -74,6 +76,8 @@
     margin-bottom: 12px;
     color: #222;
     font-weight: bold;
+   
+
 }
 
 .featured-card p {

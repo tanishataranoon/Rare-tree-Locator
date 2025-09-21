@@ -11,9 +11,8 @@ urlpatterns = [
     path("", include("TreeApp.urls")),
     path('admin/', admin.site.urls),
     path('', myapp_views.HomePage, name='HomePage'),
-    path('login/', myapp_views.login_view, name='login'),   # renamed to avoid conflict
-    path('signup/', myapp_views.signup_view, name='signup'), # renamed to avoid conflict
-    path('logout/', myapp_views.logout_view, name='logout'), # renamed to avoid conflict
+    path('signup/', myapp_views.signup_view, name='signup'), 
+    path('login/', myapp_views.login_view, name='login'),
     path('blog_list', blogapp_views.blog_list, name='blog_list'),  # Added blog list view
     path('blog_list/<int:pk>/', blogapp_views.blog_detail, name='blog_detail'),  # Detail view
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

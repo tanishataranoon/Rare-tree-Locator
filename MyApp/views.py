@@ -1,5 +1,7 @@
 from django.shortcuts import render, redirect
-from django.contrib.auth import login as auth_login, authenticate, logout as auth_logout
+from django.contrib import messages
+from .forms import SignUpForm
+from django.contrib.auth import authenticate, login, logout
 from TreeApp.models import *
 from django.contrib.auth.forms import AuthenticationForm, UserCreationForm
 
@@ -12,31 +14,39 @@ def HomePage(request):
 # Footer view
 ##def footer(request):
     return render(request, 'Common/footer.html')
-# Login view
-def login_view(request):
-    if request.method == "POST":
-        form = AuthenticationForm(request, data=request.POST)
-        if form.is_valid():
-            user = form.get_user()
-            auth_login(request, user)   # ✅ use Django's login function
-            return redirect("home")     # make sure you have a URL name 'home'
-    else:
-        form = AuthenticationForm()
-    
-    signup_form = UserCreationForm()  # For popup modal
-    return render(request, "MyApp/login.html", {"form": form, "signup_form": signup_form})
-
 # Signup view
 def signup_view(request):
     if request.method == "POST":
-        form = UserCreationForm(request.POST)
+        form = SignUpForm(request.POST)
         if form.is_valid():
-            user = form.save()
-            auth_login(request, user)   # ✅ same fix here
-            return redirect("home")
-    return redirect("login")  # fallback
+            user = form.save(commit=False)
+            user.first_name = form.cleaned_data.get("full_name")
+            user.save()
+            messages.success(request, "Account created successfully! Please log in.")
+            return redirect("login")
+    else:
+        form = SignUpForm()
+    return render(request, "Profile/signup.html", {"form": form})
+# Login view
+def login_view(request):
+    if request.method == "POST":
+        username = request.POST.get("username")
+        password = request.POST.get("password")
+        user = authenticate(request, username=username, password=password)
 
-# Logout view
-def logout_view(request):
-    auth_logout(request)   # ✅ call Django's logout
-    return redirect("login")
+        if user is not None:
+            login(request, user)
+
+            # Redirect based on user_type
+            if user.user_type == "contributor":
+                return redirect("contributor_dashboard")
+            elif user.user_type == "common":
+                return redirect("home")
+            elif user.user_type == "admin":
+                return redirect("admin_dashboard")
+            else:
+                return redirect("home")
+        else:
+            messages.error(request, "Invalid username or password")
+
+    return render(request, "Profile/login.html")

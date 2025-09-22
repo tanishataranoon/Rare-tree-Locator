@@ -7,6 +7,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Home</title>
   <link rel="stylesheet" href="{% static 'CSS/homepage.css' %}">
+
+  <!-- Leaflet CSS -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
 </head>
 
 <body>
@@ -19,13 +22,11 @@
       <div class="slide active" style="background-image: url(&quot;{% static 'images/p_1.jpg' %}&quot;);"></div>
       <div class="slide" style="background-image: url(&quot;{% static 'images/p_2.jpg' %}&quot;);"></div>
       <div class="slide" style="background-image: url(&quot;{% static 'images/p_3.jpg' %}&quot;);"></div>
-
     </div>
 
     <div class="right-side">
       <div>
-        <h1>Discover Rare Trees Around the
-          World</h1>
+        <h1>Discover Rare Trees Around the World</h1>
         <p>
           Join our community in documenting and preserving the world's most extraordinary trees. Every discovery helps
           protect biodiversity for future generations.
@@ -53,6 +54,26 @@
         <h3>Interactive Map</h3>
         <p>Discover rare trees in your area</p>
       </div>
+
+      <!-- Leaflet Map -->
+      <div id="map" style="height: 400px; margin-top: 20px;"></div>
+
+      <!-- Tree Form -->
+      <div id="map-form-container" style="margin-top: 20px;">
+        <h3>Add a New Tree</h3>
+        <form method="POST" id="tree-form">{% csrf_token %}
+          <input type="text" name="street_name" placeholder="Street / Local Name" required><br>
+          <input type="text" name="scientific_name" placeholder="Scientific Name"><br>
+          <input type="text" name="habitat" placeholder="Habitat"><br>
+          <textarea name="description" placeholder="Description"></textarea><br>
+          <input type="text" name="rarity_status" placeholder="Rarity Status"><br>
+          <input type="number" step="0.01" name="height_m" placeholder="Height in meters"><br>
+          <input type="number" name="age_estimate" placeholder="Age estimate"><br>
+          <input type="hidden" id="id_latitude" name="latitude">
+          <input type="hidden" id="id_longitude" name="longitude">
+          <button type="submit">Submit Tree</button>
+        </form>
+      </div>
     </div>
   </section>
 
@@ -78,6 +99,64 @@
 
   <!-- JS should load at the end of body -->
   <script src="{% static 'JS/homepage.js' %}"></script>
+  <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+
+  <script>
+document.addEventListener("DOMContentLoaded", function() {
+  const map = L.map('map').setView([23.8103, 90.4125], 6);
+
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    attribution: '&copy; OpenStreetMap contributors'
+  }).addTo(map);
+
+  map.invalidateSize();
+
+  // Load existing trees from Django
+  {% for tree in trees %}
+    L.marker([{{ tree.latitude }}, {{ tree.longitude }}]).addTo(map)
+      .bindPopup("<b>{{ tree.street_name }}</b>{% if tree.description %}<br>{{ tree.description }}{% endif %}");
+  {% endfor %}
+
+  // Click to add marker
+  let marker;
+  map.on('click', function(e) {
+    const lat = e.latlng.lat.toFixed(6);
+    const lng = e.latlng.lng.toFixed(6);
+
+    if (marker) { map.removeLayer(marker); }
+    marker = L.marker([lat, lng]).addTo(map)
+      .bindPopup(`Lat: ${lat}, Lng: ${lng}`).openPopup();
+
+    document.getElementById('id_latitude').value = lat;
+    document.getElementById('id_longitude').value = lng;
+  });
+
+  // Handle form submission via AJAX
+  const form = document.getElementById('tree-form');
+  form.addEventListener('submit', function(e) {
+    e.preventDefault();
+    const data = new FormData(form);
+
+    fetch("{% url 'add_tree_ajax' %}", {
+      method: 'POST',
+      headers: {'X-CSRFToken': data.get('csrfmiddlewaretoken')},
+      body: data
+    }).then(response => response.json())
+      .then(data => {
+        if(data.success){
+          alert("Tree added successfully!");
+          // Add permanent marker to map
+          L.marker([data.latitude, data.longitude]).addTo(map)
+            .bindPopup(`<b>${data.street_name}</b><br>${data.description}`).openPopup();
+          form.reset();
+          if(marker){ map.removeLayer(marker); }
+        } else {
+          alert("Error: " + data.error);
+        }
+      });
+  });
+});
+</script>
 
 </body>
 

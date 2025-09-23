@@ -1,0 +1,42 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+  <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+</head>
+<body>
+
+<h2>Add a New Tree</h2>
+<form method="POST">{% csrf_token %}
+  {{ form.as_p }}
+  <button type="submit">Submit Tree</button>
+</form>
+
+<div id="map" style="height: 400px;"></div>
+
+<script>
+  const map = L.map('map').setView([23.8103, 90.4125], 6);
+
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: '&copy; OpenStreetMap contributors'
+  }).addTo(map);
+
+  // Add marker on click
+  let marker;
+  map.on('click', function(e) {
+    const lat = e.latlng.lat.toFixed(6);
+    const lng = e.latlng.lng.toFixed(6);
+
+    if (marker) { map.removeLayer(marker); }  // remove previous marker
+    marker = L.marker([lat, lng]).addTo(map)
+      .bindPopup(`Lat: ${lat}, Lng: ${lng}`).openPopup();
+
+    // Fill hidden input fields in the form
+    document.getElementById('id_latitude').value = lat;
+    document.getElementById('id_longitude').value = lng;
+  });
+</script>
+
+</body>
+</html>

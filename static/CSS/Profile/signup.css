@@ -91,5 +91,7 @@ button:hover {
 /* Fix footer gap */
 footer {
   margin-top: 0;
-  padding: 15px 0;
+  padding: 0 0;
+  
+
 }

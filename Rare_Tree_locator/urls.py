@@ -15,4 +15,5 @@ urlpatterns = [
     path('login/', myapp_views.login_view, name='login'),
     path('blog_list', blogapp_views.blog_list, name='blog_list'),  # Added blog list view
     path('blog_list/<int:pk>/', blogapp_views.blog_detail, name='blog_detail'),  # Detail view
+    path('profile_view/<str:username>/', myapp_views.profile_view, name='profile_view'),  # Profile view
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

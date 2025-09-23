@@ -1,10 +1,13 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 from .forms import SignUpForm
 from django.contrib.auth import authenticate, login, logout
 from TreeApp.models import *
-from django.contrib.auth.forms import AuthenticationForm, UserCreationForm
-
+from django.contrib.auth.forms import AuthenticationForm
+from django.contrib.auth.decorators import login_required
+from .models import User, Profile
+from django.urls import reverse
+from BlogApp.models import BlogPost
 # Home page view
 def HomePage(request):
     return render(request, 'HomePage.html')
@@ -19,9 +22,7 @@ def signup_view(request):
     if request.method == "POST":
         form = SignUpForm(request.POST)
         if form.is_valid():
-            user = form.save(commit=False)
-            user.first_name = form.cleaned_data.get("full_name")
-            user.save()
+            form.save()
             messages.success(request, "Account created successfully! Please log in.")
             return redirect("login")
     else:
@@ -36,17 +37,40 @@ def login_view(request):
 
         if user is not None:
             login(request, user)
-
-            # Redirect based on user_type
-            if user.user_type == "contributor":
-                return redirect("contributor_dashboard")
-            elif user.user_type == "common":
-                return redirect("home")
-            elif user.user_type == "admin":
-                return redirect("admin_dashboard")
-            else:
-                return redirect("home")
+            
+            # Redirect straight to profile page
+            return redirect(reverse("profile_view", kwargs={"username": user.username}))
+            
         else:
             messages.error(request, "Invalid username or password")
 
     return render(request, "Profile/login.html")
+#profile view
+@login_required
+def profile_view(request, username):
+    user = get_object_or_404(User, username=username)
+    profile = user.profile  
+
+    joined_date = profile.joined_date
+    role = user.get_user_type_display()
+
+    # Role-specific logic
+    if user.user_type == "contributor":
+        my_trees = TreeProfile.objects.filter(submitted_by=user)
+        requests = []  # to be replaced when you build Request model
+        posts = BlogPost.objects.filter(author=user)
+    else:  # common user
+        my_trees = []  # future: trees added because of requests
+        requests = []  # future: request history
+        posts = []     # future: saved/liked posts
+
+    context = {
+        "profile_user": user,
+        "profile": profile,
+        "joined_date": joined_date,
+        "role": role,
+        "my_trees": my_trees,
+        "requests": requests,
+        "posts": posts,
+    }
+    return render(request, "Profile/profile_view.html", context)

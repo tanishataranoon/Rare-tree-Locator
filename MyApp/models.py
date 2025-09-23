@@ -1,24 +1,11 @@
-from django.db import models
 from django.contrib.auth.models import AbstractUser
+from django.db import models
+from django.db.models.signals import post_save
+from django.dispatch import receiver
+from django.utils import timezone
 
-# Create your models here.
-# Tree Model
-class Tree(models.Model):
-    RARITY_CHOICES = [
-        ('common', 'Common'),
-        ('rare', 'Rare'),
-        ('endangered', 'Endangered'),
-    ]
-    scientific_name = models.CharField(max_length=255)
-    common_names = models.CharField(max_length=255, blank=True, null=True)
-    rarity_status = models.CharField(max_length=20, choices=RARITY_CHOICES, default='common')
-    description = models.TextField(blank=True, null=True)
-    #location = models.ForeignKey(Location, on_delete=models.CASCADE, related_name='trees')
 
-    def __str__(self):
-        return f"{self.common_names or self.scientific_name}"
-    
-# Custom User model
+
 class User(AbstractUser):
     USER_TYPES = [
         ('common', 'Common User'),
@@ -30,14 +17,23 @@ class User(AbstractUser):
 
     def __str__(self):
         return f"{self.username} ({self.user_type})"
-# Tree Photo
-class TreePhoto(models.Model):
-    tree = models.ForeignKey(Tree, on_delete=models.CASCADE, related_name='photos')
-    uploaded_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, related_name='uploaded_photos')
-    photo = models.ImageField(upload_to='tree_photos/')
-    date_uploaded = models.DateTimeField(auto_now_add=True)
+
+
+class Profile(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    profession = models.CharField(max_length=100, blank=True, null=True)
+    joined_date = models.DateTimeField(default=timezone.now)  # no auto_now_add for now
 
     def __str__(self):
-        return f"Photo of {self.tree} by {self.uploaded_by}"
+        return self.user.username
 
 
+# --- SIGNALS: auto-create Profile when a User is created ---
+@receiver(post_save, sender=User)
+def create_user_profile(sender, instance, created, **kwargs):
+    if created:
+        Profile.objects.create(user=instance, profession=instance.profession)
+
+@receiver(post_save, sender=User)
+def save_user_profile(sender, instance, **kwargs):
+    instance.profile.save()

@@ -2,6 +2,7 @@ from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from .models import User
 
+
 class SignUpForm(UserCreationForm):
     full_name = forms.CharField(max_length=100, required=True)
     user_type = forms.ChoiceField(choices=User.USER_TYPES, required=True)
@@ -20,4 +21,12 @@ class SignUpForm(UserCreationForm):
             self.add_error("profession", "Profession is required for contributors.")
 
         return cleaned_data
-# Login form
+
+    def save(self, commit=True):
+        user = super().save(commit=False)
+        user.first_name = self.cleaned_data['full_name']
+        user.user_type = self.cleaned_data['user_type']
+        user.profession = self.cleaned_data.get('profession', '')
+        if commit:
+            user.save()
+        return user

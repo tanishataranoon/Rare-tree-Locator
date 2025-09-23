@@ -1,0 +1,148 @@
+/* === Profile Card === */
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f5f6fa;
+    display: flex;
+    justify-content: center;
+    flex-direction: column; /* stack main and footer vertically */
+    align-items: center;
+    min-height: 100vh;
+    margin: 0;
+    padding: 0;
+}
+/* Center the profile card inside main only */
+.main-content {
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    padding: 20px;
+    flex: 1; /* take remaining space to push footer down */
+}
+.profile-card {
+    background: #fff;
+    border-radius: 10px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    width: 700px;
+    padding: 20px;
+    margin-top: 80px;
+}
+
+/* === Header === */
+.header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 15px;
+    margin-bottom: 20px;
+}
+
+.header div {
+    flex: 1;
+    margin-left: 15px;
+}
+
+.profile-pic {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 3px solid #4CAF50;
+}
+
+.header h2 {
+    margin: 0;
+    font-size: 22px;
+}
+
+.header p {
+    margin: 2px 0;
+    color: #666;
+}
+
+.btn {
+    background-color: #4CAF50;
+    color: #fff;
+    padding: 6px 12px;
+    border-radius: 6px;
+    text-decoration: none;
+    font-size: 14px;
+}
+
+.btn:hover {
+    background-color: #45a049;
+}
+
+/* === Stats Section === */
+.stats {
+    display: flex;
+    justify-content: space-around;
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.stats div {
+    font-size: 16px;
+    font-weight: bold;
+    color: #333;
+}
+
+/* === Tabs === */
+.tabs {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-bottom: 15px;
+}
+
+.tabs button {
+    padding: 8px 15px;
+    border: none;
+    background: #eee;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background 0.2s ease-in-out;
+}
+
+.tabs button:hover {
+    background: #ddd;
+}
+
+.tabs button.active {
+    background: #4CAF50;
+    color: white;
+}
+
+/* === Tab Content === */
+.tab-content {
+    display: none;
+}
+
+.tab-content.active {
+    display: block;
+}
+
+/* === Cards for Trees/Requests/Posts === */
+.card {
+    background: #fafafa;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 15px;
+    margin-bottom: 15px;
+}
+
+.card h3 {
+    margin-top: 0;
+    color: #333;
+}
+
+.card p {
+    margin: 5px 0;
+    color: #555;
+}
+/* Fix footer gap */
+footer {
+  margin-top: 0;
+  padding: 0 0;
+  width: 100%;     /* make it span full page width */
+}

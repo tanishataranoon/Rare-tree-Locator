@@ -4,73 +4,56 @@
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Rare Tree Locator - Signup</title>
     <link rel="stylesheet" href="{% static 'css/Profile/signup.css' %}">
 </head>
 
 <body>
-    <!-- Header -->
-
     <header>
         {% include "Common/header.html" %}
     </header>
-    <!-- Move title + subtitle OUTSIDE -->
     <h2 class="site-title">Rare Tree Locator</h2>
     <p class="site-subtitle">Join our community of tree enthusiasts</p>
-
-    <!-- Signup Box -->
     <div class="signup-container">
         <h3>Create Account</h3>
         <p class="small-subtitle">Get started on your tree discovery journey</p>
 
         <form method="POST">
             {% csrf_token %}
-
-            <!-- Full Name -->
+            {{ form.non_field_errors }}
+            <label>Username</label>
+            {{ form.username }}
             <label>Full Name</label>
-            <input type="text" name="full_name" placeholder="Enter your full name" required>
-
-            <!-- Email -->
+            {{ form.full_name }}
             <label>Email</label>
-            <input type="email" name="email" placeholder="Enter your email" required>
-
-            <!-- Password -->
+            {{ form.email }}
             <label>Password</label>
-            <input type="password" name="password1" placeholder="Enter your password" required>
-
-            <!-- Confirm Password -->
+            {{ form.password1 }}
             <label>Confirm Password</label>
-            <input type="password" name="password2" placeholder="Confirm your password" required>
-
-            <!-- User Type -->
+            {{ form.password2 }}
             <label>User Type</label>
-            <select name="user_type" id="userType" required>
-                <option value="common">Common User</option>
-                <option value="contributor">Contributor</option>
-                <option value="admin">Admin</option>
-            </select>
-
-            <!-- Profession (only if contributor) -->
+            {{ form.user_type }}
             <div id="professionField" style="display:none;">
                 <label>Profession / Occupation</label>
-                <input type="text" name="profession" placeholder="Enter your profession">
+                {{ form.profession }}
             </div>
-
-            <!-- Button -->
             <button type="submit">Create Account</button>
+            {% if form.errors %}
+            <div class="errorlist">
+                {{ form.errors }}
+            </div>
+            {% endif %}
         </form>
-
         <p class="login-link">Already have an account? <a href="{% url 'login' %}">Log in</a></p>
     </div>
-
-    <!-- Back to Home -->
     <p class="back-home"><a href="{% url 'HomePage' %}">← Back to Home</a></p>
 
-    <!-- Footer -->
-    {% include "Common/footer.html" %}
+    <footer>
+        {% include "Common/footer.html" %}
+    </footer>
 
     <script src="{% static 'js/Profile/signup.js' %}"></script>
+
 </body>
 
 </html>

@@ -1,0 +1,69 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ action }} Blog Post</title>
+    <link rel="stylesheet" href="{% static 'css/blog/add_edit_blog.css' %}">
+</head>
+
+<body>
+    {% include 'Common/header.html' %}
+
+    <div class="post-container">
+        <h2>{{ action }} Blog Post</h2>
+        <form method="post" enctype="multipart/form-data" id="blogForm">
+            {% csrf_token %}
+
+            <!-- Featured Image -->
+            <div class="card">
+                <h3>Featured Image</h3>
+                <div class="image-upload">
+                    <input type="file" id="id_image" name="image" accept="image/*">
+                    <label for="id_image" class="upload-box">Click or drag to upload</label>
+
+                    <!-- Show existing image when editing -->
+                    <div id="preview">
+                        {% if form.instance.image %}
+                        <img src="{{ form.instance.image.url }}" alt="Current image">
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
+            <!-- Post Details -->
+            <div class="card">
+                <h3>Post Details</h3>
+                <label for="id_title">Post Title *</label>
+                <input type="text" id="id_title" name="title" value="{{ form.instance.title|default_if_none:'' }}"
+                    placeholder="Enter post title..." required>
+
+                <label for="id_category">Category</label>
+                <input type="text" id="id_category" name="category"
+                    value="{{ form.instance.category|default_if_none:'' }}" placeholder="e.g. Conservation, Wildlife">
+            </div>
+
+            <!-- Post Content -->
+            <div class="card">
+                <h3>Post Content</h3>
+                <textarea id="id_content" name="content" rows="10"
+                    placeholder="Write your blog post here...">{{ form.instance.content|default_if_none:'' }}</textarea>
+            </div>
+
+            <!-- Buttons -->
+            <div class="form-actions">
+                <button type="button" class="btn preview-btn" id="previewBtn">Preview</button>
+                <button type="submit" class="btn publish-btn">{{ action }} Post</button>
+            </div>
+        </form>
+    </div>
+
+    <footer>
+        {% include 'Common/footer.html' %}
+    </footer>
+    <script src="{% static 'js/blog/add_edit_blog.js' %}" defer></script>
+</body>
+
+</html>

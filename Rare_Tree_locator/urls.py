@@ -10,10 +10,22 @@ from django.conf.urls.static import static
 urlpatterns = [
     path("", include("TreeApp.urls")),
     path('admin/', admin.site.urls),
+
+    #My app views
     path('', myapp_views.HomePage, name='HomePage'),
     path('signup/', myapp_views.signup_view, name='signup'), 
     path('login/', myapp_views.login_view, name='login'),
+    path('profile_view/<str:username>/', myapp_views.profile_view, name='profile_view'),  # Profile view
+
+
+    # Blog app views
     path('blog_list', blogapp_views.blog_list, name='blog_list'),  # Added blog list view
     path('blog_list/<int:pk>/', blogapp_views.blog_detail, name='blog_detail'),  # Detail view
-    path('profile_view/<str:username>/', myapp_views.profile_view, name='profile_view'),  # Profile view
+    path('add/', blogapp_views.add_blog, name='add_blog'), #add blog view
+    path('edit/<int:pk>/', blogapp_views.edit_blog, name='edit_blog'), #edit blog view
+    path('delete/<int:pk>/', blogapp_views.delete_blog, name='delete_blog'), #delete blog view
+
+    # Tree app views
+    path('trees/', treeapp_views.TreeProfiles, name = 'TreeProfiles'),# Tree profiles view
+   
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

@@ -2,12 +2,12 @@ const menuToggle = document.getElementById('mobile-menu');
 const navLinks = document.querySelector('.nav-links');
 const header = document.querySelector('header');
 
-// ===== Mobile menu toggle =====
+// Mobile menu toggle
 menuToggle.addEventListener('click', () => {
   navLinks.classList.toggle('active');
 });
 
-// ===== Active link highlighting =====
+// Active link highlighting
 const links = document.querySelectorAll('.nav-links a');
 links.forEach(link => {
   link.addEventListener('click', () => {
@@ -16,19 +16,39 @@ links.forEach(link => {
   });
 });
 
-// ===== Hide header on scroll down, show on scroll up =====
-let lastScrollTop = 0;
+// Mobile dropdown toggle
+document.querySelectorAll(".dropdown").forEach(drop => {
+  const toggle = drop.querySelector(".dropdown-toggle");
 
+  toggle.addEventListener("click", function(e) {
+    if (window.innerWidth <= 768) {
+      e.preventDefault();
+      e.stopPropagation(); // Prevent document click from closing it
+      drop.classList.toggle("active");
+
+      // Close other dropdowns
+      document.querySelectorAll(".dropdown").forEach(other => {
+        if (other !== drop) other.classList.remove("active");
+      });
+    }
+  });
+
+  // Prevent clicks inside dropdown-menu from closing
+  const menu = drop.querySelector(".dropdown-menu");
+  if (menu) {
+    menu.addEventListener("click", e => e.stopPropagation());
+  }
+});
+
+// Close dropdown if clicked outside
+document.addEventListener("click", () => {
+  document.querySelectorAll(".dropdown").forEach(drop => drop.classList.remove("active"));
+});
+
+// Hide header on scroll down, show on scroll up
+let lastScrollTop = 0;
 window.addEventListener('scroll', function () {
   let scrollTop = window.pageYOffset || document.documentElement.scrollTop;
-
-  if (scrollTop > lastScrollTop) {
-    // scrolling down → hide header
-    header.style.top = "-100px"; // adjust if header height differs
-  } else {
-    // scrolling up → show header
-    header.style.top = "0";
-  }
-
-  lastScrollTop = scrollTop <= 0 ? 0 : scrollTop; // prevent negative scroll
+  header.style.top = (scrollTop > lastScrollTop) ? "-100px" : "0";
+  lastScrollTop = scrollTop <= 0 ? 0 : scrollTop;
 });

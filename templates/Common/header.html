@@ -1,12 +1,13 @@
 {% load static %}
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-   
     <link rel="stylesheet" href="{% static 'CSS/common/header.css' %}">
 </head>
+
 <body>
     <header>
         <div class="logo">
@@ -14,12 +15,81 @@
         </div>
         <nav>
             <ul class="nav-links">
-                <li><a href="{% url 'HomePage' %}" class="active">Home</a></li>
-                <li><a href="{% url 'TreeProfiles' %}">Trees</a></li>
-                <li><a href="#">Map</a></li>
-                <li><a href="{% url 'blog_list' %}">Blog</a></li>
-                <li><a href="{% url 'signup' %}">SignUp</a></li>
+                <!-- Home -->
+                <li>
+                    <a href="{% url 'HomePage' %}"
+                        class="{% if request.resolver_match.url_name == 'HomePage' %}active{% endif %}">
+                        Home
+                    </a>
+                </li>
+
+                <!-- Trees -->
+                <li class="dropdown">
+                    <a href="{% url 'TreeProfiles' %}" class="dropdown-toggle"
+                    class="{% if request.resolver_match.url_name in 'TreeProfiles create_tree my_trees' %}active{% endif %}">
+                        Trees
+                    </a>
+                    {% if user.is_authenticated and user.user_type == 'contributor' %}
+                    <ul class="dropdown-menu">
+                        <li><a href="#"class="add-symbol">Create Tree</a></li>
+                        <li><a href="#">My Trees</a></li>
+                        <li><a href="{% url 'TreeProfiles' %}">All Trees</a></li>
+                    </ul>
+                    {% endif %}
+                </li>
+
+                <!-- Blog -->
+                <li class="dropdown">
+                    <a href="{% url 'blog_list' %}" class="dropdown-toggle"
+                        class="{% if request.resolver_match.url_name in 'blog_list add_blog my_posts' %}active{% endif %}">
+                        Blog
+                    </a>
+                    {% if user.is_authenticated and user.user_type == 'contributor' %}
+                    <ul class="dropdown-menu">
+                        <li><a href="{% url 'add_blog' % }"class="add-symbol">Create Post</a></li>
+                        <li><a href="#">My Posts</a></li>
+                        <li><a href="{% url 'blog_list' %}">All Posts</a></li>
+                    </ul>
+                    {% endif %}
+                </li>
+
+                <!-- Map -->
+                <li>
+                    <a href="#"
+                        class="{% if request.resolver_match.url_name == 'map_page' %}active{% endif %}">
+                        Map
+                    </a>
+                </li>
+
+                <!-- Profile / Login -->
+                {% if user.is_authenticated %}
+                <li class="dropdown profile-menu">
+                    <a href="{% url 'profile_view' user.id %}"class="dropdown-toggle"
+                        class="{% if request.resolver_match.url_name == 'profile_view' %}active{% endif %}">
+                        <img src="{% if user.profile.profile_pic %}{{ user.profile.profile_pic.url }}{% else %}{% static 'images/default_profile.png' %}{% endif %}"
+                            alt="Profile" class="profile-pic">
+                    </a>
+                    <ul class="dropdown-menu">
+                        <li class="role-badge">Role: {{ user.get_user_type_display }}</li>
+                        <li><a href="{% url 'profile_view' user.id %}">Profile</a></li>
+                        <li>
+                            <form method="post" action="{% url 'logout' %}" style="display:inline;">
+                                {% csrf_token %}
+                                <button type="submit" class="logout-link">Logout</button>
+                            </form>
+                        </li>
+                    </ul>
+                </li>
+                {% else %}
+                <li><a href="{% url 'login' %}"
+                        class="{% if request.resolver_match.url_name == 'login' %}active{% endif %}">
+                        Log In
+                    </a>
+                </li>
+                {% endif %}
             </ul>
+
+
         </nav>
         <div class="menu-toggle" id="mobile-menu">
             <span></span>
@@ -30,4 +100,5 @@
 
     <script src="{% static 'JS/common/header.js' %}"></script>
 </body>
+
 </html>

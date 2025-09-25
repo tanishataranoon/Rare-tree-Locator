@@ -21,6 +21,8 @@ class User(AbstractUser):
 
 class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
+    profile_pic = models.ImageField(upload_to="profile_pics/",
+        default="default_profile.png"  )# store this inside /media/profile_pics/ or /static/images/
     profession = models.CharField(max_length=100, blank=True, null=True)
     joined_date = models.DateTimeField(default=timezone.now)  # no auto_now_add for now
 

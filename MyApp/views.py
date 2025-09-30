@@ -73,4 +73,8 @@ def profile_view(request, username):
         "requests": requests,
         "posts": posts,
     }
+    # inside profile_view
+    storage = messages.get_messages(request)
+    for _ in storage:
+        pass  # iterating clears them
     return render(request, "Profile/profile_view.html", context)

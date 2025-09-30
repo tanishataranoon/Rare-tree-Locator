@@ -29,11 +29,14 @@
                 {% csrf_token %}
                 {% if messages %}
                 <ul class="messages">
-                    {% for message in messages %}
-                    <li style="color:red;">{{ message }}</li>
-                    {% endfor %}
+                  {% for message in messages %}
+                    {% if "login" in message.tags %}
+                      <li style="color:red;">{{ message }}</li>
+                    {% endif %}
+                  {% endfor %}
                 </ul>
-                {% endif %}
+              {% endif %}
+              
 
                 <label>Email or Username</label>
                 <input type="text" name="username" placeholder="Enter your email or username" required>

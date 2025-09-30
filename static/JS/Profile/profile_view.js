@@ -1,23 +1,37 @@
 // Handle tab switching
-function showTab(tabId) {
-    // Hide all tabs
-    document.querySelectorAll(".tab-content").forEach(div => {
-        div.classList.remove("active");
-    });
+function showTab(tabId, event) {
+    document.querySelectorAll(".tab-content").forEach(div => div.classList.remove("active"));
+    document.querySelectorAll(".tabs button").forEach(btn => btn.classList.remove("active"));
 
-    // Deactivate all buttons
-    document.querySelectorAll(".tabs button").forEach(btn => {
-        btn.classList.remove("active");
-    });
-
-    // Show selected tab
     document.getElementById(tabId).classList.add("active");
-
-    // Activate selected button
-    event.target.classList.add("active");
+    if(event) event.target.classList.add("active");
 }
+
 
 // Show "trees" tab by default when page loads
 document.addEventListener("DOMContentLoaded", () => {
     showTab("trees");
+});
+document.addEventListener("DOMContentLoaded", () => {
+    const deleteButtons = document.querySelectorAll(".delete-btn");
+    const modal = document.getElementById("deleteModal");
+    const closeBtn = modal.querySelector(".close");
+    const cancelBtn = modal.querySelector(".cancel-btn");
+    const deleteForm = document.getElementById("deleteForm");
+    const modalText = document.getElementById("modal-text");
+
+    deleteButtons.forEach(button => {
+        button.addEventListener("click", () => {
+            const postId = button.dataset.postId;
+            const postTitle = button.dataset.postTitle;
+            modalText.textContent = `Are you sure you want to delete "${postTitle}"?`;
+            deleteForm.action = `/blog_delete/${postId}/`;
+            modal.classList.add("show");
+        });
+    });
+    
+    closeBtn.onclick = cancelBtn.onclick = () => modal.classList.remove("show");
+    window.onclick = (event) => {
+        if (event.target === modal) modal.classList.remove("show");
+    }
 });

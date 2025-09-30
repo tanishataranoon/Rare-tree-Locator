@@ -26,12 +26,12 @@
                 <!-- Trees -->
                 <li class="dropdown">
                     <a href="{% url 'TreeProfiles' %}" class="dropdown-toggle"
-                    class="{% if request.resolver_match.url_name in 'TreeProfiles create_tree my_trees' %}active{% endif %}">
+                        class="{% if request.resolver_match.url_name in 'TreeProfiles create_tree my_trees' %}active{% endif %}">
                         Trees
                     </a>
                     {% if user.is_authenticated and user.user_type == 'contributor' %}
                     <ul class="dropdown-menu">
-                        <li><a href="#"class="add-symbol">Create Tree</a></li>
+                        <li><a href="#" class="add-symbol">Create Tree</a></li>
                         <li><a href="#">My Trees</a></li>
                         <li><a href="{% url 'TreeProfiles' %}">All Trees</a></li>
                     </ul>
@@ -46,7 +46,7 @@
                     </a>
                     {% if user.is_authenticated and user.user_type == 'contributor' %}
                     <ul class="dropdown-menu">
-                        <li><a href="{% url 'add_blog' % }"class="add-symbol">Create Post</a></li>
+                        <li><a href="{% url 'add_blog' %}" class="add-symbol">Create Post</a></li>
                         <li><a href="#">My Posts</a></li>
                         <li><a href="{% url 'blog_list' %}">All Posts</a></li>
                     </ul>
@@ -55,8 +55,7 @@
 
                 <!-- Map -->
                 <li>
-                    <a href="#"
-                        class="{% if request.resolver_match.url_name == 'map_page' %}active{% endif %}">
+                    <a href="#" class="{% if request.resolver_match.url_name == 'map_page' %}active{% endif %}">
                         Map
                     </a>
                 </li>
@@ -64,14 +63,16 @@
                 <!-- Profile / Login -->
                 {% if user.is_authenticated %}
                 <li class="dropdown profile-menu">
-                    <a href="{% url 'profile_view' user.id %}"class="dropdown-toggle"
+                    <a href="{% url 'profile_view' user.username %}"
                         class="{% if request.resolver_match.url_name == 'profile_view' %}active{% endif %}">
                         <img src="{% if user.profile.profile_pic %}{{ user.profile.profile_pic.url }}{% else %}{% static 'images/default_profile.png' %}{% endif %}"
                             alt="Profile" class="profile-pic">
                     </a>
+
                     <ul class="dropdown-menu">
                         <li class="role-badge">Role: {{ user.get_user_type_display }}</li>
-                        <li><a href="{% url 'profile_view' user.id %}">Profile</a></li>
+                        <li><a href="{% url 'profile_view' user.username %}">Profile</a></li>
+
                         <li>
                             <form method="post" action="{% url 'logout' %}" style="display:inline;">
                                 {% csrf_token %}

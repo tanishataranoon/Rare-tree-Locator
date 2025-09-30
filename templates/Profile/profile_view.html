@@ -7,6 +7,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{{ profile_user.username }} - Profile</title>
     <link rel="stylesheet" href="{% static 'css/Profile/profile_view.css' %}">
+    <script src="{% static 'js/blog/blog_modal.js' %}" defer></script>
+
 </head>
 
 <body>
@@ -37,9 +39,10 @@
 
             <!-- Tabs -->
             <div class="tabs">
-                <button onclick="showTab('trees')">My Trees</button>
-                <button onclick="showTab('requests')">Requests</button>
-                <button onclick="showTab('posts')">Posts</button>
+                <button onclick="showTab('trees', event)">My Trees</button>
+                <button onclick="showTab('requests', event)">Requests</button>
+                <button onclick="showTab('posts', event)">Posts</button>
+
             </div>
 
             <!-- Trees -->
@@ -73,18 +76,34 @@
                 <p>No requests yet.</p>
                 {% endif %}
             </div>
-
             <!-- Posts -->
             <div id="posts" class="tab-content">
                 {% if posts %}
                 {% for post in posts %}
                 <div class="card">
-                    <h3>{{ post.title }}</h3>
+                    <h3>
+                        <a href="{% url 'blog_detail' post.id %}">{{ post.title }}</a>
+                    </h3>
+
                     {% if post.image %}
-                    <img src="{{ post.image.url }}" alt="Post Image" style="max-width:200px;">
+                    <a href="{% url 'blog_detail' post.id %}">
+                        <img src="{{ post.image.url }}" alt="Post Image" style="max-width:200px;">
+                    </a>
                     {% endif %}
+
                     <p>{{ post.content|truncatewords:20 }}</p>
                     <p>Posted on {{ post.date_posted|date:"M d, Y" }}</p>
+
+                    <!-- ✅ Show Edit/Delete only if logged-in user is the author -->
+                    {% if user.is_authenticated and user == post.author %}
+                    <div class="post-actions">
+                        <a href="{% url 'edit_blog' post.id %}" class="btn edit-btn">Edit</a>
+                        <button class="btn delete-btn" data-post-id="{{ post.id }}" data-post-title="{{ post.title }}">
+                            Delete
+                        </button>
+                    </div>
+                    {% endif %}
+
                 </div>
                 {% endfor %}
                 {% else %}
@@ -93,6 +112,21 @@
             </div>
         </div>
     </main>
+    <!-- Delete Confirmation Modal -->
+    <div id="deleteModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>Delete Post</h2>
+            <p id="modal-text"></p> <!-- 👈 leave empty, JS fills it -->
+            <form id="deleteForm" method="post">
+                {% csrf_token %}
+                <button type="submit" class="btn confirm-delete">Yes, Delete</button>
+                <button type="button" class="btn cancel-btn">Cancel</button>
+            </form>
+        </div>
+    </div>
+
+
     <footer>
         {% include "Common/footer.html" %}
     </footer>

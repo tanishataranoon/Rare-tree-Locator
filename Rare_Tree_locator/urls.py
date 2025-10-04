@@ -31,5 +31,11 @@ urlpatterns = [
 
     # Tree app views
     path('trees/', treeapp_views.TreeProfiles, name = 'TreeProfiles'),# Tree profiles view
-   
+    path("dashboard/", treeapp_views.dashboard, name="dashboard"),#user dashboard view
+    path("dashboard/ajax/create/", treeapp_views.ajax_create_request, name="ajax_create_request"),#ajax create request view
+    path("dashboard/ajax/update/<int:request_id>/", treeapp_views.ajax_update_request, name="ajax_update_request"),#ajax update request view
+    path("dashboard/ajax/delete/<int:request_id>/", treeapp_views.ajax_delete_request, name="ajax_delete_request"),#ajax delete request view
+
+
+
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

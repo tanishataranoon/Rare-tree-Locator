@@ -5,7 +5,7 @@ from django.dispatch import receiver
 from django.utils import timezone
 
 
-
+#user model
 class User(AbstractUser):
     USER_TYPES = [
         ('common', 'Common User'),
@@ -18,7 +18,7 @@ class User(AbstractUser):
     def __str__(self):
         return f"{self.username} ({self.user_type})"
 
-
+# profile model
 class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     profile_pic = models.ImageField(upload_to="profile_pics/",

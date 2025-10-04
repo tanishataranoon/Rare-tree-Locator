@@ -72,6 +72,7 @@
                     <ul class="dropdown-menu">
                         <li class="role-badge">Role: {{ user.get_user_type_display }}</li>
                         <li><a href="{% url 'profile_view' user.username %}">Profile</a></li>
+                        <li><a href="{% url 'dashboard' %}">Dashboard</a></li>
 
                         <li>
                             <form method="post" action="{% url 'logout' %}" style="display:inline;">

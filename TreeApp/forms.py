@@ -1,5 +1,7 @@
 from django.http import JsonResponse
 from .models import *
+from django import forms
+from .models import TreeRequest, TreeAnswer
 
 def add_tree_ajax(request):
     if request.method == "POST":
@@ -28,3 +30,15 @@ def add_tree_ajax(request):
             })
         return JsonResponse({"success": False, "error": "Missing required fields"})
     return JsonResponse({"success": False, "error": "Invalid request"})
+
+# Common user request form
+class TreeRequestForm(forms.ModelForm):
+    class Meta:
+        model = TreeRequest
+        fields = ["title", "description", "location"]
+
+# Contributor answer form
+class TreeAnswerForm(forms.ModelForm):
+    class Meta:
+        model = TreeAnswer
+        fields = ["answer_text", "photo"]

@@ -1,0 +1,174 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Dashboard</title>
+    <link rel="stylesheet" href="{% static 'css/Request/dashboard.css' %}">
+</head>
+
+<body>
+    {% include "Common/header.html" %}
+    <div class="dashboard-container">
+
+        <h1>Welcome, {{ request.user.username }}!</h1>
+
+        <!-- Common User Section -->
+        {% if request.user.user_type == "common" %}
+        <h2>🌱 My Requests</h2>
+        <!-- Create Request Button -->
+        <button class="btn create-request-btn" id="openCreateModal">➕ Create Request</button>
+        <div class="card-list">
+            {% for req in my_requests %}
+            <div class="card">
+                <div class="card-header">
+                    <span class="req-id">REQ-{{ req.id }}</span>
+                    <span class="status pending">Pending</span>
+                </div>
+                <div class="card-body">
+                    <h3>{{ req.title }}</h3>
+                    <p>{{ req.description|truncatechars:120 }}</p>
+                </div>
+                <div class="card-footer">
+                    <button class="btn edit-request-btn" data-id="{{ req.id }}" data-title="{{ req.title }}"
+                        data-description="{{ req.description }}" data-location="{{ req.location }}">Edit</button>
+                    <button class="btn delete-request-btn" data-id="{{ req.id }}">Delete</button>
+                </div>
+            </div>
+            {% empty %}
+            <p>No pending requests</p>
+            {% endfor %}
+        </div>
+
+        <h2>✅ My Approved Requests</h2>
+        <div class="card-list">
+            {% for req in my_approved %}
+            <div class="card">
+                <div class="card-header">
+                    <span class="req-id">REQ-{{ req.id }}</span>
+                    <span class="status answered">Answered</span>
+                </div>
+                <div class="card-body">
+                    <h3>{{ req.title }}</h3>
+                    <p><b>Answer:</b> {{ req.answer.answer_text|truncatechars:120 }}</p>
+                </div>
+            </div>
+            {% empty %}
+            <p>No approved requests yet</p>
+            {% endfor %}
+        </div>
+        {% endif %}
+
+        <!-- Contributor Section -->
+        {% if request.user.user_type == "contributor" %}
+        <h2>📥 Pending Requests</h2>
+        <div class="card-list">
+            {% for req in all_requests %}
+            <div class="card">
+                <div class="card-header">
+                    <span class="req-id">REQ-{{ req.id }}</span>
+                    <span class="status pending">Pending</span>
+                </div>
+                <div class="card-body">
+                    <h3>{{ req.title }}</h3>
+                    <p>{{ req.description|truncatechars:120 }}</p>
+                </div>
+                <div class="card-footer">
+                    <a href="#" class="btn">Answer</a>
+                </div>
+            </div>
+            {% empty %}
+            <p>No pending requests</p>
+            {% endfor %}
+        </div>
+
+        <h2>✅ My Answered Requests</h2>
+        <div class="card-list">
+            {% for ans in my_answers %}
+            <div class="card">
+                <div class="card-header">
+                    <span class="req-id">REQ-{{ ans.request.id }}</span>
+                    <span class="status answered">Answered</span>
+                </div>
+                <div class="card-body">
+                    <h3>{{ ans.request.title }}</h3>
+                    <p>{{ ans.answer_text|truncatechars:120 }}</p>
+                </div>
+            </div>
+            {% empty %}
+            <p>No answered requests yet</p>
+            {% endfor %}
+        </div>
+        {% endif %}
+
+    </div>
+    <!-- Create Request Modal -->
+    <div id="createModal" class="modal">
+        <div class="modal-content">
+            <span class="close" id="closeCreateModal">&times;</span>
+            <h2>Create Tree Request</h2>
+            <form method="POST" id="createRequestForm">
+                {% csrf_token %}
+                <label for="create_title">Title *</label>
+                <input type="text" name="title" id="create_title" required>
+
+                <label for="create_description">Description *</label>
+                <textarea name="description" id="create_description" required></textarea>
+
+                <label for="create_location">Location</label>
+                <input type="text" name="location" id="create_location">
+
+                <button type="submit" class="btn">Submit Request</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Edit Request Modal -->
+    <div id="editModal" class="modal">
+        <div class="modal-content">
+            <span class="close" id="closeEditModal">&times;</span>
+            <h2>Edit Tree Request</h2>
+            <form method="POST" id="editRequestForm">
+                {% csrf_token %}
+                <input type="hidden" name="request_id" id="edit_request_id">
+                <label for="edit_title">Title *</label>
+                <input type="text" name="title" id="edit_title" required>
+
+                <label for="edit_description">Description *</label>
+                <textarea name="description" id="edit_description" required></textarea>
+
+                <label for="edit_location">Location</label>
+                <input type="text" name="location" id="edit_location">
+
+                <button type="submit" class="btn">Update Request</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Delete Request Modal -->
+    <div id="deleteModal" class="modal">
+        <div class="modal-content">
+            <span class="close" id="closeDeleteModal">&times;</span>
+            <h2>Delete Request</h2>
+            <p>Are you sure you want to delete this request?</p>
+            <form method="POST" id="deleteRequestForm">
+                {% csrf_token %}
+                <input type="hidden" name="request_id" id="delete_request_id">
+                <button type="submit" class="btn delete-btn">Delete</button>
+                <button type="button" class="btn" id="cancelDelete">Cancel</button>
+            </form>
+        </div>
+    </div>
+
+    {% include "Common/footer.html" %}
+    <script>
+        const ajaxCreateUrl = "{% url 'ajax_create_request' %}";
+        const ajaxUpdateUrl = "{% url 'ajax_update_request' 0 %}".replace("/0/", "/");
+        const ajaxDeleteUrl = "{% url 'ajax_delete_request' 0 %}".replace("/0/", "/");
+    </script>
+    
+    <script src="{% static 'js/Request/dashboard.js' %}"></script>
+</body>
+
+</html>

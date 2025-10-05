@@ -7,6 +7,16 @@
 
 body {
   font-family: Arial, sans-serif;
+
+  min-height: 100vh;
+  margin: 0;
+  padding: 0;
+}
+.main-content {
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+  align-items: center;
 }
 
 /* ===== Header ===== */
@@ -16,7 +26,7 @@ header {
   align-items: center;
   padding: 10px 50px;
   background-color: #215732;
-  position: fixed; /* fixed so it hides/shows on scroll */
+  position: fixed;
   top: 0;
   left: 0;
   width: 100%;
@@ -24,12 +34,12 @@ header {
   transition: top 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
 }
 
-/* Add subtle shadow when header is visible after scroll */
+/* Add shadow when scrolled */
 header.scrolled {
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
 }
 
-/* Logo */
+/* ===== Logo ===== */
 .logo {
   display: flex;
   align-items: center;
@@ -39,25 +49,25 @@ header.scrolled {
 .logo img {
   width: 50px;
   height: 50px;
-  border-radius: 50%; /* round logo */
+  border-radius: 50%;
   object-fit: cover;
-  border: 2px solid white; /* optional border */
+  border: 2px solid white;
 }
 
 /* ===== Navigation ===== */
 .nav-links {
   list-style: none;
-  margin: 0;
-  padding: 0;
   display: flex;
   gap: 20px;
 }
+
 .nav-links li {
   position: relative;
 }
+
 .nav-links li a {
-  text-decoration: none; /* remove underline */
-  color: #c2e089; /* default color */
+  text-decoration: none;
+  color: #c2e089;
   font-weight: bold;
   display: block;
   transition: color 0.3s ease-in-out;
@@ -79,7 +89,7 @@ header.scrolled {
 .menu-toggle span {
   width: 25px;
   height: 3px;
-  background-color: #c2e089; /* color of hamburger bars */
+  background-color: #c2e089;
   transition: background-color 0.3s ease-in-out;
 }
 
@@ -106,7 +116,6 @@ header.scrolled {
     display: flex;
   }
 
-  /* Mobile menu toggle display */
   .menu-toggle {
     display: flex;
   }
@@ -115,49 +124,44 @@ header.scrolled {
     background-color: #c2e089;
   }
 
-  /* Mobile hover/active colors */
   .nav-links li a:hover,
   .nav-links li a.active {
     color: white;
   }
 }
+
 /* ===== Dropdown ===== */
 .dropdown {
   position: relative;
 }
 
-/* ===== Dropdown Styling  ===== */
 .dropdown-menu {
   display: none;
   position: absolute;
-  top: 120%; /* little lower to create space */
+  top: 120%;
   left: 0;
-  background: #fff; /* white dropdown background */
+  background: #fff;
   border-radius: 10px;
   padding: 8px 0;
   list-style: none;
   min-width: 120px;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-  border-radius: 4px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
   z-index: 100;
 }
 
-/* Each dropdown item */
 .dropdown-menu li {
   padding: 10px 20px;
 }
 
-
-/* Dropdown links */
 .dropdown-menu li a {
   display: block;
-  color: #333; /* dark green text */
+  color: #333;
   font-weight: 500;
   text-decoration: none;
   transition: background 0.3s ease, color 0.3s ease;
   padding: 10px;
 }
-/* Add + only for links with .add-symbol */
+
 .dropdown-menu li a.add-symbol::before {
   content: "+";
   margin-right: 8px;
@@ -165,21 +169,18 @@ header.scrolled {
   font-weight: bold;
 }
 
-
-/* Hover effect */
 .dropdown-menu li a:hover {
-  background: #2c583b; /* light green highlight */
-  color: #1a3d26;
+  background: #2c583b;
+  color: #fff;
   border-radius: 6px;
 }
 
-/* Show on hover (desktop) */
+/* Show dropdown on hover (desktop) */
 .dropdown:hover .dropdown-menu {
   display: block;
 }
 
-
-/* Profile picture styling */
+/* Profile picture (small in header) */
 .profile-pic {
   width: 35px;
   height: 35px;
@@ -189,7 +190,7 @@ header.scrolled {
   cursor: pointer;
 }
 
-/* Role badge */
+/* ===== Role badge ===== */
 .role-badge {
   font-size: 12px;
   font-weight: bold;
@@ -200,7 +201,8 @@ header.scrolled {
   text-align: center;
   margin-bottom: 5px;
 }
-/* Logout button styling */
+
+/* ===== Logout button in dropdown ===== */
 .logout-link {
   background: none;
   border: none;
@@ -212,11 +214,106 @@ header.scrolled {
 }
 
 .logout-link:hover {
-  color: 357a38;
+  color: #357a38;
+}
+/* ===== Profile Slide-in Panel ===== */
+.profile-panel {
+  position: fixed;
+  top: 0;
+  right: 0;
+  width: 300px;
+  height: 100vh;
+  background-color: #fff;
+  box-shadow: -2px 0 15px rgba(0, 0, 0, 0.25);
+  transform: translateX(100%);   /* ✅ hidden by default */
+  transition: transform 0.4s ease;
+  z-index: 9999;                 /* ✅ higher than header */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 30px 20px;
+  border-top-left-radius: 12px;
+  border-bottom-left-radius: 12px;
+}
+
+.profile-panel.active {
+  transform: translateX(0);   /* ✅ slide in */
 }
 
 
-/* Mobile dropdown handling */
+/* ===== Profile panel content ===== */
+.profile-header {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.profile-pic-large {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  border: 2px solid #215732;
+  object-fit: cover;
+  margin-bottom: 10px;
+}
+
+.profile-links {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  width: 100%;
+}
+
+.profile-links li {
+  margin: 10px 0;
+}
+
+.profile-links a,
+.logout-btn {
+  display: block;
+  width: 100%;
+  background: none;
+  border: none;
+  color: #215732;
+  font-size: 16px;
+  font-weight: bold;
+  text-decoration: none;
+  cursor: pointer;
+  padding: 10px 0;
+  border-bottom: 1px solid #e0e0e0;
+  text-align: left;
+}
+
+.profile-links a:hover,
+.logout-btn:hover {
+  color: #2e8b57;
+}
+
+/* ===== Overlay (behind profile panel) ===== */
+#overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.4);
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.4s ease;
+  z-index: 9998;  /* just below panel */
+}
+
+#overlay.active {
+  opacity: 1;
+  visibility: visible;
+}
+
+
+/* Prevent scroll when panel open */
+body.no-scroll {
+  overflow: hidden;
+}
+
+/* ===== Mobile dropdown handling ===== */
 @media screen and (max-width: 768px) {
   .dropdown-menu {
     position: static;
@@ -230,10 +327,11 @@ header.scrolled {
   }
 
   .dropdown:hover .dropdown-menu {
-    display: none; /* disable hover effect on mobile */
+    display: none;
   }
 
   .dropdown.active .dropdown-menu {
-    display: block; /* open only when clicked */
+    display: block;
   }
 }
+

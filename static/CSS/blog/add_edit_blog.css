@@ -1,3 +1,11 @@
+header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index: 1000;
+    height: 70px; /* define once */
+}
 body {
     font-family: Arial, sans-serif;
     background: #f5f6fa;
@@ -5,7 +13,9 @@ body {
     padding: 20px;
     margin-top: 100px; /* adjust for your header height */
 }
-
+main {
+    padding-top: 70px; /* same as header height */
+}
 .post-container {
     max-width: 800px;
     margin: 0 auto;

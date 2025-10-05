@@ -82,7 +82,19 @@
             <p>No pending requests</p>
             {% endfor %}
         </div>
-
+        // All Requests Section
+        <h2>🌳 All Requests</h2>
+        {% for req in requests %}
+        <div class="card">
+            <h3>{{ req.title }}</h3>
+            <p>{{ req.description }}</p>
+            <div class="images">
+                {% for img in req.images.all %}
+                <img src="{{ img.image.url }}" alt="Request Image" style="max-width:150px;">
+                {% endfor %}
+            </div>
+        </div>
+        {% endfor %}
         <h2>✅ My Answered Requests</h2>
         <div class="card-list">
             {% for ans in my_answers %}
@@ -108,7 +120,7 @@
         <div class="modal-content">
             <span class="close" id="closeCreateModal">&times;</span>
             <h2>Create Tree Request</h2>
-            <form method="POST" id="createRequestForm">
+            <form method="POST" id="createRequestForm" enctype="multipart/form-data">
                 {% csrf_token %}
                 <label for="create_title">Title *</label>
                 <input type="text" name="title" id="create_title" required>
@@ -118,6 +130,9 @@
 
                 <label for="create_location">Location</label>
                 <input type="text" name="location" id="create_location">
+
+                <label for="create_images">Upload Images (optional)</label>
+                <input type="file" name="images" id="create_images" multiple accept="image/*">
 
                 <button type="submit" class="btn">Submit Request</button>
             </form>
@@ -129,7 +144,7 @@
         <div class="modal-content">
             <span class="close" id="closeEditModal">&times;</span>
             <h2>Edit Tree Request</h2>
-            <form method="POST" id="editRequestForm">
+            <form method="POST" id="editRequestForm" enctype="multipart/form-data">
                 {% csrf_token %}
                 <input type="hidden" name="request_id" id="edit_request_id">
                 <label for="edit_title">Title *</label>
@@ -140,6 +155,9 @@
 
                 <label for="edit_location">Location</label>
                 <input type="text" name="location" id="edit_location">
+
+                <label for="edit_images">Add New Images (optional)</label>
+                <input type="file" name="images" id="edit_images" multiple accept="image/*">
 
                 <button type="submit" class="btn">Update Request</button>
             </form>
@@ -167,7 +185,7 @@
         const ajaxUpdateUrl = "{% url 'ajax_update_request' 0 %}".replace("/0/", "/");
         const ajaxDeleteUrl = "{% url 'ajax_delete_request' 0 %}".replace("/0/", "/");
     </script>
-    
+
     <script src="{% static 'js/Request/dashboard.js' %}"></script>
 </body>
 

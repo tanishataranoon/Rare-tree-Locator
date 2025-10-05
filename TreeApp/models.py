@@ -88,7 +88,15 @@ class TreeRequest(models.Model):
 
     def __str__(self):
         return f"REQ-{self.id} | {self.title} | {self.status}"
+#to allow multiple images per request
+class RequestImage(models.Model):
+    tree_request = models.ForeignKey(TreeRequest, on_delete=models.CASCADE, related_name="images")
+    image = models.ImageField(upload_to="request_images/")
 
+    def __str__(self):
+        return f"Image for Request {self.request.id}"
+    
+    
 # Answer Model
 class TreeAnswer(models.Model):
     request = models.OneToOneField(   # one request -> one official answer

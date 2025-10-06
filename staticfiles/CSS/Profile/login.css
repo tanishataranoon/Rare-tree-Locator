@@ -1,0 +1,133 @@
+html, body {
+    height: 100%;
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background-color: #f9f9f4;
+    display: flex;
+    flex-direction: column;
+}
+
+.page-container {
+    flex: 1; /* pushes footer down */
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 30px 20px;
+}
+
+/* Title above login box */
+.page-title {
+    text-align: center;
+    margin: 60px 0 25px;  /* top space from header, bottom space before login box */
+}
+
+.page-title h2 {
+    font-size: 26px;
+    color: #2e5939;
+    margin: 0;
+}
+
+.page-title .subtitle {
+    font-size: 16px;
+    color: #555;
+    margin: 5px 0 0;
+}
+
+/* Login Card */
+.login-container {
+    background-color: #fff;
+    padding: 50px 40px;   /* bigger box */
+    border-radius: 12px;
+    box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.1);
+    max-width: 420px;     /* wider */
+    width: 100%;
+    text-align: center;
+    margin-top: 50px; /* adjust spacing from header */
+}
+
+.login-container h3 {
+    font-size: 22px;
+    margin-bottom: 5px;
+    color: #2e5939;
+}
+
+.login-container .login-subtitle {
+    font-size: 14px;
+    color: #666;
+    margin-bottom: 25px;
+}
+
+form {
+    text-align: left;
+}
+
+label {
+    display: block;
+    margin-bottom: 6px;
+    font-size: 14px;
+    font-weight: bold;
+    color: #333;
+}
+
+input {
+    width: 100%;
+    padding: 12px;
+    margin-bottom: 18px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    font-size: 14px;
+    outline: none;
+    transition: border 0.2s;
+}
+
+input:focus {
+    border-color: #2e5939;
+}
+
+button {
+    width: 100%;
+    padding: 14px;
+    background-color: #2e5939;
+    border: none;
+    border-radius: 8px;
+    color: #fff;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    margin-top: 5px;
+    transition: background-color 0.2s, transform 0.1s;
+}
+
+button:hover {
+    background-color: #24472d;
+    transform: scale(1.02);
+}
+
+.login-container a {
+    color: #2e5939;
+    text-decoration: none;
+    font-size: 14px;
+}
+
+.login-container a:hover {
+    text-decoration: underline;
+}
+
+.login-container p {
+    margin-top: 15px;
+    font-size: 14px;
+}
+.back-home {
+    margin-top: 20px;
+}
+
+.back-home a {
+    text-decoration: none;
+    color: #007BFF;
+    font-weight: 500;
+}
+
+.back-home a:hover {
+    text-decoration: underline;
+}

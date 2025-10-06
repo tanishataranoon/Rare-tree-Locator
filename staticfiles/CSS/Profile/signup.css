@@ -1,0 +1,97 @@
+body {
+    font-family: Arial, sans-serif;
+    background: #f9fdf6;
+    margin: 0;
+    padding: 0;
+    text-align: center;
+}
+
+/* Push signup content below the fixed header */
+header + .site-title, 
+header + .site-subtitle {
+  display: block;
+  margin-top: 120px; /* adjust if your header height is different */
+  text-align: center;
+}
+
+.site-title {
+  color: #2e7d32;
+  margin-bottom: 5px;
+  font-size: 24px;
+}
+
+.site-subtitle {
+  color: #555;
+  margin-bottom: 30px;
+}
+
+.signup-container {
+    background: white;
+    margin: 0 auto 30px auto;
+    padding: 25px;
+    border-radius: 10px;
+    width: 420px;
+    /* wider than before */
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    text-align: left;
+}
+
+.signup-container h3 {
+    text-align: center;
+    color: #2e7d32;
+    margin-bottom: 5px;
+}
+
+.signup-container .small-subtitle {
+    text-align: center;
+    color: #666;
+    margin-bottom: 20px;
+}
+
+.signup-container label {
+    font-weight: bold;
+    margin-top: 10px;
+    display: block;
+}
+
+.signup-container input,
+.signup-container select {
+    width: 100%;
+    padding: 8px;
+    margin-top: 5px;
+    margin-bottom: 12px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+}
+
+button {
+    width: 100%;
+    padding: 10px;
+    background: #2e7d32;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+button:hover {
+    background: #256428;
+}
+
+.login-link {
+    text-align: center;
+    margin-top: 15px;
+}
+
+.back-home {
+    margin: 20px 0;
+    text-align: center;
+}
+/* Fix footer gap */
+footer {
+  margin-top: 0;
+  padding: 0 0;
+  
+
+}

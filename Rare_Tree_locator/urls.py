@@ -9,9 +9,11 @@ from django.contrib.auth.views import LogoutView
 
 
 
+
 urlpatterns = [
     path("", include("TreeApp.urls")),
     path('admin/', admin.site.urls),
+
 
     #My app views
     path('', myapp_views.HomePage, name='HomePage'),

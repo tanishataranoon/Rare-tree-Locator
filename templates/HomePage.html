@@ -7,7 +7,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Home</title>
   <link rel="stylesheet" href="{% static 'CSS/homepage.css' %}">
-
   <!-- Leaflet CSS -->
   <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
 </head>
@@ -19,17 +18,17 @@
   <!-- ===== DIAGONAL SLIDESHOW SECTION ===== -->
   <div class="main-container">
     <div class="slideshow">
-      <div class="slide active" style="background-image: url(&quot;{% static 'images/p_1.jpg' %}&quot;);"></div>
-      <div class="slide" style="background-image: url(&quot;{% static 'images/p_2.jpg' %}&quot;);"></div>
-      <div class="slide" style="background-image: url(&quot;{% static 'images/p_3.jpg' %}&quot;);"></div>
+      <div class="slide active" style="background-image: url('{% static "images/p_1.jpg" %}');"></div>
+      <div class="slide" style="background-image: url('{% static "images/p_2.jpg" %}');"></div>
+      <div class="slide" style="background-image: url('{% static "images/p_3.jpg" %}');"></div>
     </div>
 
     <div class="right-side">
       <div>
         <h1>Discover Rare Trees Around the World</h1>
         <p>
-          Join our community in documenting and preserving the world's most extraordinary trees. Every discovery helps
-          protect biodiversity for future generations.
+          Join our community in documenting and preserving the world's most extraordinary trees.
+          Every discovery helps protect biodiversity for future generations.
         </p>
       </div>
     </div>
@@ -98,40 +97,56 @@
   {% include 'Common/footer.html' %}
 
   <!-- JS should load at the end of body -->
-  <script src="{% static 'JS/homepage.js' %}"></script>
   <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+  <script src="{% static 'JS/homepage.js' %}"></script>
 
   <script>
-    document.addEventListener("DOMContentLoaded", function () {
-      const map = L.map('map').setView([23.8103, 90.4125], 6);
+  document.addEventListener("DOMContentLoaded", function () {
+    const map = L.map('map').setView([23.8103, 90.4125], 10);
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: '&copy; OpenStreetMap contributors'
+    }).addTo(map);
 
-      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        attribution: '&copy; OpenStreetMap contributors'
-      }).addTo(map);
+    // === Load all trees from Django API ===
+    fetch("{% url 'get_trees_json' %}")
+      .then(res => res.json())
+      .then(trees => {
+        console.log("Loaded trees:", trees);
+        trees.forEach(tree => {
+          const lat = parseFloat(tree.latitude);
+          const lng = parseFloat(tree.longitude);
+          if (!isNaN(lat) && !isNaN(lng)) {
+            const popupContent = `
+  <div style="text-align:center; max-width:150px;">
+    <b>${tree.street_name}</b><br>
+    ${tree.description ? `<small>${tree.description}</small><br>` : ""}
+    ${tree.image_url ? `<img src="${tree.image_url}" alt="${tree.street_name}"
+        style="width:120px; height:auto; border-radius:8px; margin-top:5px;">` : ""}
+  </div>
+`;
 
-      map.invalidateSize();
+L.marker([lat, lng])
+  .addTo(map)
+  .bindPopup(popupContent);
 
-      // Load existing trees from Django
-      {% for tree in trees %}
-      L.marker([{{ tree.latitude }}, {{ tree.longitude }}]).addTo(map)
-      .bindPopup("<b>{{ tree.street_name }}</b>{% if tree.description %}<br>{{ tree.description }}{% endif %}");
-    {% endfor %}
+          }
+        });
+      })
+      .catch(err => console.error("Error loading trees:", err));
 
-    // Click to add marker
+    // === Click to add marker ===
     let marker;
     map.on('click', function (e) {
       const lat = e.latlng.lat.toFixed(6);
       const lng = e.latlng.lng.toFixed(6);
-
-      if (marker) { map.removeLayer(marker); }
+      if (marker) map.removeLayer(marker);
       marker = L.marker([lat, lng]).addTo(map)
         .bindPopup(`Lat: ${lat}, Lng: ${lng}`).openPopup();
-
       document.getElementById('id_latitude').value = lat;
       document.getElementById('id_longitude').value = lng;
     });
 
-    // Handle form submission via AJAX
+    // === AJAX form submission ===
     const form = document.getElementById('tree-form');
     form.addEventListener('submit', function (e) {
       e.preventDefault();
@@ -141,23 +156,25 @@
         method: 'POST',
         headers: { 'X-CSRFToken': data.get('csrfmiddlewaretoken') },
         body: data
-      }).then(response => response.json())
+      })
+        .then(response => response.json())
         .then(data => {
           if (data.success) {
             alert("Tree added successfully!");
-            // Add permanent marker to map
-            L.marker([data.latitude, data.longitude]).addTo(map)
-              .bindPopup(`<b>${data.street_name}</b><br>${data.description}`).openPopup();
+            L.marker([data.latitude, data.longitude])
+              .addTo(map)
+              .bindPopup(`<b>${data.street_name}</b><br>${data.description || ''}`)
+              .openPopup();
             form.reset();
-            if (marker) { map.removeLayer(marker); }
+            if (marker) map.removeLayer(marker);
           } else {
             alert("Error: " + data.error);
           }
-        });
+        })
+        .catch(err => console.error("Error adding tree:", err));
     });
-});
+  });
   </script>
 
 </body>
-
 </html>

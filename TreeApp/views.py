@@ -197,3 +197,8 @@ def answer_request(request, request_id):
         form = TreeAnswerForm()
 
     return render(request, "requests/answer_request.html", {"form": form, "tree_request": tree_request})
+
+def TreeDetail(request, id):
+    tree = get_object_or_404(TreeProfile, id=id)
+    
+    return render(request, 'Trees/TreeDetail.html', {'tree': tree})

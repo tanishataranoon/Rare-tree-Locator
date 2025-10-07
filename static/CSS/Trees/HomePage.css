@@ -1,0 +1,36 @@
+body {
+      background: linear-gradient(180deg, #0a2a1b 0%, #113d26 50%, #184f2f 100%);
+      color: #f3f9f4;
+      font-family: 'Poppins', sans-serif;
+    }
+
+    .tree-card {
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(8px);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .tree-card:hover {
+      transform: translateY(-6px);
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4);
+    }
+
+    .tree-image {
+      height: 220px;
+      object-fit: cover;
+      width: 100%;
+      border-radius: 0.75rem 0.75rem 0 0;
+    }
+
+    .badge {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      background: rgba(0, 0, 0, 0.6);
+      color: #a9f58d;
+      padding: 3px 10px;
+      border-radius: 12px;
+      font-size: 0.75rem;
+      text-transform: uppercase;
+    }

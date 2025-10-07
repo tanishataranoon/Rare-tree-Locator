@@ -1,11 +1,19 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from .models import *
 from .forms import *
 import json
+from django.views.decorators.http import require_POST
 from django.core.serializers.json import DjangoJSONEncoder
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import login_required
+from django.core.exceptions import PermissionDenied
+from django.http import HttpResponseForbidden ,JsonResponse
+
+
+# Create your views here.
+
 
 def homepage(request):
     # Get all trees
@@ -94,3 +102,98 @@ def add_tree_ajax(request):
             return JsonResponse({'success': False, 'error': str(e)})
 
     return JsonResponse({'success': False, 'error': 'Invalid request'})
+# Dashboard
+@login_required
+def dashboard(request):
+    context = {}
+
+    if request.user.user_type == "common":
+        context["my_requests"] = TreeRequest.objects.filter(requester=request.user, status="pending")
+        context["my_approved"] = TreeRequest.objects.filter(requester=request.user, status="answered")
+
+    elif request.user.user_type == "contributor":
+        context["all_requests"] = TreeRequest.objects.filter(status="pending")
+        context["my_answers"] = TreeAnswer.objects.filter(contributor=request.user)
+
+    return render(request, "Request/dashboard.html", context)
+# Ajax to create a new request
+@login_required
+@require_POST
+def ajax_create_request(request):
+    if request.user.user_type != "common":
+        return JsonResponse({"success": False, "error": "Permission denied"}, status=403)
+
+    form = TreeRequestForm(request.POST, request.FILES)
+    if form.is_valid():
+        tree_request = form.save(commit=False)
+        tree_request.requester = request.user
+        tree_request.save()
+
+        # ✅ Save multiple uploaded images
+        for file in request.FILES.getlist("images"):
+            RequestImage.objects.create(tree_request=tree_request, image=file)
+
+        return JsonResponse({"success": True})
+    else:
+        return JsonResponse({"success": False, "errors": form.errors}, status=400)
+
+# Ajax to update an existing request
+@login_required
+@require_POST
+def ajax_update_request(request, request_id):
+    if request.user.user_type != "common":
+        return JsonResponse({"success": False, "error": "Permission denied"}, status=403)
+
+    tree_request = TreeRequest.objects.filter(id=request_id, requester=request.user).first()
+    if not tree_request:
+        return JsonResponse({"success": False, "error": "Request not found"})
+
+    form = TreeRequestForm(request.POST, request.FILES, instance=tree_request)
+    if form.is_valid():
+        updated_request = form.save()
+
+        # ✅ Add new uploaded images (if any)
+        for file in request.FILES.getlist("images"):
+            RequestImage.objects.create(tree_request=updated_request, image=file)
+
+        return JsonResponse({"success": True})
+    else:
+        return JsonResponse({"success": False, "errors": form.errors}, status=400)
+
+# Ajax to delete a request
+@login_required
+@require_POST
+def ajax_delete_request(request, request_id):
+    tree_request = TreeRequest.objects.filter(id=request_id, requester=request.user).first()
+    if not tree_request or request.user.user_type != "common":
+        raise PermissionDenied
+
+    tree_request.delete()
+    return JsonResponse({"success": True, "id": request_id})
+
+# Contributor: answer a request
+@login_required
+def answer_request(request, request_id):
+    if request.user.user_type != "contributor":
+        return HttpResponseForbidden("Only contributors can answer requests.")
+
+    tree_request = get_object_or_404(TreeRequest, id=request_id)
+
+    if request.method == "POST":
+        form = TreeAnswerForm(request.POST, request.FILES)
+        if form.is_valid():
+            answer = form.save(commit=False)
+            answer.request = tree_request
+            answer.contributor = request.user
+            answer.save()
+
+            # update request status
+            tree_request.status = "answered"
+            tree_request.save()
+
+            return redirect("contributor_dashboard")
+
+    else:
+        form = TreeAnswerForm()
+
+    return render(request, "requests/answer_request.html", {"form": form, "tree_request": tree_request})

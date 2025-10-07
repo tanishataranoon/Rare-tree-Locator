@@ -60,44 +60,46 @@
                     </a>
                 </li>
 
-                <!-- Profile / Login -->
                 {% if user.is_authenticated %}
-                <li class="dropdown profile-menu">
-                    <a href="{% url 'profile_view' user.username %}"
-                        class="{% if request.resolver_match.url_name == 'profile_view' %}active{% endif %}">
-                        <img src="{% if user.profile.profile_pic %}{{ user.profile.profile_pic.url }}{% else %}{% static 'images/default_profile.png' %}{% endif %}"
-                            alt="Profile" class="profile-pic">
-                    </a>
-
-                    <ul class="dropdown-menu">
-                        <li class="role-badge">Role: {{ user.get_user_type_display }}</li>
-                        <li><a href="{% url 'profile_view' user.username %}">Profile</a></li>
-
-                        <li>
-                            <form method="post" action="{% url 'logout' %}" style="display:inline;">
-                                {% csrf_token %}
-                                <button type="submit" class="logout-link">Logout</button>
-                            </form>
-                        </li>
-                    </ul>
+                <li class="profile-menu">
+                    <img src="{% if user.profile.profile_pic %}{{ user.profile.profile_pic.url }}{% else %}{% static 'images/default_profile.png' %}{% endif %}"
+                        alt="Profile" class="profile-pic" id="profile-icon">
                 </li>
                 {% else %}
-                <li><a href="{% url 'login' %}"
-                        class="{% if request.resolver_match.url_name == 'login' %}active{% endif %}">
-                        Log In
-                    </a>
-                </li>
+                <li><a href="{% url 'login' %}">Log In</a></li>
                 {% endif %}
             </ul>
-
-
         </nav>
+
         <div class="menu-toggle" id="mobile-menu">
             <span></span>
             <span></span>
             <span></span>
         </div>
     </header>
+    <!-- ✅ Move these OUTSIDE header -->
+    {% if user.is_authenticated %}
+    <div id="profile-panel" class="profile-panel">
+        <div class="profile-header">
+            <img src="{% if user.profile.profile_pic %}{{ user.profile.profile_pic.url }}{% else %}{% static 'images/default_profile.png' %}{% endif %}"
+                alt="Profile" class="profile-pic-large">
+            <h3>{{ user.username }}</h3>
+            <p>Role: {{ user.get_user_type_display }}</p>
+        </div>
+        <ul class="profile-links">
+            <li><a href="{% url 'profile_view' user.username %}">Profile</a></li>
+            <li><a href="{% url 'dashboard' %}">Dashboard</a></li>
+            <li>
+                <form method="post" action="{% url 'logout' %}">
+                    {% csrf_token %}
+                    <button type="submit" class="logout-btn">Log Out</button>
+                </form>
+            </li>
+        </ul>
+    </div>
+
+    <div id="overlay"></div>
+    {% endif %}
 
     <script src="{% static 'JS/common/header.js' %}"></script>
 </body>

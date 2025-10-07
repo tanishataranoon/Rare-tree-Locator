@@ -138,5 +138,6 @@ UNFOLD = {
     "SITE_TITLE": "Rare Tree Locator",
     "SITE_SYMBOL": "🌿",
     "SHOW_HISTORY": True,
-    "THEME": "dark",  # or "light"
+    "THEME": "light",  # or "light"
+    
 }

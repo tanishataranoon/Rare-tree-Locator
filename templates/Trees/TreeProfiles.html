@@ -1,68 +1,57 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-    <meta charset="UTF-8">
-    <title>Tree Profiles</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 20px;
-        }
-        .tree-card {
-            border: 1px solid #ddd;
-            border-radius: 8px;
-            padding: 15px;
-            margin-bottom: 20px;
-            width: 400px;
-        }
-        .tree-card h2 {
-            margin-top: 0;
-        }
-        .tree-photo {
-            max-width: 100%;
-            height: auto;
-            margin-bottom: 10px;
-            border-radius: 6px;
-        }
-        .meta {
-            font-size: 14px;
-            color: #555;
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Rare Tree Locator | Tree Gallery</title>
+ 
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <link rel="stylesheet" href="{% static 'CSS/Trees/HomePage.css' %}">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+
 </head>
+
 <body>
-    <h1>Tree Profiles</h1>
+  {% include 'Common/header.html' %}
 
+  <section class="py-16 px-8 text-center">
+    <h1 class="text-4xl font-bold text-green-200 mb-3 drop-shadow-lg">🌴 Explore the Rare Trees of Dhaka</h1>
+    <p class="text-green-100 text-lg">A curated gallery of unique and endangered trees shared by our contributors</p>
+  </section>
+
+  <section class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8 px-10 pb-20">
     {% for tree in TreeProfiles %}
-        <div class="tree-card">
-            <h2>{{ tree.street_name }} 
-                {% if tree.scientific_name %}
-                    <small>({{ tree.scientific_name }})</small>
-                {% endif %}
-            </h2>
+      <div class="tree-card rounded-xl overflow-hidden relative">
+        {% if tree.photos.first %}
+          <img src="{{ tree.photos.first.image.url }}" alt="{{ tree.street_name }}" class="tree-image">
+        {% else %}
+          <img src="{% static 'images/placeholder_tree.jpg' %}" alt="Tree Image" class="tree-image">
+        {% endif %}
 
-            {% if tree.photos.all %}
-                {% for photo in tree.photos.all %}
-                    <img src="{{ photo.image.url }}" alt="Tree Photo" class="tree-photo">
-                {% endfor %}
-            {% endif %}
+        {% if tree.rarity_status %}
+          <span class="badge">{{ tree.rarity_status }}</span>
+        {% endif %}
 
-            <p><strong>Habitat:</strong> {{ tree.habitat }}</p>
-            <p><strong>Location:</strong> {{ tree.latitude }}, {{ tree.longitude }}</p>
-            <p><strong>Rarity:</strong> {{ tree.rarity_status|default:"Not specified" }}</p>
-            <p><strong>Height:</strong> {{ tree.height_m|default:"Unknown" }} m</p>
-            <p><strong>Age Estimate:</strong> {{ tree.age_estimate|default:"Unknown" }} years</p>
+        <div class="p-5">
+          <h2 class="text-xl font-semibold mb-1">{{ tree.street_name }}</h2>
+          <p class="text-sm italic text-green-300 mb-2">{{ tree.scientific_name }}</p>
+          <p class="text-sm text-green-100 mb-3 line-clamp-3">{{ tree.description|truncatechars:120 }}</p>
 
-            <p>{{ tree.description }}</p>
-
-            <p class="meta">
-                Submitted by: {{ tree.submitted_by.username }} <br>
-                Approved: {{ tree.verified|yesno:"Yes,No" }} <br>
-                Created at: {{ tree.created_at|date:"M d, Y" }}
-            </p>
+          <a href="{% url 'tree_detail' tree.id %}"
+            class="inline-block bg-green-600 hover:bg-green-700 text-white text-sm font-medium px-4 py-2 rounded-lg transition">
+            View Details
+          </a>
         </div>
+      </div>
     {% empty %}
-        <p>No trees have been added yet.</p>
+      <p class="col-span-full text-center text-green-200 text-lg">No trees found yet. 🌿 Be the first to contribute!</p>
     {% endfor %}
+  </section>
+
+  {% include 'Common/footer.html' %}
 </body>
+
 </html>

@@ -57,7 +57,7 @@
 
                 <!-- Map -->
                 <li>
-                    <a href="#" class="{% if request.resolver_match.url_name == 'map_page' %}active{% endif %}">
+                    <a href="{% url 'map_page' %}" class="{% if request.resolver_match.url_name == 'map_page' %}active{% endif %}">
                         Map
                     </a>
                 </li>

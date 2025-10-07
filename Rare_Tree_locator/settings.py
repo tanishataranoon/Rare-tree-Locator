@@ -32,6 +32,8 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+    'unfold',
+    'unfold.contrib.import_export',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -41,6 +43,7 @@ INSTALLED_APPS = [
     'MyApp.apps.MyappConfig',  # Myapp is listed here
     'TreeApp.apps.TreeappConfig', # TreeApp is listed here
     'BlogApp.apps.BlogappConfig', # BlogApp is listed here
+    'import_export',  # Added for import-export functionality
 ]
 
 MIDDLEWARE = [
@@ -120,10 +123,24 @@ LOGIN_URL = 'login'  # or '/accounts/login/'
 # https://docs.djangoproject.com/en/5.2/howto/static-files/
 
 STATIC_URL = '/static/'
-STATICFILES_DIRS = [BASE_DIR/'static']
+STATIC_ROOT = BASE_DIR / 'staticfiles'
+STATICFILES_DIRS = [
+    BASE_DIR / 'static',
+]
+
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+
+UNFOLD = {
+    "SITE_HEADER": "Rare Tree Locator Admin",
+    "SITE_TITLE": "Rare Tree Locator",
+    "SITE_SYMBOL": "🌿",
+    "SHOW_HISTORY": True,
+    "THEME": "light",  # or "light"
+    
+}

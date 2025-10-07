@@ -1,0 +1,100 @@
+.blog-container {
+    max-width: 800px;
+    margin: auto;
+    padding: 20px;
+    margin-top: 100px; /* adjust for your header height */
+}
+
+/* Back to Blog Link */
+.back-link {
+    display: inline-block;
+    margin-bottom: 15px;
+    color: #006d3d;
+    font-weight: bold;
+    text-decoration: none;
+}
+.back-link:hover {
+    text-decoration: underline;
+}
+
+/* Blog Image */
+.blog-image {
+    overflow: hidden;
+    max-height: 400px;
+    margin-bottom: 15px;
+}
+.zoom-img {
+    width: 100%;
+    transition: transform 0.3s ease-in-out;
+}
+.zoom-img:hover {
+    transform: scale(1.05);
+}
+
+/* Title and Author */
+.blog-title {
+    color: #006d3d;
+    font-weight: 700;
+    font-size: 2rem;
+    margin-bottom: 10px;
+}
+
+.blog-author {
+    color: #333;
+    margin-bottom: 20px;
+}
+
+.author-link {
+    color: #0077cc;
+    font-weight: bold;
+    text-decoration: none;
+}
+.author-link:hover {
+    text-decoration: underline;
+}
+
+/* Comment Section */
+.comments-section {
+    margin-top: 40px;
+}
+
+.comment-form {
+    background-color: #e6f4ea; /* light green box */
+    padding: 15px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+}
+
+.comment-form textarea {
+    width: 100%;
+    height: 80px;
+    margin-bottom: 10px;
+    padding: 10px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    resize: none;
+}
+
+.comment-form button {
+    background-color: #006d3d;
+    color: white;
+    padding: 8px 15px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+.comment-form button:hover {
+    background-color: #005c34;
+}
+
+.comment {
+    border-bottom: 1px solid #ddd;
+    padding: 10px 0;
+}
+
+.reply {
+    margin-left: 30px;
+    background-color: #f7f7f7;
+    padding: 5px;
+    border-radius: 5px;
+}

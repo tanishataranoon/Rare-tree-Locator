@@ -1,0 +1,132 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Interactive Tree Map</title>
+
+  <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+  <link rel="stylesheet" href="{% static 'CSS/map.css' %}">
+</head>
+<body>
+
+  {% include 'Common/header.html' %}
+
+  <section class="map-section">
+    <h2>🌍 Explore the Rare Tree Map</h2>
+    <p>Locate, explore, and document extraordinary trees around the world. Each point on the map tells a story of nature’s rarity and resilience.</p>
+
+    <!-- Map -->
+    <div id="map"></div>
+
+    <!-- Form -->
+    <div id="map-form-container">
+      <h3>🪴 Add a New Tree</h3>
+      <form method="POST" id="tree-form">{% csrf_token %}
+        <input type="text" name="street_name" placeholder="Street / Local Name" required><br>
+        <input type="text" name="scientific_name" placeholder="Scientific Name"><br>
+        <input type="text" name="habitat" placeholder="Habitat"><br>
+        <textarea name="description" placeholder="Description"></textarea><br>
+        <input type="text" name="rarity_status" placeholder="Rarity Status"><br>
+        <input type="number" step="0.01" name="height_m" placeholder="Height in meters"><br>
+        <input type="number" name="age_estimate" placeholder="Age estimate"><br>
+        <input type="hidden" id="id_latitude" name="latitude">
+        <input type="hidden" id="id_longitude" name="longitude">
+        <button type="submit">Submit Tree</button>
+      </form>
+    </div>
+  </section>
+
+  {% include 'Common/footer.html' %}
+
+  <!-- Scripts -->
+  <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+  <script>
+  document.addEventListener("DOMContentLoaded", function () {
+    var map = L.map('map').setView([23.8103, 90.4125], 12);
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: '&copy; OpenStreetMap contributors'
+    }).addTo(map);
+
+    map.locate({ setView: true, maxZoom: 16 });
+
+function onLocationFound(e) {
+  var radius = e.accuracy;
+  L.marker(e.latlng)
+    .addTo(map)
+    .bindPopup("You are within " + Math.round(radius) + " meters from this point")
+    .openPopup();
+  L.circle(e.latlng, radius).addTo(map);
+}
+
+function onLocationError(e) {
+  alert(e.message);
+}
+
+map.on('locationfound', onLocationFound);
+map.on('locationerror', onLocationError);
+
+
+    // === Load trees ===
+    fetch("{% url 'get_trees_json' %}")
+      .then(res => res.json())
+      .then(trees => {
+        trees.forEach(tree => {
+          const lat = parseFloat(tree.latitude);
+          const lng = parseFloat(tree.longitude);
+          if (!isNaN(lat) && !isNaN(lng)) {
+            const popupContent = `
+              <div style="text-align:center; max-width:160px;">
+                <b>${tree.street_name}</b><br>
+                ${tree.description ? `<small>${tree.description}</small><br>` : ""}
+                ${tree.image_url ? `<img src="${tree.image_url}" alt="${tree.street_name}" style="width:120px; border-radius:8px; margin-top:5px;">` : ""}
+              </div>`;
+            const marker = L.marker([lat, lng]).addTo(map).bindPopup(popupContent);
+            marker._icon.classList.add('glow');
+          }
+        });
+      });
+
+    // === Add new marker on click ===
+    let marker;
+    map.on('click', function (e) {
+      const lat = e.latlng.lat.toFixed(6);
+      const lng = e.latlng.lng.toFixed(6);
+      if (marker) map.removeLayer(marker);
+      marker = L.marker([lat, lng]).addTo(map)
+        .bindPopup(`Lat: ${lat}, Lng: ${lng}`).openPopup();
+      marker._icon.classList.add('glow');
+      document.getElementById('id_latitude').value = lat;
+      document.getElementById('id_longitude').value = lng;
+    });
+
+    // === Form submission ===
+    const form = document.getElementById('tree-form');
+    form.addEventListener('submit', function (e) {
+      e.preventDefault();
+      const data = new FormData(form);
+      fetch("{% url 'add_tree_ajax' %}", {
+        method: 'POST',
+        headers: { 'X-CSRFToken': data.get('csrfmiddlewaretoken') },
+        body: data
+      })
+      .then(response => response.json())
+      .then(data => {
+        if (data.success) {
+          alert("🌿 Tree added successfully!");
+          const newMarker = L.marker([data.latitude, data.longitude]).addTo(map)
+            .bindPopup(`<b>${data.street_name}</b><br>${data.description || ''}`).openPopup();
+          newMarker._icon.classList.add('glow');
+          form.reset();
+          if (marker) map.removeLayer(marker);
+        } else {
+          alert("Error: " + data.error);
+        }
+      });
+    });
+  });
+  </script>
+
+</body>
+</html>

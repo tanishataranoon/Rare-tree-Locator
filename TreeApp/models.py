@@ -13,6 +13,8 @@ class TreeProfile(models.Model):
     scientific_name = models.CharField(max_length=200, blank=True, null=True)
     habitat = models.CharField(max_length=200, blank=True, null=True)
     description = models.TextField(blank=True, null=True)
+    map_embed = models.TextField(blank=True, null=True)  # For iframe embed code
+    video_url = models.URLField(blank=True, null=True)
 
     # Location
     latitude = models.DecimalField(max_digits=9, decimal_places=6)   # e.g., 23.810331

@@ -25,8 +25,8 @@
 
                 <!-- Trees -->
                 <li class="dropdown">
-                    <a href="{% url 'TreeProfiles' %}" class="dropdown-toggle"
-                        class="{% if request.resolver_match.url_name in 'TreeProfiles create_tree my_trees' %}active{% endif %}">
+                    <a href="{% url 'TreeProfiles' %}" class="dropdown-toggle
+                        {% if request.resolver_match.url_name == 'TreeProfiles' or request.resolver_match.url_name == 'create_tree' or request.resolver_match.url_name == 'my_trees' %} active {% endif %}">
                         Trees
                     </a>
                     {% if user.is_authenticated and user.user_type == 'contributor' %}
@@ -37,11 +37,12 @@
                     </ul>
                     {% endif %}
                 </li>
+                
 
                 <!-- Blog -->
                 <li class="dropdown">
-                    <a href="{% url 'blog_list' %}" class="dropdown-toggle"
-                        class="{% if request.resolver_match.url_name in 'blog_list add_blog my_posts' %}active{% endif %}">
+                    <a href="{% url 'blog_list' %}" class="dropdown-toggle
+                        {% if request.resolver_match.url_name == 'blog_list' or request.resolver_match.url_name == 'add_blog' or request.resolver_match.url_name == 'my_posts' %} active {% endif %}">
                         Blog
                     </a>
                     {% if user.is_authenticated and user.user_type == 'contributor' %}
@@ -52,6 +53,7 @@
                     </ul>
                     {% endif %}
                 </li>
+                
 
                 <!-- Map -->
                 <li>

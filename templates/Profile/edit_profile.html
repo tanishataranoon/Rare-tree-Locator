@@ -5,7 +5,7 @@
 <head>
     <meta charset="utf-8" />
     <title>Edit Profile</title>
-    <link rel="stylesheet" href="{% static 'css/profile/edit_profile.css' %}">
+    <link rel="stylesheet" href="{% static 'css/Profile/edit_profile.css' %}">
 </head>
 
 <body>
@@ -22,8 +22,8 @@
                 <div class="profile-top">
                     <div class="avatar-wrap">
                         <img id="avatarPreview"
-                             src="{% if form.instance.profile_pic %}{{ form.instance.profile_pic.url }}{% else %}{% static 'images/default_profile.png' %}{% endif %}"
-                             alt="Profile Picture" class="avatar">
+                            src="{% if form.instance.profile_pic %}{{ form.instance.profile_pic.url }}{% else %}{{ MEDIA_URL }}default_profile.png{% endif %}"
+                            alt="Profile Picture" class="avatar">
                         <label class="change-pic-btn">
                             Change Picture
                             <input type="file" id="id_profile_pic" name="profile_pic" form="profileForm" accept="image/*" style="display:none;">
@@ -32,7 +32,7 @@
                 </div>
 
                 <!-- PROFILE FORM -->
-                <form method="post" enctype="multipart/form-data" action="{% url 'edit_profile' %}">
+                <form method="POST" enctype="multipart/form-data" id="profileForm">
                     {% csrf_token %}
                     <div class="card-body">
                         <div class="section">
@@ -132,6 +132,6 @@
     </main>
 
     {% include "Common/footer.html" %}
-    <script src="{% static 'js/profile/edit_profile.js' %}"></script>
+    <script src="{% static 'js/Profile/edit_profile.js' %}"></script>
 </body>
 </html>

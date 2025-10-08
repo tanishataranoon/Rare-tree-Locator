@@ -1,192 +1,131 @@
 {% load static %}
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <title>Dashboard</title>
     <link rel="stylesheet" href="{% static 'css/Request/dashboard.css' %}">
+    <script src="https://unpkg.com/feather-icons"></script>
 </head>
 
 <body>
     {% include "Common/header.html" %}
-    <div class="dashboard-container">
+    <div class="dashboard-wrapper">
 
-        <h1>Welcome, {{ request.user.username }}!</h1>
+        <!-- ===== Sidebar ===== -->
+        <aside class="sidebar">
+            <ul>
+                <li class="{% if request.resolver_match.url_name == 'dashboard' %}active{% endif %}">
+                    <a href="{% url 'dashboard' %}"><i data-feather="grid"></i> Dashboard</a>
+                </li>
+                <li>
+                    <a href="{% url 'request_list' %}"><i data-feather="file-text"></i> Tree Requests</a>
+                </li>
+                <li>
+                    <a href="#"><i data-feather="tree"></i> Added Trees</a>
+                </li>
+                <li>
+                    <a href="#"><i data-feather="user"></i> Profile</a>
+                </li>
+            </ul>
+        </aside>
 
-        <!-- Common User Section -->
-        {% if request.user.user_type == "common" %}
-        <h2>🌱 My Requests</h2>
-        <!-- Create Request Button -->
-        <button class="btn create-request-btn" id="openCreateModal">➕ Create Request</button>
-        <div class="card-list">
-            {% for req in my_requests %}
-            <div class="card">
-                <div class="card-header">
-                    <span class="req-id">REQ-{{ req.id }}</span>
-                    <span class="status pending">Pending</span>
+        <!-- ===== Main Content ===== -->
+        <main class="dashboard-content">
+            <section class="overview">
+                <h1>Dashboard Overview</h1>
+                <p>Monitor your activity and manage tree requests</p>
+                <a href="/" class="view-site">🌐 View Site</a>
+            </section>
+
+            <!-- ===== Summary Cards ===== -->
+            <section class="summary-cards">
+                <div class="card">
+                    <h3>Pending Requests</h3>
+                    <div class="count">{{ pending_count|default:"0" }}</div>
+                    <span class="icon">⏳</span>
                 </div>
-                <div class="card-body">
-                    <h3>{{ req.title }}</h3>
-                    <p>{{ req.description|truncatechars:120 }}</p>
+                <div class="card">
+                    <h3>Answered This Week</h3>
+                    <div class="count">{{ answered_week_count|default:"0" }}</div>
+                    <span class="icon">💬</span>
                 </div>
-                <div class="card-footer">
-                    <button class="btn edit-request-btn" data-id="{{ req.id }}" data-title="{{ req.title }}"
-                        data-description="{{ req.description }}" data-location="{{ req.location }}">Edit</button>
-                    <button class="btn delete-request-btn" data-id="{{ req.id }}">Delete</button>
+                <div class="card">
+                    <h3>Trees Added</h3>
+                    <div class="count">{{ trees_added|default:"—" }}</div>
+                    <span class="icon">🌲</span>
                 </div>
-            </div>
-            {% empty %}
-            <p>No pending requests</p>
-            {% endfor %}
-        </div>
-
-        <h2>✅ My Approved Requests</h2>
-        <div class="card-list">
-            {% for req in my_approved %}
-            <div class="card">
-                <div class="card-header">
-                    <span class="req-id">REQ-{{ req.id }}</span>
-                    <span class="status answered">Answered</span>
+                <div class="card">
+                    <h3>Total Contributions</h3>
+                    <div class="count">{{ total_contrib|default:"—" }}</div>
+                    <span class="icon">✅</span>
                 </div>
-                <div class="card-body">
-                    <h3>{{ req.title }}</h3>
-                    <p><b>Answer:</b> {{ req.answer.answer_text|truncatechars:120 }}</p>
-                </div>
-            </div>
-            {% empty %}
-            <p>No approved requests yet</p>
-            {% endfor %}
-        </div>
-        {% endif %}
+            </section>
 
-        <!-- Contributor Section -->
-        {% if request.user.user_type == "contributor" %}
-        <h2>📥 Pending Requests</h2>
-        <div class="card-list">
-            {% for req in all_requests %}
-            <div class="card">
-                <div class="card-header">
-                    <span class="req-id">REQ-{{ req.id }}</span>
-                    <span class="status pending">Pending</span>
-                </div>
-                <div class="card-body">
-                    <h3>{{ req.title }}</h3>
-                    <p>{{ req.description|truncatechars:120 }}</p>
-                </div>
-                <div class="card-footer">
-                    <a href="#" class="btn">Answer</a>
-                </div>
-            </div>
-            {% empty %}
-            <p>No pending requests</p>
-            {% endfor %}
-        </div>
-        // All Requests Section
-        <h2>🌳 All Requests</h2>
-        {% for req in requests %}
-        <div class="card">
-            <h3>{{ req.title }}</h3>
-            <p>{{ req.description }}</p>
-            <div class="images">
-                {% for img in req.images.all %}
-                <img src="{{ img.image.url }}" alt="Request Image" style="max-width:150px;">
-                {% endfor %}
-            </div>
-        </div>
-        {% endfor %}
-        <h2>✅ My Answered Requests</h2>
-        <div class="card-list">
-            {% for ans in my_answers %}
-            <div class="card">
-                <div class="card-header">
-                    <span class="req-id">REQ-{{ ans.request.id }}</span>
-                    <span class="status answered">Answered</span>
-                </div>
-                <div class="card-body">
-                    <h3>{{ ans.request.title }}</h3>
-                    <p>{{ ans.answer_text|truncatechars:120 }}</p>
-                </div>
-            </div>
-            {% empty %}
-            <p>No answered requests yet</p>
-            {% endfor %}
-        </div>
-        {% endif %}
+            <!-- ===== Recent Activity ===== -->
+            <section class="recent-activity">
+                <h2>Recent Activity</h2>
+                {% if recent_activity %}
+                    <ul>
+                        {% for act in recent_activity %}
+                            <li>
+                                <strong>{{ act.title }}</strong> — {{ act.status }}
+                                <span class="date">{{ act.created_at|date:"M d, Y" }}</span>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                {% else %}
+                    <p>No recent activity</p>
+                {% endif %}
+            </section>
 
-    </div>
-    <!-- Create Request Modal -->
-    <div id="createModal" class="modal">
-        <div class="modal-content">
-            <span class="close" id="closeCreateModal">&times;</span>
-            <h2>Create Tree Request</h2>
-            <form method="POST" id="createRequestForm" enctype="multipart/form-data">
-                {% csrf_token %}
-                <label for="create_title">Title *</label>
-                <input type="text" name="title" id="create_title" required>
+            <!-- ===== Contributor Only Section ===== -->
+            {% if request.user.user_type == "contributor" %}
+            <section class="pending-section">
+                <h2>Contributor — Pending Requests</h2>
+                <p>Answer requests and add trees</p>
 
-                <label for="create_description">Description *</label>
-                <textarea name="description" id="create_description" required></textarea>
+                {% if all_requests %}
+                    <div class="req-list">
+                        {% for req in all_requests %}
+                        <div class="req-card">
+                            <h3>{{ req.title }}</h3>
+                            <p>{{ req.description|truncatechars:100 }}</p>
+                            <span class="status {{ req.status|lower }}">{{ req.status }}</span>
+                            <a href="#" class="btn">Answer</a>
+                        </div>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <p>No pending requests</p>
+                {% endif %}
+            </section>
 
-                <label for="create_location">Location</label>
-                <input type="text" name="location" id="create_location">
-
-                <label for="create_images">Upload Images (optional)</label>
-                <input type="file" name="images" id="create_images" multiple accept="image/*">
-
-                <button type="submit" class="btn">Submit Request</button>
-            </form>
-        </div>
-    </div>
-
-    <!-- Edit Request Modal -->
-    <div id="editModal" class="modal">
-        <div class="modal-content">
-            <span class="close" id="closeEditModal">&times;</span>
-            <h2>Edit Tree Request</h2>
-            <form method="POST" id="editRequestForm" enctype="multipart/form-data">
-                {% csrf_token %}
-                <input type="hidden" name="request_id" id="edit_request_id">
-                <label for="edit_title">Title *</label>
-                <input type="text" name="title" id="edit_title" required>
-
-                <label for="edit_description">Description *</label>
-                <textarea name="description" id="edit_description" required></textarea>
-
-                <label for="edit_location">Location</label>
-                <input type="text" name="location" id="edit_location">
-
-                <label for="edit_images">Add New Images (optional)</label>
-                <input type="file" name="images" id="edit_images" multiple accept="image/*">
-
-                <button type="submit" class="btn">Update Request</button>
-            </form>
-        </div>
-    </div>
-
-    <!-- Delete Request Modal -->
-    <div id="deleteModal" class="modal">
-        <div class="modal-content">
-            <span class="close" id="closeDeleteModal">&times;</span>
-            <h2>Delete Request</h2>
-            <p>Are you sure you want to delete this request?</p>
-            <form method="POST" id="deleteRequestForm">
-                {% csrf_token %}
-                <input type="hidden" name="request_id" id="delete_request_id">
-                <button type="submit" class="btn delete-btn">Delete</button>
-                <button type="button" class="btn" id="cancelDelete">Cancel</button>
-            </form>
-        </div>
+            <section class="all-requests">
+                <h2>All Requests</h2>
+                {% if requests %}
+                    <div class="req-list">
+                        {% for req in requests %}
+                        <div class="req-card">
+                            <h3>{{ req.title }}</h3>
+                            <p>{{ req.description|truncatechars:100 }}</p>
+                            <span class="status {{ req.status|lower }}">{{ req.status }}</span>
+                            <a href="#" class="btn view">View</a>
+                        </div>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <p>No requests available</p>
+                {% endif %}
+            </section>
+            {% endif %}
+        </main>
     </div>
 
     {% include "Common/footer.html" %}
+
     <script>
-        const ajaxCreateUrl = "{% url 'ajax_create_request' %}";
-        const ajaxUpdateUrl = "{% url 'ajax_update_request' 0 %}".replace("/0/", "/");
-        const ajaxDeleteUrl = "{% url 'ajax_delete_request' 0 %}".replace("/0/", "/");
+        feather.replace();
     </script>
-
-    <script src="{% static 'js/Request/dashboard.js' %}"></script>
 </body>
-
 </html>

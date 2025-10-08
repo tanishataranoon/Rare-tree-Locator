@@ -1,110 +1,154 @@
-document.addEventListener("DOMContentLoaded", function () {
-  // ===== Modal Handling =====
-  const createModal = document.getElementById("createModal");
-  const openCreateBtn = document.getElementById("openCreateModal");
-  const closeCreateBtn = document.getElementById("closeCreateModal");
+// dashboard.js
+(function(){
+  // helpers
+  function qs(sel){ return document.querySelector(sel) }
+  function qsa(sel){ return Array.from(document.querySelectorAll(sel)) }
+  function getCookie(name){
+    const v = document.cookie.match('(^|;)\\s*' + name + '\\s*=\\s*([^;]+)');
+    return v ? v.pop() : '';
+  }
+  const csrftoken = getCookie('csrftoken');
 
-  openCreateBtn.onclick = () => (createModal.style.display = "block");
-  closeCreateBtn.onclick = () => (createModal.style.display = "none");
+  // modal helpers
+  function openModal(mod) { mod.setAttribute('aria-hidden','false'); document.body.style.overflow='hidden'; }
+  function closeModal(mod) { mod.setAttribute('aria-hidden','true'); document.body.style.overflow=''; }
 
-  const editModal = document.getElementById("editModal");
-  const closeEditBtn = document.getElementById("closeEditModal");
+  // elements
+  const createModal = qs('#createModal');
+  const editModal = qs('#editModal');
+  const deleteModal = qs('#deleteModal');
 
-  document.querySelectorAll(".edit-request-btn").forEach((btn) => {
-      btn.onclick = () => {
-          document.getElementById("edit_request_id").value = btn.dataset.id;
-          document.getElementById("edit_title").value = btn.dataset.title;
-          document.getElementById("edit_description").value = btn.dataset.description;
-          document.getElementById("edit_location").value = btn.dataset.location;
-          editModal.style.display = "block";
-      };
+  // open create
+  const openCreate = qs('#openCreateModal');
+  if(openCreate){
+    openCreate.addEventListener('click', (e)=>{
+      e.preventDefault();
+      openModal(createModal);
+    });
+  }
+  // close create
+  qs('#closeCreateModal')?.addEventListener('click', ()=> closeModal(createModal));
+  qs('#cancelCreate')?.addEventListener('click', ()=> closeModal(createModal));
+
+  // open edit buttons (dynamic)
+  qsa('.edit-request-btn').forEach(btn=>{
+    btn.addEventListener('click', e=>{
+      e.preventDefault();
+      const id = btn.dataset.id;
+      qs('#edit_request_id').value = id;
+      qs('#edit_title').value = btn.dataset.title || '';
+      qs('#edit_description').value = btn.dataset.description || '';
+      qs('#edit_location').value = btn.dataset.location || '';
+      openModal(editModal);
+    });
   });
 
-  closeEditBtn.onclick = () => (editModal.style.display = "none");
+  qs('#closeEditModal')?.addEventListener('click', ()=> closeModal(editModal));
+  qs('#cancelEdit')?.addEventListener('click', ()=> closeModal(editModal));
 
-  const deleteModal = document.getElementById("deleteModal");
-  const closeDeleteBtn = document.getElementById("closeDeleteModal");
-  const cancelDeleteBtn = document.getElementById("cancelDelete");
+  // delete
+  qsa('.delete-request-btn').forEach(btn=>{
+    btn.addEventListener('click', e=>{
+      e.preventDefault();
+      const id = btn.dataset.id;
+      qs('#delete_request_id').value = id;
+      openModal(deleteModal);
+    });
+  });
+  qs('#closeDeleteModal')?.addEventListener('click', ()=> closeModal(deleteModal));
+  qs('#cancelDelete')?.addEventListener('click', ()=> closeModal(deleteModal));
 
-  document.querySelectorAll(".delete-request-btn").forEach((btn) => {
-      btn.onclick = () => {
-          document.getElementById("delete_request_id").value = btn.dataset.id;
-          deleteModal.style.display = "block";
-      };
+  // AJAX create
+  const createForm = qs('#createRequestForm');
+  if(createForm){
+    createForm.addEventListener('submit', async function(e){
+      e.preventDefault();
+      const fd = new FormData(createForm);
+      try{
+        const res = await fetch(ajaxCreateUrl, {
+          method: 'POST',
+          headers: { 'X-CSRFToken': csrftoken },
+          body: fd
+        });
+        const data = await res.json();
+        if(res.ok && data.success){
+          alert('Request created');
+          closeModal(createModal);
+          window.location.reload();
+        } else {
+          alert(data.error || 'Create failed');
+        }
+      }catch(err){ console.error(err); alert('Network error'); }
+    });
+  }
+
+  // AJAX edit
+  const editForm = qs('#editRequestForm');
+  if(editForm){
+    editForm.addEventListener('submit', async function(e){
+      e.preventDefault();
+      const id = qs('#edit_request_id').value;
+      if(!id){ alert('Missing id'); return; }
+      const fd = new FormData(editForm);
+      try{
+        const res = await fetch(ajaxUpdateUrl + id + '/', {
+          method: 'POST',
+          headers: { 'X-CSRFToken': csrftoken },
+          body: fd
+        });
+        const data = await res.json();
+        if(res.ok && data.success){
+          alert('Request updated');
+          closeModal(editModal);
+          window.location.reload();
+        } else {
+          alert(data.error || 'Update failed');
+        }
+      }catch(err){ console.error(err); alert('Network error'); }
+    });
+  }
+
+  // AJAX delete
+  const deleteForm = qs('#deleteRequestForm');
+  if(deleteForm){
+    deleteForm.addEventListener('submit', async function(e){
+      e.preventDefault();
+      const id = qs('#delete_request_id').value;
+      if(!id){ alert('Missing id'); return; }
+      try{
+        const res = await fetch(ajaxDeleteUrl + id + '/', {
+          method: 'POST',
+          headers: { 'X-CSRFToken': csrftoken },
+          body: new FormData(deleteForm)
+        });
+        const data = await res.json();
+        if(res.ok && data.success){
+          alert('Deleted');
+          closeModal(deleteModal);
+          window.location.reload();
+        } else {
+          alert(data.error || 'Delete failed');
+        }
+      }catch(err){ console.error(err); alert('Network error'); }
+    });
+  }
+
+  // click outside modal to close
+  [createModal, editModal, deleteModal].forEach(m=>{
+    if(!m) return;
+    m.addEventListener('click', (ev)=>{
+      if(ev.target === m) closeModal(m);
+    });
   });
 
-  closeDeleteBtn.onclick = () => (deleteModal.style.display = "none");
-  cancelDeleteBtn.onclick = () => (deleteModal.style.display = "none");
-
-  window.onclick = (e) => {
-      if (e.target === createModal) createModal.style.display = "none";
-      if (e.target === editModal) editModal.style.display = "none";
-      if (e.target === deleteModal) deleteModal.style.display = "none";
-  };
-
-  // ===== AJAX Create Request =====
-  document.getElementById("createRequestForm").onsubmit = function (e) {
+  // optional: answer buttons (for contributor)
+  qsa('.answer-btn').forEach(b=>{
+    b.addEventListener('click', e=>{
       e.preventDefault();
-      const formData = new FormData(this);
-
-      fetch(ajaxCreateUrl, {
-          method: "POST",
-          body: formData,
-          headers: { "X-CSRFToken": formData.get("csrfmiddlewaretoken") },
-      })
-          .then((res) => res.json())
-          .then((data) => {
-              if (data.success) {
-                  createModal.style.display = "none";
-                  this.reset(); // reset form including file inputs
-                  location.reload(); // reload to show new request with images
-              } else {
-                  alert("Error: " + JSON.stringify(data.errors || data.error));
-              }
-          })
-          .catch((err) => console.error("Create failed:", err));
-  };
-
-  // ===== AJAX Edit Request =====
-  document.getElementById("editRequestForm").onsubmit = function (e) {
-      e.preventDefault();
-      const formData = new FormData(this);
-      const requestId = document.getElementById("edit_request_id").value;
-
-      fetch(`${ajaxUpdateUrl}${requestId}/`, {
-          method: "POST",
-          body: formData,
-          headers: { "X-CSRFToken": formData.get("csrfmiddlewaretoken") },
-      })
-          .then((res) => res.json())
-          .then((data) => {
-              if (data.success) {
-                  editModal.style.display = "none";
-                  this.reset();
-                  location.reload();
-              } else {
-                  alert("Error: " + JSON.stringify(data.errors || data.error));
-              }
-          })
-          .catch((err) => console.error("Update failed:", err));
-  };
-    // ===== AJAX Delete Request =====
-    document.getElementById("deleteRequestForm").onsubmit = function (e) {
-      e.preventDefault();
-      const formData = new FormData(this);
-      const requestId = document.getElementById("delete_request_id").value;
-  
-      fetch(`${ajaxDeleteUrl}${requestId}/`, {
-        method: "POST",
-        body: formData,
-        headers: { "X-CSRFToken": formData.get("csrfmiddlewaretoken") },
-      })
-        .then((res) => res.json())
-        .then((data) => {
-          if (data.success) location.reload();
-          else alert("Error deleting request.");
-        })
-        .catch((err) => console.error("Delete failed:", err));
-    };
+      const id = b.dataset.id;
+      // simple redirect to request detail page (you likely have view to answer)
+      window.location.href = `/requests/${id}/`; // adjust if your url differs
+    });
   });
-  
+
+})();

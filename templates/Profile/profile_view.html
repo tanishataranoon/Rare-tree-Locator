@@ -20,9 +20,10 @@
                 <div class="header">
                     <!-- Profile Picture -->
                     <div class="profile-left">
-                        <img src="{% if profile.profile_pic %}{{ profile.profile_pic.url }}{% else %}{% static 'images/default_profile.png' %}{% endif %}"
+                        <img src="{% if profile.profile_pic %}{{ profile.profile_pic.url }}{% else %}{{ MEDIA_URL }}default_profile.png{% endif %}"
                             alt="Profile Picture"
                             class="profile-pic">
+
                     </div>
 
                     <!-- Profile Info -->

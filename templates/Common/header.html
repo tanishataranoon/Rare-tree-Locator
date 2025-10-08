@@ -64,7 +64,7 @@
 
                 {% if user.is_authenticated %}
                 <li class="profile-menu">
-                    <img src="{% if user.profile.profile_pic %}{{ user.profile.profile_pic.url }}{% else %}{% static 'images/default_profile.png' %}{% endif %}"
+                    <img src="{% if user.profile.profile_pic %}{{ user.profile.profile_pic.url }}{% else %}{{ MEDIA_URL }}default_profile.png{% endif %}"
                         alt="Profile" class="profile-pic" id="profile-icon">
                 </li>
                 {% else %}

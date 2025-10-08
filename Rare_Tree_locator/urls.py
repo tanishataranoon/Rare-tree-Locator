@@ -20,9 +20,8 @@ urlpatterns = [
     path('signup/', myapp_views.signup_view, name='signup'), 
     path('login/', myapp_views.login_view, name='login'),
     path("logout/", LogoutView.as_view(next_page="HomePage"), name="logout"),
-
+    path('edit_profile/', myapp_views.edit_profile, name="edit_profile"),
     path('profile_view/<str:username>/', myapp_views.profile_view, name='profile_view'),  # Profile view
-
 
     # Blog app views
     path('blog_list', blogapp_views.blog_list, name='blog_list'),  # Added blog list view

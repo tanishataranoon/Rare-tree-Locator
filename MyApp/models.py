@@ -10,7 +10,6 @@ class User(AbstractUser):
     USER_TYPES = [
         ('common', 'Common User'),
         ('contributor', 'Contributor'),
-        ('admin', 'Admin'),
     ]
     user_type = models.CharField(max_length=20, choices=USER_TYPES, default='common')
     profession = models.CharField(max_length=100, blank=True, null=True)
@@ -21,9 +20,18 @@ class User(AbstractUser):
 # profile model
 class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
-    profile_pic = models.ImageField(upload_to="profile_pics/",
-        default="default_profile.png"  )# store this inside /media/profile_pics/ or /static/images/
+    profile_pic = models.ImageField(
+    upload_to="profile_pics/",
+    default="profile_pics/default_profile.png"
+)
+
     profession = models.CharField(max_length=100, blank=True, null=True)
+    bio = models.TextField(blank=True, null=True)
+    phone = models.CharField(max_length=30, blank=True, null=True)
+    linkedin = models.URLField(blank=True, null=True)
+    instagram = models.CharField(max_length=100, blank=True, null=True)
+    twitter = models.CharField(max_length=100, blank=True, null=True)
+    personal_website = models.URLField(blank=True, null=True)
     joined_date = models.DateTimeField(default=timezone.now)  # no auto_now_add for now
 
     def __str__(self):

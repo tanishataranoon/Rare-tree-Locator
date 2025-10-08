@@ -1,0 +1,137 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <title>Edit Profile</title>
+    <link rel="stylesheet" href="{% static 'css/profile/edit_profile.css' %}">
+</head>
+
+<body>
+    {% include "Common/header.html" %}
+
+    <main class="main-content">
+        <div class="container">
+            <!-- Back to Home -->
+            <a href="{% url 'HomePage' %}" class="back-link">&larr; Back to Home</a>
+            <h2>Edit Profile</h2>
+
+            <div class="card profile-card">
+                <!-- Profile Picture -->
+                <div class="profile-top">
+                    <div class="avatar-wrap">
+                        <img id="avatarPreview"
+                             src="{% if form.instance.profile_pic %}{{ form.instance.profile_pic.url }}{% else %}{% static 'images/default_profile.png' %}{% endif %}"
+                             alt="Profile Picture" class="avatar">
+                        <label class="change-pic-btn">
+                            Change Picture
+                            <input type="file" id="id_profile_pic" name="profile_pic" form="profileForm" accept="image/*" style="display:none;">
+                        </label>
+                    </div>
+                </div>
+
+                <!-- PROFILE FORM -->
+                <form method="post" enctype="multipart/form-data" action="{% url 'edit_profile' %}">
+                    {% csrf_token %}
+                    <div class="card-body">
+                        <div class="section">
+                            <h3>Basic Information</h3>
+
+                            <div class="row">
+                                <div class="col-left">
+                                    <label>Full Name</label>
+                                    <p class="readonly">{{ request.user.get_full_name }}</p>
+                                </div>
+                                <div class="col-right">
+                                    <label>Username</label>
+                                    <p class="readonly">{{ request.user.username }}</p>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-left">
+                                    <label>Email</label>
+                                    <p class="readonly">{{ request.user.email }}</p>
+                                </div>
+                                <div class="col-right">
+                                    <label>Phone</label>
+                                    {{ form.phone }}
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-full">
+                                    <label>Bio / About Me</label>
+                                    {{ form.bio }}
+                                </div>
+                            </div>
+
+                            {% if request.user.user_type == 'contributor' %}
+                            <div class="row">
+                                <div class="col-left">
+                                    <label>Profession</label>
+                                    {{ form.profession }}
+                                </div>
+                                <div class="col-right">
+                                    <label>Joined Date</label>
+                                    <p class="readonly">{{ form.instance.joined_date|date:"M d, Y H:i" }}</p>
+                                </div>
+                            </div>
+                            {% else %}
+                            <div class="row">
+                                <div class="col-right">
+                                    <label>Joined Date</label>
+                                    <p class="readonly">{{ form.instance.joined_date|date:"M d, Y H:i" }}</p>
+                                </div>
+                            </div>
+                            {% endif %}
+
+                            <div class="row">
+                                <div class="col-left">
+                                    <label>User Type</label>
+                                    <p class="readonly">{{ request.user.user_type }}</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="section">
+                            <h3>Social Links</h3>
+                            <div class="row">
+                                <div class="col-full">
+                                    <label>LinkedIn</label>
+                                    {{ form.linkedin }}
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-left">
+                                    <label>Instagram</label>
+                                    {{ form.instagram }}
+                                </div>
+                                <div class="col-right">
+                                    <label>Twitter</label>
+                                    {{ form.twitter }}
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-full">
+                                    <label>Personal Website</label>
+                                    {{ form.personal_website }}
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="actions">
+                            <button type="submit" class="btn save">Save Changes</button>
+                            <a href="{% url 'HomePage' %}" class="btn cancel">Cancel</a>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </main>
+
+    {% include "Common/footer.html" %}
+    <script src="{% static 'js/profile/edit_profile.js' %}"></script>
+</body>
+</html>

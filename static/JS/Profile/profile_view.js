@@ -35,3 +35,23 @@ document.addEventListener("DOMContentLoaded", () => {
         if (event.target === modal) modal.classList.remove("show");
     }
 });
+// =========================
+// Toggle "Show More Details" dropdown
+// =========================
+function toggleDetails() {
+    const details = document.getElementById("extra-details");
+    const btn = document.querySelector(".toggle-details-btn");
+
+    if (!details || !btn) return;
+
+    // Smooth show/hide
+    if (details.classList.contains("show")) {
+        details.style.maxHeight = null;
+        details.classList.remove("show");
+        btn.textContent = "Show More Details";
+    } else {
+        details.classList.add("show");
+        details.style.maxHeight = details.scrollHeight + "px";
+        btn.textContent = "Hide Details";
+    }
+}

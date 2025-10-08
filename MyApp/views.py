@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
-from .forms import SignUpForm
-from django.contrib.auth import authenticate, login, logout
+from .forms import SignUpForm, ProfileForm, CustomPasswordChangeForm
+from django.contrib.auth import authenticate, login, logout ,update_session_auth_hash
 from TreeApp.models import *
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.decorators import login_required
@@ -11,12 +11,15 @@ from BlogApp.models import BlogPost
 # Home page view
 def HomePage(request):
     return render(request, 'HomePage.html')
+
 # Header view
 ##def header(request):
     return render(request, 'Common/header.html')
 # Footer view
 ##def footer(request):
     return render(request, 'Common/footer.html')
+
+
 # Signup view
 def signup_view(request):
     if request.method == "POST":
@@ -28,6 +31,7 @@ def signup_view(request):
     else:
         form = SignUpForm()
     return render(request, "Profile/signup.html", {"form": form})
+
 # Login view
 def login_view(request):
     if request.method == "POST":
@@ -45,6 +49,7 @@ def login_view(request):
             messages.error(request, "Invalid username or password")
 
     return render(request, "Profile/login.html")
+
 #profile view
 @login_required
 def profile_view(request, username):
@@ -77,4 +82,23 @@ def profile_view(request, username):
     storage = messages.get_messages(request)
     for _ in storage:
         pass  # iterating clears them
-    return render(request, "Profile/profile_view.html", context)
+    return render(request, 'Profile/profile_view.html', context)
+
+# Edit profile view
+@login_required
+def edit_profile(request):
+    profile = request.user.profile  # get current user's profile
+    if request.method == "POST":
+        form = ProfileForm(request.POST, request.FILES, instance=profile)
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Profile updated successfully!")
+            return redirect("profile_view", username=request.user.username)  # ✅ fixed
+    else:
+        form = ProfileForm(instance=profile)
+
+    context = {
+        "form": form
+    }
+    return render(request, "Profile/edit_profile.html", context)
+

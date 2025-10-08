@@ -200,5 +200,8 @@ def answer_request(request, request_id):
 
 def TreeDetail(request, id):
     tree = get_object_or_404(TreeProfile, id=id)
-    
+
     return render(request, 'Trees/TreeDetail.html', {'tree': tree})
+
+def map_page(request):
+    return render(request, 'map.html')

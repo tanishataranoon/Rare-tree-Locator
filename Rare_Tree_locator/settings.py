@@ -33,6 +33,7 @@ ALLOWED_HOSTS = []
 
 INSTALLED_APPS = [
     'unfold',
+    'unfold.contrib.import_export',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -42,6 +43,7 @@ INSTALLED_APPS = [
     'MyApp.apps.MyappConfig',  # Myapp is listed here
     'TreeApp.apps.TreeappConfig', # TreeApp is listed here
     'BlogApp.apps.BlogappConfig', # BlogApp is listed here
+    'import_export',  # Added for import-export functionality
 ]
 
 MIDDLEWARE = [
@@ -115,6 +117,7 @@ USE_I18N = True
 
 USE_TZ = True
 
+LOGIN_URL = 'login'  # or '/accounts/login/'
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.2/howto/static-files/

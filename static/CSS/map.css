@@ -1,0 +1,118 @@
+/* ===== MAP PAGE STYLING ===== */
+
+body {
+  background: linear-gradient(135deg, #0f241e, #14372d, #1e5c4c);
+  color: #f4f8f5;
+  font-family: 'Poppins', sans-serif;
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden;
+}
+
+/* Section */
+.map-section {
+  padding: 80px 20px;
+  text-align: center;
+  min-height: 100vh;
+}
+
+.map-section h2 {
+  font-size: 2.4rem;
+  color: #a7f2ba;
+  margin-bottom: 10px;
+  text-shadow: 0 0 10px rgba(0, 255, 120, 0.4);
+}
+
+.map-section p {
+  color: #cde8d4;
+  max-width: 700px;
+  margin: 0 auto 40px;
+  line-height: 1.5;
+}
+
+/* Map Container */
+#map {
+  height: 500px;
+  width: 85%;
+  max-width: 1100px;
+  margin: 0 auto;
+  border-radius: 16px;
+  box-shadow: 0 0 25px rgba(0, 255, 100, 0.25);
+  overflow: hidden;
+}
+
+/* Glassy Form */
+#map-form-container {
+  background: rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(10px);
+  border-radius: 20px;
+  padding: 35px;
+  width: 85%;
+  max-width: 600px;
+  margin: 50px auto;
+  box-shadow: 0 0 25px rgba(0, 255, 120, 0.15);
+  text-align: left;
+}
+
+#map-form-container h3 {
+  color: #aef2b9;
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+/* Form fields */
+#tree-form input,
+#tree-form textarea {
+  width: 100%;
+  padding: 12px 15px;
+  margin-bottom: 15px;
+  border: none;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.15);
+  color: #e4f7ea;
+  font-size: 0.95rem;
+}
+
+#tree-form input::placeholder,
+#tree-form textarea::placeholder {
+  color: #bde3c6;
+}
+
+#tree-form textarea {
+  resize: vertical;
+  min-height: 80px;
+}
+
+/* Submit button */
+#tree-form button {
+  background: linear-gradient(90deg, #2ee372, #00b85c);
+  color: white;
+  font-weight: 600;
+  border: none;
+  border-radius: 8px;
+  padding: 10px 20px;
+  cursor: pointer;
+  transition: all 0.3s;
+  display: block;
+  margin: 0 auto;
+}
+
+#tree-form button:hover {
+  transform: scale(1.05);
+  box-shadow: 0 0 15px rgba(0, 255, 120, 0.5);
+}
+
+/* Marker glow effect */
+.leaflet-marker-icon.glow {
+  filter: drop-shadow(0 0 8px rgba(0, 255, 0, 0.8));
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  #map, #map-form-container {
+    width: 95%;
+  }
+  .map-section h2 {
+    font-size: 2rem;
+  }
+}

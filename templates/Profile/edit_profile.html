@@ -32,7 +32,7 @@
                 </div>
 
                 <!-- PROFILE FORM -->
-                <form method="post" enctype="multipart/form-data" action="{% url 'edit_profile' %}">
+                <form method="POST" enctype="multipart/form-data" id="profileForm">
                     {% csrf_token %}
                     <div class="card-body">
                         <div class="section">

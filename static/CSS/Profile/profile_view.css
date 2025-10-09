@@ -28,8 +28,8 @@ body {
 /* Header: profile picture + info */
 .header {
     display: flex;
-    align-items: center;
-    justify-content: space-between;
+    align-items: flex-start;
+    gap: 30px;
     border-bottom: 1px solid #ddd;
     padding-bottom: 20px;
     margin-bottom: 25px;
@@ -43,23 +43,23 @@ body {
     align-items: center;
 }
 
+
 .profile-left img.profile-pic {
-    width: 100px;
-    height: 100px;
+    width: 120px;
+    height: 120px;
     border-radius: 50%;
     object-fit: cover;
     border: 3px solid #ccc;
-    box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    box-shadow: 0 3px 8px rgba(0,0,0,0.1);
 }
 
 /* Right: Profile Info */
+
 .profile-right {
     flex: 1;
-    margin-left: 20px;
     display: flex;
     flex-direction: column;
-    justify-content: center;
-    position: relative;
+    gap: 5px;
 }
 
 /* Full name wide and bold */
@@ -67,22 +67,30 @@ body {
     font-size: 1.9rem;
     font-weight: 700;
     color: #222;
-    margin: 0;
+}
+/* Bio in darker color */
+
+.username {
+    font-size: 1rem;
+    color: #777;
+    margin-bottom: 4px;
 }
 
-/* Bio in darker color */
+.profession {
+    font-weight: 500;
+    color: #555;
+    margin-bottom: 4px;
+}
+
 .bio {
     font-style: italic;
     color: #444;
-    margin: 5px 0 10px 0;
-    font-size: 1rem;
+    margin-bottom: 8px;
 }
 
-/* Username, profession, joined date below name/bio */
-.username, .profession, .joined {
-    color: #666;
-    font-size: 0.95rem;
-    margin: 2px 0;
+.joined {
+    color: #999;
+    font-size: 0.9rem;
 }
 
 /* Edit profile button on the right side, aligned vertically */
@@ -126,12 +134,12 @@ body {
     font-size: 0.95rem;
     overflow: hidden;
     max-height: 0;
-    transition: max-height 0.5s ease, opacity 0.5s ease;
     opacity: 0;
+    transition: max-height 0.5s ease, opacity 0.5s ease;
 }
 
 .extra-details.show {
-    max-height: 600px;
+    max-height: 500px;
     opacity: 1;
 }
 

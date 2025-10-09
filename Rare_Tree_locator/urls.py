@@ -37,6 +37,10 @@ urlpatterns = [
     path("dashboard/ajax/update/<int:request_id>/", treeapp_views.ajax_update_request, name="ajax_update_request"),#ajax update request view
     path("dashboard/ajax/delete/<int:request_id>/", treeapp_views.ajax_delete_request, name="ajax_delete_request"),#ajax delete request view
 
-
+    path("request_list/", treeapp_views.request_list, name="request_list"),            # List all requests
+    path("request_form/", treeapp_views.request_create, name="request_create"),      # Create request
+    path("request/<int:pk>/", treeapp_views.request_detail, name="request_detail"),    # View request details
+    path("request/<int:pk>/edit/", treeapp_views.request_edit, name="request_edit"),   # Edit request
+    path("request/<int:pk>/delete/", treeapp_views.request_delete, name="request_delete"), # Delete request
 
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

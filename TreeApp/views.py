@@ -7,10 +7,10 @@ from django.core.serializers.json import DjangoJSONEncoder
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth.decorators import login_required
 from django.core.exceptions import PermissionDenied
 from django.http import HttpResponseForbidden ,JsonResponse
-
+from django.utils import timezone
+from django.db.models import Count
 
 # Create your views here.
 
@@ -102,20 +102,87 @@ def add_tree_ajax(request):
             return JsonResponse({'success': False, 'error': str(e)})
 
     return JsonResponse({'success': False, 'error': 'Invalid request'})
+
 # Dashboard
 @login_required
 def dashboard(request):
-    context = {}
+    pending_count = TreeRequest.objects.filter(status='pending').count()
+    answered_week_count = TreeRequest.objects.filter(status='answered', created_at__gte=timezone.now()-timezone.timedelta(days=7)).count()
+    trees_added_count = ... # implement per your tree model
+    total_contributions = ... # e.g. answers by this user if contributor
+    recent_activity = TreeRequest.objects.order_by('-created_at')[:6]
+    context = {
+       'pending_count': pending_count,
+       'answered_week_count': answered_week_count,
+       'trees_added_count': trees_added_count,
+       'total_contributions': total_contributions,
+       'recent_activity': recent_activity,
+       # include my_requests, all_requests, my_answers etc as you already do
+    }
+    return render(request, 'Request/dashboard.html', context)
 
-    if request.user.user_type == "common":
-        context["my_requests"] = TreeRequest.objects.filter(requester=request.user, status="pending")
-        context["my_approved"] = TreeRequest.objects.filter(requester=request.user, status="answered")
 
-    elif request.user.user_type == "contributor":
-        context["all_requests"] = TreeRequest.objects.filter(status="pending")
-        context["my_answers"] = TreeAnswer.objects.filter(contributor=request.user)
+@login_required
+def request_list(request):
+    requests = TreeRequest.objects.all().order_by('-created_at')
+    return render(request, "Request/request_list.html", {"requests": requests})
 
-    return render(request, "Request/dashboard.html", context)
+@login_required
+def request_create(request):
+    if request.method == "POST":
+        form = TreeRequestForm(request.POST)
+        if form.is_valid():
+            new_request = form.save(commit=False)
+            new_request.requester = request.user
+            new_request.save()
+            return redirect("request_list")  # Go back to request list
+    else:
+        form = TreeRequestForm()
+
+    return render(request, "Request/request_form.html", {"form": form, "action": "Create"})
+
+@login_required
+def request_detail(request, pk):
+    tr = get_object_or_404(TreeRequest, pk=pk)
+    return render(request, "Request/request_detail.html", {"request_obj": tr})
+
+@login_required
+def request_edit(request, pk):
+    tr = get_object_or_404(TreeRequest, pk=pk)
+    if request.user != tr.requester:
+        return JsonResponse({"error": "Permission denied"}, status=403)
+
+    if request.method == "POST":
+        form = TreeRequestForm(request.POST, instance=tr)
+        if form.is_valid():
+            form.save()
+            return redirect("request_list")
+    else:
+        form = TreeRequestForm(instance=tr)
+    return render(request, "Request/request_form.html", {"form": form})
+
+@login_required
+def request_delete(request, pk):
+    tr = get_object_or_404(TreeRequest, pk=pk)
+    if request.user != tr.requester:
+        return JsonResponse({"error": "Permission denied"}, status=403)
+    tr.delete()
+    return redirect("request_list")
+
+@login_required
+def request_detail(request, pk):
+    tr = get_object_or_404(TreeRequest, pk=pk)
+    return render(request, "Request/request_detail.html", {"request_obj": tr})
+
+
+
+
+
+
+
+
+
+
 # Ajax to create a new request
 @login_required
 @require_POST

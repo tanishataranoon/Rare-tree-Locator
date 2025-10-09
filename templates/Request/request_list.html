@@ -1,0 +1,49 @@
+
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{% static 'css/Request/request_list.css' %}">
+    <title>Document</title>
+</head>
+<body>
+    {% include "Common/header.html" %}
+
+
+{% block content %}
+<h2>Tree Requests</h2>
+
+<div class="request-list">
+    {% for request in requests %}
+    <div class="request-card" id="request-card-{{ request.id }}">
+        <h3>{{ request.title }}</h3>
+        <p>{{ request.description|truncatechars:100 }}</p>
+        <p><strong>Location:</strong> {{ request.location }}</p>
+        <p><strong>Status:</strong> {{ request.status }}</p>
+        <p><small>Created: {{ request.created_at|date:"M d, Y H:i" }}</small></p>
+
+        <div class="request-actions">
+            <a href="{% url 'request_create' %}" class="create-btn">+ Create Request</a>
+
+            {% if request.requester == user %}
+            <a href="{% url 'request_edit' request.id %}" class="edit-btn">Edit</a>
+            {% endif %}
+            <a href="{% url 'request_detail' request.id %}" class="view-btn">View</a>
+            {% if request.requester == user %}
+            <button class="delete-btn" data-id="{{ request.id }}">Delete</button>
+            {% endif %}
+        </div>
+    </div>
+    {% empty %}
+    <p>No requests yet.</p>
+    {% endfor %}
+</div>
+
+<script src="{% static 'js/Request/request_list.js' %}"></script>
+{% endblock %}
+    {% include "Common/footer.html" %}
+
+</body>
+</html>

@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+{% load static %}
+
+{% block content %}
+<h2>{{ request_obj.title }}</h2>
+
+<p><strong>Description:</strong> {{ request_obj.description }}</p>
+<p><strong>Location:</strong> {{ request_obj.location }}</p>
+<p><strong>Status:</strong> {{ request_obj.status }}</p>
+<p><strong>Created at:</strong> {{ request_obj.created_at|date:"M d, Y H:i" }}</p>
+
+<a href="{% url 'request_list' %}">Back to requests</a>
+{% endblock %}
+
+</body>
+</html>

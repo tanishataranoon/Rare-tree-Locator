@@ -1,0 +1,91 @@
+.request-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+}
+
+.request-card {
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    padding: 15px;
+    width: 300px;
+    box-shadow: 0px 2px 8px rgba(0,0,0,0.1);
+    background: white;
+}
+
+.request-card h3 {
+    margin-top: 0;
+}
+
+.request-actions {
+    margin-top: 10px;
+}
+
+.request-actions button {
+    background: #007bff;
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    margin-right: 5px;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.request-actions button:hover {
+    background: #0056b3;
+}
+.create-btn {
+    display: inline-block;
+    margin-bottom: 20px;
+    padding: 10px 15px;
+    background: #28a745;
+    color: white;
+    text-decoration: none;
+    border-radius: 5px;
+}
+.create-btn:hover {
+    background: #218838;
+}
+.request-actions {
+    margin-top: 10px;
+    display: flex;
+    gap: 5px;
+}
+
+.request-actions a,
+.request-actions button {
+    padding: 5px 10px;
+    border-radius: 5px;
+    text-decoration: none;
+    color: white;
+    font-size: 0.9rem;
+}
+
+.create-btn {
+    background: #28a745;
+}
+.create-btn:hover {
+    background: #218838;
+}
+
+.edit-btn {
+    background: #007bff;
+}
+.edit-btn:hover {
+    background: #0056b3;
+}
+
+.view-btn {
+    background: #17a2b8;
+}
+.view-btn:hover {
+    background: #117a8b;
+}
+
+.delete-btn {
+    background: #dc3545;
+    border: none;
+}
+.delete-btn:hover {
+    background: #c82333;
+}

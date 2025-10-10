@@ -21,8 +21,7 @@
                     <!-- Profile Picture -->
                     <div class="profile-left">
                         <img src="{% if profile.profile_pic %}{{ profile.profile_pic.url }}{% else %}{{ MEDIA_URL }}default_profile.png{% endif %}"
-                            alt="Profile Picture"
-                            class="profile-pic">
+                            alt="Profile Picture" class="profile-pic">
 
                     </div>
 
@@ -32,47 +31,50 @@
                         <p class="username">@{{ profile_user.username }}</p>
 
                         {% if profile.profession %}
-                            <p class="profession">{{ profile.profession }}</p>
+                        <p class="profession">{{ profile.profession }}</p>
                         {% endif %}
 
                         {% if profile.bio %}
-                            <p class="bio">"{{ profile.bio }}"</p>
+                        <p class="bio">"{{ profile.bio }}"</p>
                         {% endif %}
 
                         <p class="joined">Joined {{ profile.joined_date|date:"F Y" }}</p>
 
                         {% if profile.phone or profile.linkedin or profile.instagram or profile.twitter or profile.personal_website %}
-                            <button class="toggle-details-btn" onclick="toggleDetails()">Show More Details</button>
 
-                            <div id="extra-details" class="extra-details">
-                                <hr>
-                                {% if profile.phone %}
-                                    <h4>📞 Contact</h4>
-                                    <p>{{ profile.phone }}</p>
+                        <button class="toggle-details-btn" onclick="toggleDetails()">Show More Details</button>
+
+                        <div id="extra-details" class="extra-details">
+                            <hr>
+                            {% if profile.phone %}
+                            <h4>📞 Contact</h4>
+                            <p>{{ profile.phone }}</p>
+                            {% endif %}
+
+                            {% if profile.linkedin or profile.instagram or profile.twitter or profile.personal_website%}
+                            <h4>🌐 Social Links</h4>
+                            <ul>
+                                {% if profile.linkedin %}
+                                <li><a href="{{ profile.linkedin }}" target="_blank">LinkedIn</a></li>
                                 {% endif %}
-    
-                                {% if profile.linkedin or profile.instagram or profile.twitter or profile.personal_website %}
-                                    <h4>🌐 Social Links</h4>
-                                    <ul>
-                                        {% if profile.linkedin %}
-                                            <li><a href="{{ profile.linkedin }}" target="_blank">LinkedIn</a></li>
-                                        {% endif %}
-                                        {% if profile.instagram %}
-                                            <li><a href="https://instagram.com/{{ profile.instagram }}" target="_blank">Instagram</a></li>
-                                        {% endif %}
-                                        {% if profile.twitter %}
-                                            <li><a href="https://twitter.com/{{ profile.twitter }}" target="_blank">Twitter</a></li>
-                                        {% endif %}
-                                        {% if profile.personal_website %}
-                                            <li><a href="{{ profile.personal_website }}" target="_blank">Website</a></li>
-                                        {% endif %}
-                                    </ul>
+                                {% if profile.instagram %}
+                                <li><a href="https://instagram.com/{{ profile.instagram }}"
+                                        target="_blank">Instagram</a></li>
                                 {% endif %}
-                            </div>
+                                {% if profile.twitter %}
+                                <li><a href="https://twitter.com/{{ profile.twitter }}" target="_blank">Twitter</a></li>
+                                {% endif %}
+                                {% if profile.personal_website %}
+                                <li><a href="{{ profile.personal_website }}" target="_blank">Website</a></li>
+                                {% endif %}
+                            </ul>
+                            {% endif %}
+                        </div>
                         {% endif %}
 
+
                         {% if request.user == profile_user %}
-                            <a href="{% url 'edit_profile' %}" class="btn edit-btn">Edit Profile</a>
+                        <a href="{% url 'edit_profile' %}" class="btn edit-btn">Edit Profile</a>
                         {% endif %}
                     </div>
                 </div> <!-- header -->
@@ -94,34 +96,47 @@
                 <!-- Trees Tab -->
                 <div id="trees" class="tab-content active">
                     {% if my_trees %}
-                        {% for tree in my_trees %}
-                            <div class="card">
-                                <h3>{{ tree.street_name }}</h3>
-                                <p><em>{{ tree.scientific_name }}</em></p>
-                                <p>Location: {{ tree.latitude }}, {{ tree.longitude }}</p>
-                                <span>Status: {{ tree.rarity_status }}</span>
-                                <p>Added: {{ tree.created_at|date:"M d, Y" }}</p>
-                            </div>
-                        {% endfor %}
+                    {% for tree in my_trees %}
+                    <div class="card">
+                        <h3>{{ tree.street_name }}</h3>
+                        <p><em>{{ tree.scientific_name }}</em></p>
+                        <p>Location: {{ tree.latitude }}, {{ tree.longitude }}</p>
+                        <span>Status: {{ tree.rarity_status }}</span>
+                        <p>Added: {{ tree.created_at|date:"M d, Y" }}</p>
+                    </div>
+                    {% endfor %}
                     {% else %}
-                        <p>No trees yet.</p>
+                    <p>No trees yet.</p>
                     {% endif %}
                 </div>
 
                 <!-- Requests Tab -->
                 <div id="requests" class="tab-content">
                     {% if requests %}
-                        {% for req in requests %}
-                            <div class="card">
-                                <p>{{ req.description }}</p>
-                                <p>Status: {{ req.status }}</p>
-                                <p>{{ req.created_at|date:"M d, Y" }}</p>
-                            </div>
-                        {% endfor %}
+                    {% for req in requests %}
+                    <div class="card">
+                        <h3>{{ req.title|default:"Request" }}</h3>
+
+                        {% if req.image %}
+                        <img src="{{ req.image.url }}" alt="Request Image" style="max-width:200px;">
+                        {% endif %}
+
+                        <p>{{ req.description|truncatewords:20 }}</p>
+                        <p>Status: {{ req.status }}</p>
+                        <p>Created on {{ req.created_at|date:"M d, Y" }}</p>
+
+                        <div class="request-actions">
+                            <button class="btn delete-btn" data-request-id="{{ req.id }}" data-request-title="{{ req.title }}">Delete</button>
+
+                        </div>
+                    </div>
+                    {% endfor %}
                     {% else %}
-                        <p>No requests yet.</p>
+                    <p>You haven't created any requests yet.</p>
                     {% endif %}
                 </div>
+
+
 
                 <!-- Posts Tab -->
                 <div id="posts" class="tab-content">
@@ -134,12 +149,12 @@
                         {% endif %}
                         <p>{{ post.content|truncatewords:20 }}</p>
                         <p>Posted on {{ post.date_posted|date:"M d, Y" }}</p>
-                
+
                         {% if user.is_authenticated and user.id == post.author.id %}
                         <div class="post-actions">
                             <a href="{% url 'edit_blog' post.id %}" class="btn edit-btn">Edit</a>
-                            <button class="btn delete-btn" data-post-id="{{ post.id }}"
-                                data-post-title="{{ post.title }}">Delete</button>
+                            <button class="btn delete-btn" data-type="post"data-id="{{ post.id }}" data-title="{{ post.title }}">Delete</button>
+                    
                         </div>
                         {% endif %}
                     </div>

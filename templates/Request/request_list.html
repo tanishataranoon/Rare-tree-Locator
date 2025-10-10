@@ -1,49 +1,189 @@
-
 {% load static %}
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tree Requests</title>
     <link rel="stylesheet" href="{% static 'css/Request/request_list.css' %}">
-    <title>Document</title>
 </head>
+
 <body>
-    {% include "Common/header.html" %}
+    <div class="container">
+        <h1>🌱 Tree Requests</h1>
 
-
-{% block content %}
-<h2>Tree Requests</h2>
-
-<div class="request-list">
-    {% for request in requests %}
-    <div class="request-card" id="request-card-{{ request.id }}">
-        <h3>{{ request.title }}</h3>
-        <p>{{ request.description|truncatechars:100 }}</p>
-        <p><strong>Location:</strong> {{ request.location }}</p>
-        <p><strong>Status:</strong> {{ request.status }}</p>
-        <p><small>Created: {{ request.created_at|date:"M d, Y H:i" }}</small></p>
-
-        <div class="request-actions">
-            <a href="{% url 'request_create' %}" class="create-btn">+ Create Request</a>
-
-            {% if request.requester == user %}
-            <a href="{% url 'request_edit' request.id %}" class="edit-btn">Edit</a>
-            {% endif %}
-            <a href="{% url 'request_detail' request.id %}" class="view-btn">View</a>
-            {% if request.requester == user %}
-            <button class="delete-btn" data-id="{{ request.id }}">Delete</button>
+        <!-- Request Header -->
+        <div class="request-header">
+            <h2>Tree Requests</h2>
+            {% if user.is_authenticated and user.user_type == 'common' %}
+                <button id="new-request-btn" class="btn-primary" data-create-request-url="{% url 'create_request' %}">
+                    + New Request
+                </button>
+            {% elif not user.is_authenticated %}
+                <p>You must be logged in to create a new request.</p>
             {% endif %}
         </div>
+
+        <!-- Request List -->
+        {% if requests %}
+            <div class="request-grid">
+                {% for req in requests %}
+                    <div class="request-card-modern" data-id="{{ req.id }}" data-title="{{ req.title }}"
+                        data-description="{{ req.description }}" data-requester="{{ req.requester.username }}"
+                        data-location="{{ req.location }}" data-has-answer="{% if req.answer %}true{% else %}false{% endif %}">
+                        <div class="image-box">
+                            {% if req.image %}
+                                <img src="{{ req.image.url }}" alt="{{ req.title }}">
+                            {% else %}
+                                <div class="no-image">No Image</div>
+                            {% endif %}
+                        </div>
+
+                        <div class="card-body">
+                            <h3>{{ req.title }}</h3>
+                            <p class="description">{{ req.description|truncatewords:10 }}</p>
+                            <div class="meta">
+                                <span class="status-tag {{ req.status }}">{{ req.get_status_display }}</span>
+                                <span class="date">{{ req.created_at|date:"M d, Y" }}</span>
+                            </div>
+
+                            <!-- Footer Buttons -->
+                            <div class="card-footer">
+                                <button class="btn-view">View Details</button>
+
+                                {% if user.is_authenticated and user.user_type == 'common' and req.requester == user %}
+                                    <button class="btn-delete" data-id="{{ req.id }}">Delete</button>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <p class="empty-msg">No requests found.</p>
+        {% endif %}
+
+        <!-- ========================= -->
+        <!-- New Request Modal -->
+        <!-- ========================= -->
+        <div id="new-request-modal" class="modal">
+            <div class="modal-content new-request-modern">
+                <span id="new-request-close" class="close">&times;</span>
+
+                <div class="modal-header">
+                    <h2>Create New Tree Request</h2>
+                    <p class="modal-subtitle">Submit details and an image to identify or record a tree.</p>
+                </div>
+
+                <form id="new-request-form" action="{% url 'create_request' %}" enctype="multipart/form-data" class="modern-form">
+                    {% csrf_token %}
+                    <div class="form-group">
+                        <label for="title">Title</label>
+                        <input type="text" name="title" id="title" placeholder="Enter tree title" required>
+                        <div class="form-error" id="title-error"></div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="description">Description</label>
+                        <textarea name="description" id="description" rows="3" placeholder="Describe the tree..." required></textarea>
+                        <div class="form-error" id="description-error"></div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group half">
+                            <label for="location">Location</label>
+                            <input type="text" name="location" id="location" placeholder="e.g. Central Park">
+                            <div class="form-error" id="location-error"></div>
+                        </div>
+                        <div class="form-group half">
+                            <label for="image">Upload Image</label>
+                            <input type="file" name="image" id="image" accept="image/*">
+                            <div class="image-preview" id="image-preview"></div>
+                            <div class="form-error" id="image-error"></div>
+                        </div>
+                    </div>
+
+                    <div class="form-actions">
+                        <button type="submit" class="btn-submit">Submit Request</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- ========================= -->
+        <!-- Request Details Modal -->
+        <!-- ========================= -->
+        <div id="request-modal" class="modal">
+            <div class="modal-content details-modal">
+                <span class="close">&times;</span>
+
+                <!-- Header Section -->
+                <div class="modal-header-info">
+                    <h2 id="modal-title">Request Details</h2>
+                    <div class="info-grid">
+                        <p><strong>Request ID:</strong> <span id="modal-id"></span></p>
+                        <p><strong>Submitted By:</strong> <span id="modal-requester"></span></p>
+                        <p><strong>Date Submitted:</strong> <span id="modal-date"></span></p>
+                        <p><strong>Location:</strong> <span id="modal-location"></span></p>
+                    </div>
+                </div>
+
+                <!-- Main Body Grid -->
+                <div class="modal-body-grid">
+                    <div class="left-section">
+                        <h4>Submitted Image</h4>
+                        <div class="image-preview-box">
+                            <img id="modal-image" src="" alt="Tree Image">
+                        </div>
+                    </div>
+
+                    <div class="right-section">
+                        <h4>Description</h4>
+                        <p id="modal-description"></p>
+                        <h4>Additional Notes</h4>
+                        <p id="modal-notes">—</p>
+                        <div class="status-section">
+                            <p><strong>Current Status:</strong> <span id="modal-status" class="status-badge pending">Pending</span></p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Footer Buttons -->
+                <div class="modal-footer">
+                    {% comment %} Role-based buttons {% endcomment %}
+                    {% if user.is_authenticated %}
+                        {% if user.user_type == 'common' %}
+                            {% if req.answer %}
+                                <button class="btn-view-answer">View Answer</button>
+                            {% endif %}
+                        {% else %}
+                            <button class="btn btn-skip">Skip / Avoid</button>
+                            <button class="btn btn-answer">Answer Directly</button>
+                            <button class="btn btn-add">Add Tree Officially</button>
+                        {% endif %}
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <!-- ========================= -->
+        <!-- Delete Confirmation Modal -->
+        <!-- ========================= -->
+        <div id="delete-modal" class="modal">
+            <div class="modal-content">
+                <span class="close">&times;</span>
+                <h3>Confirm Delete</h3>
+                <p>Are you sure you want to delete this request? This action cannot be undone.</p>
+                <div class="modal-actions">
+                    <button id="confirm-delete" class="btn btn-danger">Yes, Delete</button>
+                    <button id="cancel-delete" class="btn btn-secondary">Cancel</button>
+                </div>
+            </div>
+        </div>
     </div>
-    {% empty %}
-    <p>No requests yet.</p>
-    {% endfor %}
-</div>
-
-<script src="{% static 'js/Request/request_list.js' %}"></script>
-{% endblock %}
-    {% include "Common/footer.html" %}
-
+    
+    
+    <script src="{% static 'js/Request/request_list.js' %}"></script>
 </body>
 </html>

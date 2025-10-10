@@ -66,7 +66,8 @@ def profile_view(request, username):
         posts = BlogPost.objects.filter(author=user)
     else:  # common user
         my_trees = []  # future: trees added because of requests
-        requests = []  # future: request history
+        requests = TreeRequest.objects.filter(requester=user)  # fetch user requests even for common users
+
         posts = []     # future: saved/liked posts
 
     context = {
@@ -82,7 +83,7 @@ def profile_view(request, username):
     storage = messages.get_messages(request)
     for _ in storage:
         pass  # iterating clears them
-    return render(request, 'Profile/profile_view.html', context)
+    return render(request,"Profile/profile_view.html", context)
 
 # Edit profile view
 @login_required

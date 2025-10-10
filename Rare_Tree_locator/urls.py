@@ -32,15 +32,16 @@ urlpatterns = [
 
     # Tree app views
     path('trees/', treeapp_views.TreeProfiles, name = 'TreeProfiles'),# Tree profiles view
+    path('trees/<int:id>/', treeapp_views.TreeDetail, name='tree_detail'),
+    path('map/', treeapp_views.map_page, name='map_page'),
+    path('add-tree-ajax/', treeapp_views.add_tree_ajax, name='add_tree_ajax'),
+    path('api/trees/', treeapp_views.get_trees_json, name='get_trees_json'),
+    
     path("dashboard/", treeapp_views.dashboard, name="dashboard"),#user dashboard view
-    path("dashboard/ajax/create/", treeapp_views.ajax_create_request, name="ajax_create_request"),#ajax create request view
-    path("dashboard/ajax/update/<int:request_id>/", treeapp_views.ajax_update_request, name="ajax_update_request"),#ajax update request view
-    path("dashboard/ajax/delete/<int:request_id>/", treeapp_views.ajax_delete_request, name="ajax_delete_request"),#ajax delete request view
 
-    path("request_list/", treeapp_views.request_list, name="request_list"),            # List all requests
-    path("request_form/", treeapp_views.request_create, name="request_create"),      # Create request
-    path("request/<int:pk>/", treeapp_views.request_detail, name="request_detail"),    # View request details
-    path("request/<int:pk>/edit/", treeapp_views.request_edit, name="request_edit"),   # Edit request
-    path("request/<int:pk>/delete/", treeapp_views.request_delete, name="request_delete"), # Delete request
+    path("requests/", treeapp_views.request_list, name="request_list"),
+    path("requests/create/", treeapp_views.create_request, name="create_request"),
+    path("requests/<int:pk>/detail/", treeapp_views.request_detail_ajax, name="request_detail_ajax"),
+    path('requests/<int:id>/delete/', treeapp_views.delete_request, name='delete_request')
 
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

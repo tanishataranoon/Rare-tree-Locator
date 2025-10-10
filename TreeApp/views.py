@@ -11,6 +11,7 @@ from django.core.exceptions import PermissionDenied
 from django.http import HttpResponseForbidden ,JsonResponse
 from django.utils import timezone
 from django.db.models import Count
+from django.contrib import messages
 
 # Create your views here.
 
@@ -103,6 +104,8 @@ def add_tree_ajax(request):
 
     return JsonResponse({'success': False, 'error': 'Invalid request'})
 
+
+
 # Dashboard
 @login_required
 def dashboard(request):
@@ -112,67 +115,59 @@ def dashboard(request):
     total_contributions = ... # e.g. answers by this user if contributor
     recent_activity = TreeRequest.objects.order_by('-created_at')[:6]
     context = {
-       'pending_count': pending_count,
-       'answered_week_count': answered_week_count,
-       'trees_added_count': trees_added_count,
-       'total_contributions': total_contributions,
-       'recent_activity': recent_activity,
-       # include my_requests, all_requests, my_answers etc as you already do
+    'pending_count': pending_count,
+    'answered_week_count': answered_week_count,
+    'trees_added_count': trees_added_count,
+    'total_contributions': total_contributions,
+    'recent_activity': recent_activity,
+    # include my_requests, all_requests, my_answers etc as you already do
     }
     return render(request, 'Request/dashboard.html', context)
 
-
 @login_required
 def request_list(request):
-    requests = TreeRequest.objects.all().order_by('-created_at')
-    return render(request, "Request/request_list.html", {"requests": requests})
+    requests = TreeRequest.objects.all().order_by("-created_at")
+    form = TreeRequestForm()
+    return render(request, "Request/request_list.html", {"requests": requests, "form": form})
+
 
 @login_required
-def request_create(request):
+def create_request(request):
     if request.method == "POST":
-        form = TreeRequestForm(request.POST)
+        form = TreeRequestForm(request.POST, request.FILES)
         if form.is_valid():
-            new_request = form.save(commit=False)
-            new_request.requester = request.user
-            new_request.save()
-            return redirect("request_list")  # Go back to request list
-    else:
-        form = TreeRequestForm()
-
-    return render(request, "Request/request_form.html", {"form": form, "action": "Create"})
-
-@login_required
-def request_detail(request, pk):
-    tr = get_object_or_404(TreeRequest, pk=pk)
-    return render(request, "Request/request_detail.html", {"request_obj": tr})
+            tree_request = form.save(commit=False)
+            tree_request.requester = request.user
+            tree_request.save()
+            return JsonResponse({"success": True})
+        else:
+            return JsonResponse({"success": False, "errors": form.errors})
+    return JsonResponse({"success": False, "error": "Invalid request"})
 
 @login_required
-def request_edit(request, pk):
-    tr = get_object_or_404(TreeRequest, pk=pk)
-    if request.user != tr.requester:
-        return JsonResponse({"error": "Permission denied"}, status=403)
-
-    if request.method == "POST":
-        form = TreeRequestForm(request.POST, instance=tr)
-        if form.is_valid():
-            form.save()
-            return redirect("request_list")
-    else:
-        form = TreeRequestForm(instance=tr)
-    return render(request, "Request/request_form.html", {"form": form})
-
-@login_required
-def request_delete(request, pk):
-    tr = get_object_or_404(TreeRequest, pk=pk)
-    if request.user != tr.requester:
-        return JsonResponse({"error": "Permission denied"}, status=403)
-    tr.delete()
-    return redirect("request_list")
+def request_detail_ajax(request, pk):
+    tree_request = get_object_or_404(TreeRequest, pk=pk)
+    data = {
+        "id": f"REQ-{tree_request.id:03}",
+        "title": tree_request.title,
+        "description": tree_request.description,
+        "location": tree_request.location,
+        "created_at": tree_request.created_at.strftime("%Y-%m-%d %H:%M"),
+        "status": tree_request.get_status_display(),
+        "requester": tree_request.requester.username,
+        "image_url": tree_request.image.url if tree_request.image else "",
+    }
+    return JsonResponse(data)
 
 @login_required
-def request_detail(request, pk):
-    tr = get_object_or_404(TreeRequest, pk=pk)
-    return render(request, "Request/request_detail.html", {"request_obj": tr})
+def delete_request(request, id):
+    if request.method == 'POST':
+        req = get_object_or_404(TreeRequest, id=id)
+        if req.requester == request.user:
+            req.delete()
+            return JsonResponse({"success": True})
+        return JsonResponse({"error": "Not authorized"}, status=403)
+    return JsonResponse({"error": "Invalid method"}, status=400)
 
 
 
@@ -183,60 +178,6 @@ def request_detail(request, pk):
 
 
 
-# Ajax to create a new request
-@login_required
-@require_POST
-def ajax_create_request(request):
-    if request.user.user_type != "common":
-        return JsonResponse({"success": False, "error": "Permission denied"}, status=403)
-
-    form = TreeRequestForm(request.POST, request.FILES)
-    if form.is_valid():
-        tree_request = form.save(commit=False)
-        tree_request.requester = request.user
-        tree_request.save()
-
-        # ✅ Save multiple uploaded images
-        for file in request.FILES.getlist("images"):
-            RequestImage.objects.create(tree_request=tree_request, image=file)
-
-        return JsonResponse({"success": True})
-    else:
-        return JsonResponse({"success": False, "errors": form.errors}, status=400)
-
-# Ajax to update an existing request
-@login_required
-@require_POST
-def ajax_update_request(request, request_id):
-    if request.user.user_type != "common":
-        return JsonResponse({"success": False, "error": "Permission denied"}, status=403)
-
-    tree_request = TreeRequest.objects.filter(id=request_id, requester=request.user).first()
-    if not tree_request:
-        return JsonResponse({"success": False, "error": "Request not found"})
-
-    form = TreeRequestForm(request.POST, request.FILES, instance=tree_request)
-    if form.is_valid():
-        updated_request = form.save()
-
-        # ✅ Add new uploaded images (if any)
-        for file in request.FILES.getlist("images"):
-            RequestImage.objects.create(tree_request=updated_request, image=file)
-
-        return JsonResponse({"success": True})
-    else:
-        return JsonResponse({"success": False, "errors": form.errors}, status=400)
-
-# Ajax to delete a request
-@login_required
-@require_POST
-def ajax_delete_request(request, request_id):
-    tree_request = TreeRequest.objects.filter(id=request_id, requester=request.user).first()
-    if not tree_request or request.user.user_type != "common":
-        raise PermissionDenied
-
-    tree_request.delete()
-    return JsonResponse({"success": True, "id": request_id})
 
 # Contributor: answer a request
 @login_required

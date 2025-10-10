@@ -71,32 +71,24 @@ class TreePhoto(models.Model):
         return f"Photo of {self.tree.street_name}"
 
 #request model
+
 class TreeRequest(models.Model):
     STATUS_CHOICES = [
         ("pending", "Pending"),
         ("answered", "Answered"),
     ]
 
-    requester = models.ForeignKey(
-        settings.AUTH_USER_MODEL,
-        on_delete=models.CASCADE,
-        related_name="tree_requests"
-    )
-    title = models.CharField(max_length=255)  # short summary e.g. "Unknown Flowering Tree"
+    requester = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="tree_requests")
+    title = models.CharField(max_length=255)
     description = models.TextField()
     location = models.CharField(max_length=255, blank=True, null=True)
+    image = models.ImageField(upload_to="request_images/", blank=True, null=True)
     created_at = models.DateTimeField(default=timezone.now)
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default="pending")
 
     def __str__(self):
-        return f"REQ-{self.id} | {self.title} | {self.status}"
-#to allow multiple images per request
-class RequestImage(models.Model):
-    tree_request = models.ForeignKey(TreeRequest, on_delete=models.CASCADE, related_name="images")
-    image = models.ImageField(upload_to="request_images/")
+        return self.title
 
-    def __str__(self):
-        return f"Image for Request {self.request.id}"
     
     
 # Answer Model

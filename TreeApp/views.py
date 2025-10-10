@@ -213,3 +213,14 @@ def TreeDetail(request, id):
 
 def map_page(request):
     return render(request, 'map.html')
+
+def contact(request):
+    if request.method == "POST":
+        name = request.POST.get("name")
+        email = request.POST.get("email")
+        message = request.POST.get("message")
+        # এখানে তুমি এসে DB-এ রেখে দিতে পারো বা send_mail() করে ইমেইল পাঠাতে পারো
+        print("CONTACT MSG:", name, email, message)
+        messages.success(request, "Thanks — your message was received!")
+        return redirect('contact')
+    return render(request, "contact.html")

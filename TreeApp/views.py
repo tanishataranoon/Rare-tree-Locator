@@ -104,31 +104,56 @@ def add_tree_ajax(request):
 
     return JsonResponse({'success': False, 'error': 'Invalid request'})
 
+def TreeDetail(request, id):
+    tree = get_object_or_404(TreeProfile, id=id)
+
+    return render(request, 'Trees/TreeDetail.html', {'tree': tree})
+
+def map_page(request):
+    return render(request, 'map.html')
 
 
 # Dashboard
 @login_required
 def dashboard(request):
     pending_count = TreeRequest.objects.filter(status='pending').count()
-    answered_week_count = TreeRequest.objects.filter(status='answered', created_at__gte=timezone.now()-timezone.timedelta(days=7)).count()
-    trees_added_count = ... # implement per your tree model
-    total_contributions = ... # e.g. answers by this user if contributor
+    answered_week_count = TreeRequest.objects.filter(
+        status='answered',
+        created_at__gte=timezone.now() - timezone.timedelta(days=7)
+    ).count()
+
+    # You can fill these later depending on your tree models
+    trees_added_count = 0  
+    total_contributions = 0
+
     recent_activity = TreeRequest.objects.order_by('-created_at')[:6]
+
     context = {
-    'pending_count': pending_count,
-    'answered_week_count': answered_week_count,
-    'trees_added_count': trees_added_count,
-    'total_contributions': total_contributions,
-    'recent_activity': recent_activity,
-    # include my_requests, all_requests, my_answers etc as you already do
+        'pending_count': pending_count,
+        'answered_week_count': answered_week_count,
+        'trees_added': trees_added_count,
+        'total_contrib': total_contributions,
+        'recent_activity': recent_activity,
     }
-    return render(request, 'Request/dashboard.html', context)
+    return render(request, 'Dashboard/dashboard.html', context)
+
+@login_required
+def tree_requests(request):
+    # Whatever logic you used in your old `request_list` view
+    my_requests = TreeRequest.objects.filter(user=request.user)
+    all_requests = TreeRequest.objects.all().order_by('-created_at')
+
+    context = {
+        'my_requests': my_requests,
+        'all_requests': all_requests,
+    }
+    return render(request, 'Dashboard/tree_requests.html', context)
 
 @login_required
 def request_list(request):
     requests = TreeRequest.objects.all().order_by("-created_at")
     form = TreeRequestForm()
-    return render(request, "Request/request_list.html", {"requests": requests, "form": form})
+    return render(request, "Dashboard/tree_requests.html", {"requests": requests, "form": form})
 
 
 @login_required
@@ -171,7 +196,27 @@ def delete_request(request, id):
 
 
 
+@login_required
+def submit_answer(request, request_id):
+    tree_request = get_object_or_404(TreeRequest, id=request_id)
 
+    if request.method == "POST":
+        form = TreeAnswerForm(request.POST, request.FILES)
+        if form.is_valid():
+            answer = form.save(commit=False)
+            answer.tree_request = tree_request
+            answer.answered_by = request.user
+            answer.save()
+
+            # Update request status
+            tree_request.status = "answered"
+            tree_request.save()
+
+            return redirect("dashboard")  # or your request list view
+    else:
+        form = TreeAnswerForm()
+
+    return render(request, "answers/answer_modal.html", {"form": form, "tree_request": tree_request})
 
 
 
@@ -206,10 +251,3 @@ def answer_request(request, request_id):
 
     return render(request, "requests/answer_request.html", {"form": form, "tree_request": tree_request})
 
-def TreeDetail(request, id):
-    tree = get_object_or_404(TreeProfile, id=id)
-
-    return render(request, 'Trees/TreeDetail.html', {'tree': tree})
-
-def map_page(request):
-    return render(request, 'map.html')

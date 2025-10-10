@@ -24,7 +24,7 @@ header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 10px 50px;
+  padding: 6px 40px;   
   background-color: #215732;
   position: fixed;
   top: 0;
@@ -47,8 +47,8 @@ header.scrolled {
 }
 
 .logo img {
-  width: 50px;
-  height: 50px;
+  width: 42px;
+  height: 42px;
   border-radius: 50%;
   object-fit: cover;
   border: 2px solid white;
@@ -182,8 +182,8 @@ header.scrolled {
 
 /* Profile picture (small in header) */
 .profile-pic {
-  width: 35px;
-  height: 35px;
+  width: 30px;
+  height: 30px;
   border-radius: 50%;
   object-fit: cover;
   border: 2px solid #c2e089;

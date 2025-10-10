@@ -42,7 +42,7 @@
 
                         {% if profile.phone or profile.linkedin or profile.instagram or profile.twitter or profile.personal_website %}
 
-                        <button class="toggle-details-btn" onclick="toggleDetails()">Show More Details</button>
+                        <button class="toggle-details-btn">Show More Details</button>
 
                         <div id="extra-details" class="extra-details">
                             <hr>
@@ -71,8 +71,6 @@
                             {% endif %}
                         </div>
                         {% endif %}
-
-
                         {% if request.user == profile_user %}
                         <a href="{% url 'edit_profile' %}" class="btn edit-btn">Edit Profile</a>
                         {% endif %}

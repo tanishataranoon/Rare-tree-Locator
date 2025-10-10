@@ -93,24 +93,14 @@ class TreeRequest(models.Model):
     
 # Answer Model
 class TreeAnswer(models.Model):
-    request = models.OneToOneField(   # one request -> one official answer
-        TreeRequest,
-        on_delete=models.CASCADE,
-        related_name="answer"
+    tree_request = models.ForeignKey("TreeRequest", on_delete=models.CASCADE, related_name="answers"
     )
-    contributor = models.ForeignKey(
-        settings.AUTH_USER_MODEL,
-        on_delete=models.CASCADE,
-        related_name="tree_answers"
-    )
-    answer_text = models.TextField(blank=True, null=True)
+    answered_by = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="answers_given") #need to change 
+    response_text = models.TextField(blank=True, null=True)
+    reference_image = models.ImageField(upload_to="answer_images/", blank=True, null=True)
+    video_url = models.URLField(blank=True, null=True)
+    external_url = models.URLField(blank=True, null=True)
     created_at = models.DateTimeField(default=timezone.now)
 
-    # Attach optional photo(s)
-    photo = models.ImageField(upload_to="answers/", blank=True, null=True)
-
-    # If you want multiple photos, better to create another model TreeAnswerPhoto
-
     def __str__(self):
-        return f"Answer to {self.request.title} by {self.contributor.username}"
-
+        return f"Answer to {self.tree_request.title} by {self.answered_by.username}"

@@ -1,7 +1,7 @@
 from django.http import JsonResponse
 from .models import *
 from django import forms
-from .models import TreeRequest,  TreeAnswer
+from .models import TreeRequest, TreeAnswer
 
 def add_tree_ajax(request):
     if request.method == "POST":
@@ -42,4 +42,7 @@ class TreeRequestForm(forms.ModelForm):
 class TreeAnswerForm(forms.ModelForm):
     class Meta:
         model = TreeAnswer
-        fields = ["answer_text", "photo"]
+        fields = ["response_text", "reference_image", "video_url", "external_url"]
+        widgets = {
+            "response_text": forms.Textarea(attrs={"placeholder": "Provide your expert identification and any additional information..."}),
+        }

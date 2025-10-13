@@ -117,7 +117,26 @@ document.addEventListener("DOMContentLoaded", () => {
                 const img = document.getElementById("modal-image");
                 const imageTag = card.querySelector("img");
                 img.src = imageTag ? imageTag.src : "";
-                requestModal.style.display = "block";
+                 // Show buttons dynamically
+                const viewAnswerBtn = document.getElementById("view-answer-btn");
+                const answerBtn = document.querySelector(".open-answer-modal");
+
+                // If user is common
+                if (viewAnswerBtn) {
+                    if (card.dataset.hasAnswer === "true") {
+                        viewAnswerBtn.style.display = "inline-block";
+                } else {
+                    viewAnswerBtn.style.display = "none";
+                }
+            }
+
+            // If user is contributor/admin
+            if (answerBtn) {
+                answerBtn.dataset.requestId = card.dataset.id;
+                answerBtn.style.display = "inline-block";
+            }
+
+            requestModal.style.display = "block";
             });
         });
     }
@@ -189,3 +208,61 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 });
+// ================= Answer Modal =================
+const answerModalContainer = document.getElementById("answerModalContainer");
+
+// Only run if Answer buttons exist
+if (document.querySelectorAll(".open-answer-modal").length > 0) {
+    document.querySelectorAll(".open-answer-modal").forEach(btn => {
+        btn.addEventListener("click", function () {
+            const requestId = this.dataset.requestId;
+
+            // Fetch the answer modal HTML
+            fetch(`/answer-modal/${requestId}/`)
+                .then(res => res.text())
+                .then(html => {
+                    // Inject modal HTML dynamically
+                    if (answerModalContainer) {
+                        answerModalContainer.innerHTML = html;
+                    } else {
+                        console.error("Missing #answerModalContainer in HTML!");
+                        return;
+                    }
+
+                    // Initialize Bootstrap modal
+                    const modalEl = document.getElementById("answerModal");
+                    const modal = new bootstrap.Modal(modalEl);
+                    modal.show();
+
+                    // Attach form submission
+                    const form = document.getElementById("answerForm");
+                    if (form) {
+                        form.addEventListener("submit", e => {
+                            e.preventDefault();
+                            const formData = new FormData(form);
+
+                            fetch(`/submit-answer/${requestId}/`, {
+                                method: "POST",
+                                body: formData,
+                            })
+                                .then(res => res.json())
+                                .then(data => {
+                                    if (data.success) {
+                                        modal.hide();
+                                        // Reload to reflect updated status
+                                        location.reload();
+                                    } else {
+                                        alert("Error: " + JSON.stringify(data.errors));
+                                    }
+                                })
+                                .catch(err => {
+                                    console.error("Error submitting answer:", err);
+                                    alert("Failed to submit answer.");
+                                });
+                        });
+                    }
+                })
+                .catch(err => console.error("Error loading answer modal:", err));
+        });
+    });
+}

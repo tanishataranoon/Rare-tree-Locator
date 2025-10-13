@@ -1,0 +1,38 @@
+<div class="modal fade" id="answerModal" tabindex="-1" aria-labelledby="answerModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <form id="answerForm" enctype="multipart/form-data">
+        <div class="modal-header">
+          <h5 class="modal-title" id="answerModalLabel">
+            Answer Request: {{ tree_request.title }}
+          </h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+
+        <div class="modal-body">
+          <div class="mb-3">
+            {{ form.response_text.label_tag }}
+            {{ form.response_text }}
+          </div>
+          <div class="mb-3">
+            {{ form.reference_image.label_tag }}
+            {{ form.reference_image }}
+          </div>
+          <div class="mb-3">
+            {{ form.video_url.label_tag }}
+            {{ form.video_url }}
+          </div>
+          <div class="mb-3">
+            {{ form.external_url.label_tag }}
+            {{ form.external_url }}
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button type="submit" class="btn btn-success">Submit Answer</button>
+          <a href="{% url 'add_tree' %}" class="btn btn-primary">Add Tree</a>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

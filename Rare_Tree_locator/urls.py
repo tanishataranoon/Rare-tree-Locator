@@ -22,6 +22,7 @@ urlpatterns = [
     path("logout/", LogoutView.as_view(next_page="HomePage"), name="logout"),
     path('edit_profile/', myapp_views.edit_profile, name="edit_profile"),
     path('profile_view/<str:username>/', myapp_views.profile_view, name='profile_view'),  # Profile view
+    path('contact/', treeapp_views.contact, name='contact'),
 
     # Blog app views
     path('blog_list', blogapp_views.blog_list, name='blog_list'),  # Added blog list view
@@ -42,6 +43,9 @@ urlpatterns = [
     path("requests/", treeapp_views.request_list, name="request_list"),
     path("requests/create/", treeapp_views.create_request, name="create_request"),
     path("requests/<int:pk>/detail/", treeapp_views.request_detail_ajax, name="request_detail_ajax"),
-    path('requests/<int:id>/delete/', treeapp_views.delete_request, name='delete_request')
+    path('requests/<int:id>/delete/', treeapp_views.delete_request, name='delete_request'),
 
+    path('answer-modal/<int:request_id>/', treeapp_views.answer_modal, name='answer_modal'),
+    path('submit-answer/<int:request_id>/', treeapp_views.submit_answer, name='submit_answer'),
+    path('view-answers/<int:request_id>/', treeapp_views.view_answers, name='view_answers'),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

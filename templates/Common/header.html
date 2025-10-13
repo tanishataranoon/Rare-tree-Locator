@@ -81,7 +81,7 @@
             <span></span>
         </div>
     </header>
-    <!-- ✅ Move these OUTSIDE header -->
+    <!-- sidebar -->
     {% if user.is_authenticated %}
     <div id="profile-panel" class="profile-panel">
         <div class="profile-header">
@@ -93,6 +93,7 @@
         <ul class="profile-links">
             <li><a href="{% url 'profile_view' user.username %}">Profile</a></li>
             <li><a href="{% url 'dashboard' %}">Dashboard</a></li>
+            <li><a href="{% url 'contact' %}">Contact Us</a></li>
             <li>
                 <form method="post" action="{% url 'logout' %}">
                     {% csrf_token %}

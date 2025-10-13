@@ -13,11 +13,11 @@ def HomePage(request):
     return render(request, 'HomePage.html')
 
 # Header view
-##def header(request):
-    return render(request, 'Common/header.html')
-# Footer view
-##def footer(request):
-    return render(request, 'Common/footer.html')
+# ##def header(request):
+#     return render(request, 'Common/header.html')
+# # Footer view
+# ##def footer(request):
+#     return render(request, 'Common/footer.html')
 
 
 # Signup view

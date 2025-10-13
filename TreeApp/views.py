@@ -196,6 +196,14 @@ def delete_request(request, id):
 
 
 
+
+@login_required
+def answer_modal(request, request_id):
+    tree_request = get_object_or_404(TreeRequest, id=request_id)
+    form = TreeAnswerForm()
+    return render(request, "answer/answer_modal.html", {"tree_request": tree_request, "form": form})
+
+
 @login_required
 def submit_answer(request, request_id):
     tree_request = get_object_or_404(TreeRequest, id=request_id)
@@ -208,50 +216,48 @@ def submit_answer(request, request_id):
             answer.answered_by = request.user
             answer.save()
 
-            # Update request status
             tree_request.status = "answered"
             tree_request.save()
+            return JsonResponse({"success": True})
+    return JsonResponse({"success": False, "errors": form.errors})
 
-            return redirect("dashboard")  # or your request list view
-    else:
-        form = TreeAnswerForm()
-
-    return render(request, "answers/answer_modal.html", {"form": form, "tree_request": tree_request})
-
-
-
-
-
-
-
-# Contributor: answer a request
+# View answers for a request
 @login_required
-def answer_request(request, request_id):
-    if request.user.user_type != "contributor":
-        return HttpResponseForbidden("Only contributors can answer requests.")
-
+def view_answers(request, request_id):
     tree_request = get_object_or_404(TreeRequest, id=request_id)
+    answers = tree_request.answers.all()
+    return render(request, "answers/view_answers.html", {"tree_request": tree_request, "answers": answers})
 
-    if request.method == "POST":
-        form = TreeAnswerForm(request.POST, request.FILES)
-        if form.is_valid():
-            answer = form.save(commit=False)
-            answer.request = tree_request
-            answer.contributor = request.user
-            answer.save()
+# # Contributor: answer a request
+# @login_required
+# def answer_request(request, request_id):
+#     if request.user.user_type != "contributor":
+#         return HttpResponseForbidden("Only contributors can answer requests.")
 
-            # update request status
-            tree_request.status = "answered"
-            tree_request.save()
+#     tree_request = get_object_or_404(TreeRequest, id=request_id)
 
-            return redirect("contributor_dashboard")
+#     if request.method == "POST":
+#         form = TreeAnswerForm(request.POST, request.FILES)
+#         if form.is_valid():
+#             answer = form.save(commit=False)
+#             answer.request = tree_request
+#             answer.contributor = request.user
+#             answer.save()
 
-    else:
-        form = TreeAnswerForm()
+#             # update request status
+#             tree_request.status = "answered"
+#             tree_request.save()
 
-    return render(request, "requests/answer_request.html", {"form": form, "tree_request": tree_request})
+#             return redirect("contributor_dashboard")
+
+#     else:
+#         form = TreeAnswerForm()
+
+#     return render(request, "requests/answer_request.html", {"form": form, "tree_request": tree_request})
 
 
+
+# Contact form
 def contact(request):
     if request.method == "POST":
         name = request.POST.get("name")

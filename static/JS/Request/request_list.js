@@ -4,14 +4,11 @@ document.addEventListener("DOMContentLoaded", () => {
     const newRequestModal = document.getElementById("new-request-modal");
     const newRequestClose = document.getElementById("new-request-close");
 
-    // Open modal
     if (newRequestBtn) {
         newRequestBtn.addEventListener("click", () => {
             newRequestModal.style.display = "block";
         });
     }
-
-    // Close modal
     if (newRequestClose) {
         newRequestClose.addEventListener("click", () => {
             newRequestModal.style.display = "none";
@@ -59,32 +56,23 @@ document.addEventListener("DOMContentLoaded", () => {
         const csrftoken = getCookie('csrftoken');
 
         newRequestForm.addEventListener("submit", (e) => {
-            e.preventDefault(); // prevent page reload
-
+            e.preventDefault();
             const formData = new FormData(newRequestForm);
 
             fetch(newRequestForm.action, {
                 method: "POST",
-                headers: {
-                    "X-CSRFToken": csrftoken
-                },
+                headers: { "X-CSRFToken": csrftoken },
                 body: formData
             })
-            .then(res => {
-                if (!res.ok) throw new Error("Server error");
-                return res.json();
-            })
+            .then(res => res.json())
             .then(data => {
                 if (data.success) {
                     alert("Request created successfully!");
                     location.reload();
                 } else if (data.errors) {
-                    // Display form errors
                     for (let field in data.errors) {
                         const errorDiv = document.getElementById(`${field}-error`);
-                        if (errorDiv) {
-                            errorDiv.textContent = data.errors[field].join(", ");
-                        }
+                        if (errorDiv) errorDiv.textContent = data.errors[field].join(", ");
                     }
                 } else {
                     alert(data.error || "Failed to create request.");
@@ -97,8 +85,6 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
-
-
     // ================= Request Details Modal =================
     const requestModal = document.getElementById("request-modal");
     if (requestModal) {
@@ -109,6 +95,8 @@ document.addEventListener("DOMContentLoaded", () => {
         document.querySelectorAll(".btn-view").forEach(btn => {
             btn.addEventListener("click", () => {
                 const card = btn.closest(".request-card-modern");
+
+                // Populate modal details
                 document.getElementById("modal-title").textContent = card.dataset.title;
                 document.getElementById("modal-id").textContent = card.dataset.id;
                 document.getElementById("modal-requester").textContent = card.dataset.requester;
@@ -117,26 +105,29 @@ document.addEventListener("DOMContentLoaded", () => {
                 const img = document.getElementById("modal-image");
                 const imageTag = card.querySelector("img");
                 img.src = imageTag ? imageTag.src : "";
-                 // Show buttons dynamically
-                const viewAnswerBtn = document.getElementById("view-answer-btn");
-                const answerBtn = document.querySelector(".open-answer-modal");
 
-                // If user is common
+                // ================= View Answer Button =================
+                const viewAnswerBtn = document.getElementById("view-answer-btn");
                 if (viewAnswerBtn) {
                     if (card.dataset.hasAnswer === "true") {
                         viewAnswerBtn.style.display = "inline-block";
-                } else {
-                    viewAnswerBtn.style.display = "none";
+                        viewAnswerBtn.onclick = () => {
+                            window.location.href = `/requests/${card.dataset.id}/answer/view/`;
+                        };
+                    } else {
+                        viewAnswerBtn.style.display = "none";
+                    }
                 }
-            }
 
-            // If user is contributor/admin
-            if (answerBtn) {
-                answerBtn.dataset.requestId = card.dataset.id;
-                answerBtn.style.display = "inline-block";
-            }
+                // ================= Answer Button (for contributors/admins) =================
+                const answerBtn = document.getElementById("answer-btn");
+                if (answerBtn) {
+                    const reqId = card.dataset.id;
+                    answerBtn.href = `/requests/${reqId}/answer/`;
+                    answerBtn.style.display = "inline-block";
+                }
 
-            requestModal.style.display = "block";
+                requestModal.style.display = "block";
             });
         });
     }
@@ -148,6 +139,17 @@ document.addEventListener("DOMContentLoaded", () => {
         const cancelDelete = document.getElementById("cancel-delete");
         const confirmDelete = document.getElementById("confirm-delete");
         let deleteRequestId = null;
+
+        document.querySelectorAll(".btn-delete").forEach(btn => {
+            btn.addEventListener("click", () => {
+                deleteRequestId = btn.dataset.id;
+                deleteModal.style.display = "block";
+            });
+        });
+
+        deleteClose.addEventListener("click", () => deleteModal.style.display = "none");
+        cancelDelete.addEventListener("click", () => deleteModal.style.display = "none");
+        window.addEventListener("click", (e) => { if (e.target === deleteModal) deleteModal.style.display = "none"; });
 
         function getCookie(name) {
             let cookieValue = null;
@@ -165,23 +167,8 @@ document.addEventListener("DOMContentLoaded", () => {
         }
         const csrftoken = getCookie('csrftoken');
 
-        // Open Delete Modal
-        document.querySelectorAll(".btn-delete").forEach(btn => {
-            btn.addEventListener("click", () => {
-                deleteRequestId = btn.dataset.id;
-                deleteModal.style.display = "block";
-            });
-        });
-
-        // Close modal
-        deleteClose.addEventListener("click", () => deleteModal.style.display = "none");
-        cancelDelete.addEventListener("click", () => deleteModal.style.display = "none");
-        window.addEventListener("click", (e) => { if (e.target === deleteModal) deleteModal.style.display = "none"; });
-
-        // Confirm Delete
         confirmDelete.addEventListener("click", () => {
             if (!deleteRequestId) return;
-
             fetch(`/requests/${deleteRequestId}/delete/`, {
                 method: "POST",
                 headers: {
@@ -190,16 +177,10 @@ document.addEventListener("DOMContentLoaded", () => {
                     "Content-Type": "application/json"
                 },
             })
-            .then(res => {
-                if (!res.ok) throw new Error("Server error");
-                return res.json();
-            })
+            .then(res => res.json())
             .then(data => {
-                if (data.success) {
-                    location.reload();
-                } else {
-                    alert(data.error || "Delete failed!");
-                }
+                if (data.success) location.reload();
+                else alert(data.error || "Delete failed!");
             })
             .catch(err => {
                 console.error(err);
@@ -208,61 +189,3 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 });
-// ================= Answer Modal =================
-const answerModalContainer = document.getElementById("answerModalContainer");
-
-// Only run if Answer buttons exist
-if (document.querySelectorAll(".open-answer-modal").length > 0) {
-    document.querySelectorAll(".open-answer-modal").forEach(btn => {
-        btn.addEventListener("click", function () {
-            const requestId = this.dataset.requestId;
-
-            // Fetch the answer modal HTML
-            fetch(`/answer-modal/${requestId}/`)
-                .then(res => res.text())
-                .then(html => {
-                    // Inject modal HTML dynamically
-                    if (answerModalContainer) {
-                        answerModalContainer.innerHTML = html;
-                    } else {
-                        console.error("Missing #answerModalContainer in HTML!");
-                        return;
-                    }
-
-                    // Initialize Bootstrap modal
-                    const modalEl = document.getElementById("answerModal");
-                    const modal = new bootstrap.Modal(modalEl);
-                    modal.show();
-
-                    // Attach form submission
-                    const form = document.getElementById("answerForm");
-                    if (form) {
-                        form.addEventListener("submit", e => {
-                            e.preventDefault();
-                            const formData = new FormData(form);
-
-                            fetch(`/submit-answer/${requestId}/`, {
-                                method: "POST",
-                                body: formData,
-                            })
-                                .then(res => res.json())
-                                .then(data => {
-                                    if (data.success) {
-                                        modal.hide();
-                                        // Reload to reflect updated status
-                                        location.reload();
-                                    } else {
-                                        alert("Error: " + JSON.stringify(data.errors));
-                                    }
-                                })
-                                .catch(err => {
-                                    console.error("Error submitting answer:", err);
-                                    alert("Failed to submit answer.");
-                                });
-                        });
-                    }
-                })
-                .catch(err => console.error("Error loading answer modal:", err));
-        });
-    });
-}

@@ -45,7 +45,7 @@ urlpatterns = [
     path("requests/<int:pk>/detail/", treeapp_views.request_detail_ajax, name="request_detail_ajax"),
     path('requests/<int:id>/delete/', treeapp_views.delete_request, name='delete_request'),
 
-    path('answer-modal/<int:request_id>/', treeapp_views.answer_modal, name='answer_modal'),
-    path('submit-answer/<int:request_id>/', treeapp_views.submit_answer, name='submit_answer'),
-    path('view-answers/<int:request_id>/', treeapp_views.view_answers, name='view_answers'),
+    path('requests/<int:pk>/answer/', treeapp_views.answer_request, name='answer_request'),
+    path('requests/<int:pk>/answer/view/', treeapp_views.view_submitted_answer, name='view_submitted_answer'),
+
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

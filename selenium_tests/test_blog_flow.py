@@ -68,12 +68,16 @@ def test_blog_flow(login_contributor):
     )
     delete_btn.click()
 
-    # Confirm delete in modal
+# Confirm delete in modal
     confirm_btn = WebDriverWait(driver, 10).until(
         EC.element_to_be_clickable((By.CSS_SELECTOR, "#deleteForm button.confirm-delete"))
     )
     confirm_btn.click()
 
-    WebDriverWait(driver, 10).until(EC.url_contains("blog_list"))
+# Wait until the edited blog disappears from the page
+    WebDriverWait(driver, 10).until_not(
+        EC.text_to_be_present_in_element((By.TAG_NAME, "body"), "Selenium Blog Edited")
+    )
+
     assert "Selenium Blog Edited" not in driver.page_source
     print("✅ Blog deleted successfully!")

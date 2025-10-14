@@ -1,0 +1,63 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Answer View - {{ tree_request.title }}</title>
+    <link rel="stylesheet" href="{% static 'css/Request/view_submitted_answer.css' %}">
+</head>
+<body>
+    {% include 'Common/header.html' %}
+    <a href="{% url 'dashboard' %}" class="back-link">&larr; Back to Dashboard</a>
+
+    <div class="main-container">
+        <!-- Request Card -->
+        <div class="card request-card">
+            <h2>🌳 Tree Request</h2>
+            <hr>
+            <p><strong>Title:</strong> {{ tree_request.title }}</p>
+            <p><strong>Location:</strong> {{ tree_request.location }}</p>
+            <p><strong>Requested By:</strong> {{ tree_request.requester.username }}</p>
+            <p>{{ tree_request.description }}</p>
+
+            {% if tree_request.image %}
+                <img src="{{ tree_request.image.url }}" class="req-img">
+            {% endif %}
+
+            <p class="timestamp">📅 {{ tree_request.created_at|date:"M d, Y h:i A" }}</p>
+        </div>
+
+        <!-- Answer Card -->
+        <div class="card answer-card">
+            <h2>💬 Contributor Answer</h2>
+            <hr>
+
+            {% if answers %}
+                {% for ans in answers %}
+                    <div class="answer-block">
+                        <p><strong>Answered By:</strong> {{ ans.answered_by.username }}</p>
+                        <p>{{ ans.response_text }}</p>
+
+                        {% if ans.reference_image %}
+                            <img src="{{ ans.reference_image.url }}" class="ans-img">
+                        {% endif %}
+
+                        {% if ans.video_url %}
+                            <p>🎥 <a href="{{ ans.video_url }}" target="_blank">Watch Video</a></p>
+                        {% endif %}
+
+                        {% if ans.external_url %}
+                            <p>🔗 <a href="{{ ans.external_url }}" target="_blank">Reference Link</a></p>
+                        {% endif %}
+
+                        <p class="timestamp">🕒 {{ ans.created_at|date:"M d, Y h:i A" }}</p>
+                    </div>
+                {% endfor %}
+            {% else %}
+                <p class="no-ans">No answer submitted yet.</p>
+            {% endif %}
+        </div>
+    </div>
+    {% include 'Common/footer.html' %}
+</body>
+</html>

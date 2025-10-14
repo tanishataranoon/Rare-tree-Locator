@@ -198,15 +198,9 @@ def delete_request(request, id):
 
 
 @login_required
-def answer_modal(request, request_id):
-    tree_request = get_object_or_404(TreeRequest, id=request_id)
-    form = TreeAnswerForm()
-    return render(request, "answer/answer_modal.html", {"tree_request": tree_request, "form": form})
-
-
-@login_required
-def submit_answer(request, request_id):
-    tree_request = get_object_or_404(TreeRequest, id=request_id)
+def answer_request(request, pk):
+    tree_request = get_object_or_404(TreeRequest, pk=pk)
+    answers = tree_request.answers.all().order_by('-created_at')
 
     if request.method == "POST":
         form = TreeAnswerForm(request.POST, request.FILES)
@@ -215,47 +209,25 @@ def submit_answer(request, request_id):
             answer.tree_request = tree_request
             answer.answered_by = request.user
             answer.save()
+            return redirect('answer_request', pk=pk)
+    else:
+        form = TreeAnswerForm()
 
-            tree_request.status = "answered"
-            tree_request.save()
-            return JsonResponse({"success": True})
-    return JsonResponse({"success": False, "errors": form.errors})
-
-# View answers for a request
-@login_required
-def view_answers(request, request_id):
-    tree_request = get_object_or_404(TreeRequest, id=request_id)
-    answers = tree_request.answers.all()
-    return render(request, "answers/view_answers.html", {"tree_request": tree_request, "answers": answers})
-
-# # Contributor: answer a request
-# @login_required
-# def answer_request(request, request_id):
-#     if request.user.user_type != "contributor":
-#         return HttpResponseForbidden("Only contributors can answer requests.")
-
-#     tree_request = get_object_or_404(TreeRequest, id=request_id)
-
-#     if request.method == "POST":
-#         form = TreeAnswerForm(request.POST, request.FILES)
-#         if form.is_valid():
-#             answer = form.save(commit=False)
-#             answer.request = tree_request
-#             answer.contributor = request.user
-#             answer.save()
-
-#             # update request status
-#             tree_request.status = "answered"
-#             tree_request.save()
-
-#             return redirect("contributor_dashboard")
-
-#     else:
-#         form = TreeAnswerForm()
-
-#     return render(request, "requests/answer_request.html", {"form": form, "tree_request": tree_request})
+    return render(request, 'Request/answer_request.html', {
+        'tree_request': tree_request,
+        'answers': answers,
+        'form': form,
+    })
 
 
+def view_submitted_answer(request, pk):
+    tree_request = get_object_or_404(TreeRequest, pk=pk)
+    answers = tree_request.answers.all().order_by("-created_at")
+
+    return render(request, "Request/view_submitted_answer.html", {
+        "tree_request": tree_request,
+        "answers": answers
+    })
 
 # Contact form
 def contact(request):
@@ -263,7 +235,6 @@ def contact(request):
         name = request.POST.get("name")
         email = request.POST.get("email")
         message = request.POST.get("message")
-        # এখানে তুমি এসে DB-এ রেখে দিতে পারো বা send_mail() করে ইমেইল পাঠাতে পারো
         print("CONTACT MSG:", name, email, message)
         messages.success(request, "Thanks — your message was received!")
         return redirect('contact')

@@ -1,0 +1,61 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Answer Request - {{ tree_request.title }}</title>
+    <link rel="stylesheet" href="{% static 'css/Request/answer_page.css' %}">
+</head>
+
+<body>
+    <div class="container">
+        <h1>🌳 {{ tree_request.title }}</h1>
+        <p><strong>Location:</strong> {{ tree_request.location }}</p>
+        <p><strong>Submitted by:</strong> {{ tree_request.requester.username }}</p>
+        <p>{{ tree_request.description }}</p>
+
+        {% if tree_request.image %}
+        <img src="{{ tree_request.image.url }}" class="request-img">
+        {% endif %}
+
+        <hr>
+
+        <h2>💬 Contributor Answers ({{ answers.count }})</h2>
+        {% for ans in answers %}
+        <div class="answer-card">
+            <p><strong>By:</strong>
+                <a href="{% url 'profile_view' ans.answered_by.id %}">{{ ans.answered_by.username }}</a>
+                <span class="timestamp">({{ ans.created_at|date:"M d, Y h:i A" }})</span>
+            </p>
+            <p>{{ ans.response_text }}</p>
+
+            {% if ans.reference_image %}
+            <img src="{{ ans.reference_image.url }}" class="answer-img">
+            {% endif %}
+
+            {% if ans.video_url %}
+            <p>🎥 <a href="{{ ans.video_url }}" target="_blank">Watch Video</a></p>
+            {% endif %}
+
+            {% if ans.external_url %}
+            <p>🔗 <a href="{{ ans.external_url }}" target="_blank">More Info</a></p>
+            {% endif %}
+        </div>
+        {% empty %}
+        <p>No answers yet.</p>
+        {% endfor %}
+
+        {% if user.user_type == "contributor" %}
+        <hr>
+        <h3>✏️ Submit Your Answer</h3>
+        <form method="POST" enctype="multipart/form-data">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button type="submit" class="btn-primary">Submit Answer</button>
+        </form>
+        {% endif %}
+    </div>
+</body>
+
+</html>

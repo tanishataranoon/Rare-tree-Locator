@@ -1,0 +1,84 @@
+body {
+    font-family: "Segoe UI", Arial, sans-serif;
+    background-color: #f8fafc;
+    margin: 0;
+    padding-top: 80px;  /* adjust based on your header height */
+    padding-bottom: 60px; /* adjust based on footer height */
+}
+
+.main-container {
+   display: flex;
+    flex-wrap: wrap;
+    gap: 30px;
+    justify-content: center;
+    margin-top: 90px; /* slightly more than header height */
+    position: relative;
+    z-index: 1;
+}
+.back-link {
+    display: inline-block;
+    margin-top: 100px; /* same as header height */
+    margin-left: 20px;
+    z-index: 1001;
+    position: relative;
+    color: #2e7d32;
+    font-weight: bold;
+    text-decoration: none;
+}
+
+.card {
+    background: #fff;
+    border-radius: 15px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    padding: 25px;
+    width: 45%;
+    min-width: 380px;
+    max-height: 80vh;  /* prevent it from overflowing screen */
+    overflow-y: auto;  /* scroll if content is too big */
+    transition: 0.3s ease;
+}
+
+
+.card:hover {
+    transform: translateY(-3px);
+}
+
+h2 {
+    color: #2e7d32;
+    margin-top: 0;
+}
+
+hr {
+    border: none;
+    border-top: 2px solid #e0e0e0;
+    margin: 10px 0 15px;
+}
+
+.req-img, .ans-img {
+    width: 100%;
+    height: auto;  /* maintains aspect ratio */
+    max-height: 300px;  /* prevents it from being too tall */
+    border-radius: 12px;
+    margin-top: 10px;
+}
+
+
+.timestamp {
+    color: #777;
+    font-size: 0.9em;
+    margin-top: 10px;
+}
+
+.answer-block {
+    background-color: #f1f8e9;
+    padding: 15px;
+    border-left: 5px solid #4caf50;
+    border-radius: 10px;
+    margin-bottom: 15px;
+}
+
+.no-ans {
+    text-align: center;
+    color: #aaa;
+    font-style: italic;
+}

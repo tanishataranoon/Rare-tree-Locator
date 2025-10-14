@@ -29,9 +29,14 @@
         {% if requests %}
         <div class="request-grid">
             {% for req in requests %}
-            <div class="request-card-modern" data-id="{{ req.id }}" data-title="{{ req.title }}"
-                data-description="{{ req.description }}" data-requester="{{ req.requester.username }}"
-                data-location="{{ req.location }}" data-has-answer="{% if req.answer %}true{% else %}false{% endif %}">
+            <div class="request-card-modern" 
+                 data-id="{{ req.id }}" 
+                 data-title="{{ req.title }}"
+                 data-description="{{ req.description }}"
+                 data-requester="{{ req.requester.username }}"
+                 data-location="{{ req.location }}"
+                 data-has-answer="{% if req.answers.exists %}true{% else %}false{% endif %}">
+                 
                 <div class="image-box">
                     {% if req.image %}
                     <img src="{{ req.image.url }}" alt="{{ req.title }}">
@@ -48,7 +53,6 @@
                         <span class="date">{{ req.created_at|date:"M d, Y" }}</span>
                     </div>
 
-                    <!-- Footer Buttons -->
                     <div class="card-footer">
                         <button class="btn-view">View Details</button>
 
@@ -64,20 +68,16 @@
         <p class="empty-msg">No requests found.</p>
         {% endif %}
 
-        <!-- ========================= -->
-        <!-- New Request Modal -->
-        <!-- ========================= -->
+        <!-- ================= New Request Modal ================= -->
         <div id="new-request-modal" class="modal">
             <div class="modal-content new-request-modern">
                 <span id="new-request-close" class="close">&times;</span>
-
                 <div class="modal-header">
                     <h2>Create New Tree Request</h2>
                     <p class="modal-subtitle">Submit details and an image to identify or record a tree.</p>
                 </div>
 
-                <form id="new-request-form" action="{% url 'create_request' %}" enctype="multipart/form-data"
-                    class="modern-form">
+                <form id="new-request-form" action="{% url 'create_request' %}" enctype="multipart/form-data" class="modern-form">
                     {% csrf_token %}
                     <div class="form-group">
                         <label for="title">Title</label>
@@ -87,8 +87,7 @@
 
                     <div class="form-group">
                         <label for="description">Description</label>
-                        <textarea name="description" id="description" rows="3" placeholder="Describe the tree..."
-                            required></textarea>
+                        <textarea name="description" id="description" rows="3" placeholder="Describe the tree..." required></textarea>
                         <div class="form-error" id="description-error"></div>
                     </div>
 
@@ -113,14 +112,11 @@
             </div>
         </div>
 
-        <!-- ========================= -->
-        <!-- Request Details Modal -->
-        <!-- ========================= -->
+        <!-- ================= Request Details Modal ================= -->
         <div id="request-modal" class="modal">
             <div class="modal-content details-modal">
                 <span class="close">&times;</span>
 
-                <!-- Header Section -->
                 <div class="modal-header-info">
                     <h2 id="modal-title">Request Details</h2>
                     <div class="info-grid">
@@ -131,7 +127,6 @@
                     </div>
                 </div>
 
-                <!-- Main Body Grid -->
                 <div class="modal-body-grid">
                     <div class="left-section">
                         <h4>Submitted Image</h4>
@@ -146,33 +141,25 @@
                         <h4>Additional Notes</h4>
                         <p id="modal-notes">—</p>
                         <div class="status-section">
-                            <p><strong>Current Status:</strong> <span id="modal-status"
-                                    class="status-badge pending">Pending</span></p>
+                            <p><strong>Current Status:</strong> <span id="modal-status" class="status-badge pending">Pending</span></p>
                         </div>
                     </div>
                 </div>
 
-                <!-- Footer Buttons -->
                 <div class="modal-footer">
-                    <!-- Buttons for common users -->
-                    {% if user.is_authenticated and user.user_type == 'common' %}
                     <button id="view-answer-btn" class="btn-view-answer" style="display:none;">View Answer</button>
-                    {% endif %}
 
-                    <!-- Buttons for contributors/admins -->
                     {% if user.is_authenticated and user.user_type != 'common' %}
+                    <a id="answer-btn" href="#" class="btn btn-primary">Answer</a>
                     <button class="btn btn-skip">Skip / Avoid</button>
-                    <button class="open-answer-modal btn btn-primary" style="display:none;">Answer</button>
-                    <a href="#" class="btn btn-add">Add Tree Officially</a>
                     {% endif %}
-                </div>
 
+                    <a href="#" class="btn btn-add">Add Tree Officially</a>
+                </div>
             </div>
         </div>
 
-        <!-- ========================= -->
-        <!-- Delete Confirmation Modal -->
-        <!-- ========================= -->
+        <!-- ================= Delete Confirmation Modal ================= -->
         <div id="delete-modal" class="modal">
             <div class="modal-content">
                 <span class="close">&times;</span>
@@ -186,9 +173,6 @@
         </div>
     </div>
 
-    <div id="answerModalContainer"></div>
-
     <script src="{% static 'js/Request/request_list.js' %}"></script>
 </body>
-
 </html>

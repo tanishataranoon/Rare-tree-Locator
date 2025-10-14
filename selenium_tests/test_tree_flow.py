@@ -5,6 +5,7 @@ from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 
+@pytest.mark.run(order=3)  # runs first
 @pytest.mark.usefixtures("login_contributor")
 def test_full_tree_flow(login_contributor):
     driver = login_contributor
@@ -48,5 +49,5 @@ def test_full_tree_flow(login_contributor):
         EC.presence_of_element_located((By.CSS_SELECTOR, ".leaflet-marker-icon"))
     )
     assert marker is not None
-    
+
     print("✅ Full tree flow test passed!")

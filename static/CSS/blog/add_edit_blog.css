@@ -4,7 +4,7 @@ header {
     left: 0;
     width: 100%;
     z-index: 1000;
-    height: 70px; /* define once */
+    height: 45px; /* define once */
 }
 body {
     font-family: Arial, sans-serif;

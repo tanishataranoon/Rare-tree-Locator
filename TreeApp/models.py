@@ -5,6 +5,36 @@ from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django.utils import timezone
 from MyApp.models import User, Profile
+from django.contrib.auth import get_user_model
+from django.db import migrations
+
+def fix_null_treeanswers(apps, schema_editor):
+    TreeAnswer = apps.get_model("TreeApp", "TreeAnswer")
+    User = apps.get_model("auth", "User")
+
+    try:
+        default_user = User.objects.get(username="admin")  # replace with a real user
+    except User.DoesNotExist:
+        return
+
+    # Fill missing answered_by
+    TreeAnswer.objects.filter(answered_by__isnull=True).update(answered_by=default_user)
+
+    # Fill missing response_text
+    TreeAnswer.objects.filter(response_text__isnull=True).update(response_text="No response provided")
+
+class Migration(migrations.Migration):
+
+    dependencies = [
+        ('TreeApp', 'previous_migration_name'),  # replace with your last migration
+    ]
+
+    operations = [
+        migrations.RunPython(fix_null_treeanswers),
+    ]
+
+
+
 
 #tree profile model
 class TreeProfile(models.Model):
@@ -13,6 +43,8 @@ class TreeProfile(models.Model):
     scientific_name = models.CharField(max_length=200, blank=True, null=True)
     habitat = models.CharField(max_length=200, blank=True, null=True)
     description = models.TextField(blank=True, null=True)
+    map_embed = models.TextField(blank=True, null=True)  # For iframe embed code
+    video_url = models.URLField(blank=True, null=True)
 
     # Location
     latitude = models.DecimalField(max_digits=9, decimal_places=6)   # e.g., 23.810331
@@ -69,54 +101,50 @@ class TreePhoto(models.Model):
         return f"Photo of {self.tree.street_name}"
 
 #request model
+
 class TreeRequest(models.Model):
     STATUS_CHOICES = [
         ("pending", "Pending"),
         ("answered", "Answered"),
     ]
 
-    requester = models.ForeignKey(
-        settings.AUTH_USER_MODEL,
-        on_delete=models.CASCADE,
-        related_name="tree_requests"
-    )
-    title = models.CharField(max_length=255)  # short summary e.g. "Unknown Flowering Tree"
+    requester = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="tree_requests")
+    title = models.CharField(max_length=255)
     description = models.TextField()
     location = models.CharField(max_length=255, blank=True, null=True)
+    image = models.ImageField(upload_to="request_images/", blank=True, null=True)
     created_at = models.DateTimeField(default=timezone.now)
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default="pending")
 
     def __str__(self):
-        return f"REQ-{self.id} | {self.title} | {self.status}"
-#to allow multiple images per request
-class RequestImage(models.Model):
-    tree_request = models.ForeignKey(TreeRequest, on_delete=models.CASCADE, related_name="images")
-    image = models.ImageField(upload_to="request_images/")
+        return self.title
 
-    def __str__(self):
-        return f"Image for Request {self.request.id}"
     
     
 # Answer Model
 class TreeAnswer(models.Model):
-    request = models.OneToOneField(   # one request -> one official answer
-        TreeRequest,
+    tree_request = models.ForeignKey(
+        "TreeRequest",
         on_delete=models.CASCADE,
-        related_name="answer"
+        related_name="answers"
     )
-    contributor = models.ForeignKey(
+    answered_by = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,
-        related_name="tree_answers"
+        related_name="answers_given"
     )
-    answer_text = models.TextField(blank=True, null=True)
+    response_text = models.TextField(default="", blank=False)  # ✅ Default avoids migration issues
+    reference_image = models.ImageField(upload_to="answer_images/", blank=True, null=True)
+    video_url = models.URLField(blank=True, null=True)
+    external_url = models.URLField(blank=True, null=True)
     created_at = models.DateTimeField(default=timezone.now)
 
-    # Attach optional photo(s)
-    photo = models.ImageField(upload_to="answers/", blank=True, null=True)
-
-    # If you want multiple photos, better to create another model TreeAnswerPhoto
+    def save(self, *args, **kwargs):
+        super().save(*args, **kwargs)
+        # ✅ Automatically mark request as answered
+        if self.tree_request.status != "answered":
+            self.tree_request.status = "answered"
+            self.tree_request.save()
 
     def __str__(self):
-        return f"Answer to {self.request.title} by {self.contributor.username}"
-
+        return f"Answer to {self.tree_request.title} by {self.answered_by.username}"

@@ -1,0 +1,51 @@
+{% extends 'Dashboard/dashboard_base.html' %}
+
+{% block title %}Dashboard Overview{% endblock %}
+
+{% block content %}
+
+<section class="overview">
+    <h1>Dashboard Overview</h1>
+    <p>Monitor your activity and manage tree requests</p>
+    <a href="/" class="view-site">🌐 View Site</a>
+</section>
+
+<section class="summary-cards">
+    <div class="card">
+        <h3>Pending Requests</h3>
+        <div class="count">{{ pending_count }}</div>
+        <span class="icon">⏳</span>
+    </div>
+    <div class="card">
+        <h3>Answered This Week</h3>
+        <div class="count">{{ answered_week_count }}</div>
+        <span class="icon">💬</span>
+    </div>
+    <div class="card">
+        <h3>Trees Added</h3>
+        <div class="count">{{ trees_added }}</div>
+        <span class="icon">🌲</span>
+    </div>
+    <div class="card">
+        <h3>Total Contributions</h3>
+        <div class="count">{{ total_contrib }}</div>
+        <span class="icon">✅</span>
+    </div>
+</section>
+
+<section class="recent-activity">
+    <h2>Recent Activity</h2>
+    {% if recent_activity %}
+    <ul>
+        {% for act in recent_activity %}
+        <li>
+            <strong>{{ act.title }}</strong> — {{ act.status }}
+            <span class="date">{{ act.created_at|date:"M d, Y" }}</span>
+        </li>
+        {% endfor %}
+    </ul>
+    {% else %}
+    <p>No recent activity</p>
+    {% endif %}
+</section>
+{% endblock %}

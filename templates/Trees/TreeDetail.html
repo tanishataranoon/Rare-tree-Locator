@@ -1,0 +1,260 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>{{ tree.street_name }} — Rare Tree Locator</title>
+  <style>
+    body {
+      font-family: "Poppins", sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: white;
+      color: #333;
+      line-height: 1.6;
+    }
+
+    /* ===== Header ===== */
+    .header {
+      background-color: #e0d2b0;
+      padding: 30px 20px;
+      text-align: center;
+      border-bottom: 4px solid white;
+    }
+
+    .header h1 {
+      font-size: 2rem;
+      margin-bottom: 5px;
+    }
+
+    .header p {
+      font-size: 1.1rem;
+      color: #444;
+    }
+
+    /* ===== Tree Image ===== */
+    .tree-image {
+      text-align: center;
+      background: #fffaf0;
+      padding: 30px 0;
+    }
+
+    .tree-image img {
+      width: 60%;
+      max-width: 500px;
+      border-radius: 15px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+    }
+
+    /* ===== Info Section ===== */
+    .tree-info {
+      padding: 40px 20px;
+      max-width: 1000px;
+      margin: auto;
+    }
+
+    .info-box {
+      background: #fffdf5;
+      border-radius: 10px;
+      padding: 30px;
+      box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+    }
+
+    .info-box h2 {
+      border-left: 5px solid #b5a16a;
+      padding-left: 10px;
+      margin-bottom: 20px;
+      color: #3b5d2a;
+    }
+
+    .info-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 25px;
+      margin-top: 20px;
+    }
+
+    .info-item {
+      background: #f8f5e9;
+      padding: 20px;
+      border-radius: 12px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+      transition: transform 0.3s ease;
+    }
+
+    .info-item:hover {
+      transform: translateY(-5px);
+    }
+
+    .info-item h4 {
+      color: #3b5d2a;
+      margin-bottom: 8px;
+    }
+
+    /* ===== Video Section ===== */
+    .video-section {
+      text-align: center;
+      padding: 50px 20px;
+      background: #fffaf0;
+    }
+
+    .video-section h2 {
+      margin-bottom: 20px;
+      font-size: 1.5rem;
+      color: #3b5d2a;
+    }
+
+    .video-wrapper {
+      max-width: 700px;
+      margin: auto;
+      border-radius: 10px;
+      overflow: hidden;
+      box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+    }
+
+    iframe {
+      width: 100%;
+      height: 400px;
+      border: none;
+    }
+
+    /* ===== Map Section ===== */
+    .map-section {
+      text-align: center;
+      padding: 50px 20px;
+      background: white;
+    }
+
+    .map-section h2 {
+      margin-bottom: 20px;
+      font-size: 1.5rem;
+      color: #3b5d2a;
+    }
+
+    .map-wrapper {
+      max-width: 1000px;
+      margin: auto;
+      border-radius: 10px;
+      overflow: hidden;
+      box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+    }
+
+    /* ===== Related Images ===== */
+    .related-images {
+      background: #f4efdf;
+      padding: 50px 20px;
+      text-align: center;
+    }
+
+    .related-images h2 {
+      margin-bottom: 30px;
+      font-size: 1.5rem;
+      color: #3b5d2a;
+    }
+
+    .image-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 20px;
+      max-width: 1000px;
+      margin: auto;
+    }
+
+    .image-grid img {
+      width: 100%;
+      height: 200px;
+      object-fit: cover;
+      border-radius: 12px;
+      box-shadow: 0 3px 8px rgba(0,0,0,0.1);
+      transition: transform 0.3s ease;
+    }
+
+    .image-grid img:hover {
+      transform: scale(1.05);
+    }
+
+    footer {
+      text-align: center;
+      background: #f3f2ef;
+      padding: 15px;
+      font-size: 0.9rem;
+      margin-top: 30px;
+    }
+
+    .back-link {
+      display: inline-block;
+      margin: 20px;
+      color: #3b5d2a;
+      text-decoration: none;
+      font-weight: 600;
+    }
+  </style>
+</head>
+<body>
+  <header class="header">
+    <h1>Discover the Secrets of the Majestic <em>"{{ tree.street_name }}" 🌿</em></h1>
+    <p>{{ tree.scientific_name }}</p>
+  </header>
+
+  <!-- ===== Tree Image ===== -->
+  <section class="tree-image">
+    {% if tree.photos.first %}
+      <img src="{{ tree.photos.first.image.url }}" alt="{{ tree.street_name }}">
+    {% else %}
+      <img src="{% static 'images/placeholder_tree.jpg' %}" alt="Tree Image">
+    {% endif %}
+  </section>
+
+  <!-- ===== Tree Details ===== -->
+  <section class="tree-info">
+    <div class="info-box">
+      <h2>Tree Details</h2>
+      <div class="info-grid">
+        <div class="info-item"><h4>🌳 Common Name</h4><p>{{ tree.street_name }}</p></div>
+        <div class="info-item"><h4>🔬 Scientific Name</h4><p>{{ tree.scientific_name|default:"N/A" }}</p></div>
+        <div class="info-item"><h4>🌴 Habitat</h4><p>{{ tree.habitat|default:"Unknown" }}</p></div>
+        <div class="info-item"><h4>📍 Latitude</h4><p>{{ tree.latitude }}</p></div>
+        <div class="info-item"><h4>📍 Longitude</h4><p>{{ tree.longitude }}</p></div>
+        <div class="info-item"><h4>🪴 Description</h4><p>{{ tree.description|default:"No description available." }}</p></div>
+        <div class="info-item"><h4>🌿 Rarity Status</h4><p>{{ tree.rarity_status|default:"Unknown" }}</p></div>
+        <div class="info-item"><h4>📏 Height</h4><p>{{ tree.height_m|default:"Not measured" }} m</p></div>
+        <div class="info-item"><h4>⏳ Age Estimate</h4><p>{{ tree.age_estimate|default:"N/A" }} years</p></div>
+        <div class="info-item"><h4>✅ Verified</h4><p>{% if tree.verified %}Yes{% else %}No{% endif %}</p></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== Video Section ===== -->
+  <section class="video-section">
+    <h2>From Seed to Shade: Watch the Journey!</h2>
+    <div class="video-wrapper">
+      {% if tree.video_url %}
+        <iframe src="{{ tree.video_url }}" allowfullscreen></iframe>
+      {% else %}
+        <iframe src="https://www.youtube.com/embed/T9RZxS3oKcM" allowfullscreen></iframe>
+      {% endif %}
+    </div>
+  </section>
+
+  <!-- ===== Map Section ===== -->
+  <section class="map-section">
+    <h1>"Track the Rare Knema Tree Across Bangladesh – See It on the Map!"</h1>
+    <h2>Tree Location: Dulahazara, Cox’s Bazar (Knema bengalensis)</h2>
+    
+    <div class="map-wrapper">
+      <iframe
+  width="600" height="450" style="border:0"
+  src="https://www.google.com/maps?q=21.7433,92.0625&hl=es;z=14&output=embed"
+  allowfullscreen>
+</iframe>
+    </div>
+  </section>
+
+ 
+
+  <footer>
+    <p>&copy; 2025 Rare Tree Locator | Designed by J.G.</p>
+  </footer>
+</body>
+</html>

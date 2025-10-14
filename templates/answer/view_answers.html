@@ -1,0 +1,21 @@
+<h4>Answers for: {{ tree_request.title }}</h4>
+
+{% for ans in answers %}
+<div class="card mb-3">
+  <div class="card-body">
+    <p><strong>Answered by:</strong> {{ ans.answered_by.username }}</p>
+    <p>{{ ans.response_text }}</p>
+    {% if ans.video_url %}
+      <p><a href="{{ ans.video_url }}" target="_blank">Watch Video</a></p>
+    {% endif %}
+    {% if ans.external_url %}
+      <p><a href="{{ ans.external_url }}" target="_blank">Reference Link</a></p>
+    {% endif %}
+    {% if ans.reference_image %}
+      <img src="{{ ans.reference_image.url }}" width="200" alt="Reference Image">
+    {% endif %}
+  </div>
+</div>
+{% empty %}
+<p>No answers yet.</p>
+{% endfor %}

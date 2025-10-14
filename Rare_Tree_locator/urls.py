@@ -20,9 +20,9 @@ urlpatterns = [
     path('signup/', myapp_views.signup_view, name='signup'), 
     path('login/', myapp_views.login_view, name='login'),
     path("logout/", LogoutView.as_view(next_page="HomePage"), name="logout"),
-
+    path('edit_profile/', myapp_views.edit_profile, name="edit_profile"),
     path('profile_view/<str:username>/', myapp_views.profile_view, name='profile_view'),  # Profile view
-
+    path('contact/', treeapp_views.contact, name='contact'),
 
     # Blog app views
     path('blog_list', blogapp_views.blog_list, name='blog_list'),  # Added blog list view
@@ -33,11 +33,19 @@ urlpatterns = [
 
     # Tree app views
     path('trees/', treeapp_views.TreeProfiles, name = 'TreeProfiles'),# Tree profiles view
+    path('map/', treeapp_views.map_page, name='map_page'),
+    path('add-tree-ajax/', treeapp_views.add_tree_ajax, name='add_tree_ajax'),
+    path('api/trees/', treeapp_views.get_trees_json, name='get_trees_json'),
+    
     path("dashboard/", treeapp_views.dashboard, name="dashboard"),#user dashboard view
-    path("dashboard/ajax/create/", treeapp_views.ajax_create_request, name="ajax_create_request"),#ajax create request view
-    path("dashboard/ajax/update/<int:request_id>/", treeapp_views.ajax_update_request, name="ajax_update_request"),#ajax update request view
-    path("dashboard/ajax/delete/<int:request_id>/", treeapp_views.ajax_delete_request, name="ajax_delete_request"),#ajax delete request view
+    path('tree-requests/', treeapp_views.tree_requests, name='tree_requests'),
 
+    path("requests/", treeapp_views.request_list, name="request_list"),
+    path("requests/create/", treeapp_views.create_request, name="create_request"),
+    path("requests/<int:pk>/detail/", treeapp_views.request_detail_ajax, name="request_detail_ajax"),
+    path('requests/<int:id>/delete/', treeapp_views.delete_request, name='delete_request'),
 
-
+    path('answer-modal/<int:request_id>/', treeapp_views.answer_modal, name='answer_modal'),
+    path('submit-answer/<int:request_id>/', treeapp_views.submit_answer, name='submit_answer'),
+    path('view-answers/<int:request_id>/', treeapp_views.view_answers, name='view_answers'),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

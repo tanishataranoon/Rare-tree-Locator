@@ -32,16 +32,20 @@ def add_tree_ajax(request):
     return JsonResponse({"success": False, "error": "Invalid request"})
 
 # Common user request form
-# forms.py
 class TreeRequestForm(forms.ModelForm):
     class Meta:
         model = TreeRequest
-        fields = ["title", "description", "location"]
-
+        fields = ["title", "description", "location", "image"]
 
 
 # Contributor answer form
 class TreeAnswerForm(forms.ModelForm):
     class Meta:
         model = TreeAnswer
-        fields = ["answer_text", "photo"]
+        fields = ["response_text", "reference_image", "video_url", "external_url"]
+        widgets = {
+            "response_text": forms.Textarea(attrs={
+                "placeholder": "Provide your expert identification and any additional information...",
+                "rows": 4
+            }),
+        }

@@ -25,23 +25,24 @@
 
                 <!-- Trees -->
                 <li class="dropdown">
-                    <a href="{% url 'TreeProfiles' %}" class="dropdown-toggle"
-                        class="{% if request.resolver_match.url_name in 'TreeProfiles create_tree my_trees' %}active{% endif %}">
+                    <a href="{% url 'TreeProfiles' %}" class="dropdown-toggle
+                        {% if request.resolver_match.url_name == 'TreeProfiles' or request.resolver_match.url_name == 'create_tree' or request.resolver_match.url_name == 'my_trees' %} active {% endif %}">
                         Trees
                     </a>
                     {% if user.is_authenticated and user.user_type == 'contributor' %}
                     <ul class="dropdown-menu">
-                        <li><a href="#" class="add-symbol">Create Tree</a></li>
+                        <li><a href="{% url 'add_tree_ajax' %}" class="add-symbol">Create Tree</a></li>
                         <li><a href="#">My Trees</a></li>
                         <li><a href="{% url 'TreeProfiles' %}">All Trees</a></li>
                     </ul>
                     {% endif %}
                 </li>
+                
 
                 <!-- Blog -->
                 <li class="dropdown">
-                    <a href="{% url 'blog_list' %}" class="dropdown-toggle"
-                        class="{% if request.resolver_match.url_name in 'blog_list add_blog my_posts' %}active{% endif %}">
+                    <a href="{% url 'blog_list' %}" class="dropdown-toggle
+                        {% if request.resolver_match.url_name == 'blog_list' or request.resolver_match.url_name == 'add_blog' or request.resolver_match.url_name == 'my_posts' %} active {% endif %}">
                         Blog
                     </a>
                     {% if user.is_authenticated and user.user_type == 'contributor' %}
@@ -52,6 +53,7 @@
                     </ul>
                     {% endif %}
                 </li>
+                
 
                 <!-- Map -->
                 <li>
@@ -59,10 +61,12 @@
                         Map
                     </a>
                 </li>
+                <li><a href="{% url 'contact' %}">Contact</a></li>
+
 
                 {% if user.is_authenticated %}
                 <li class="profile-menu">
-                    <img src="{% if user.profile.profile_pic %}{{ user.profile.profile_pic.url }}{% else %}{% static 'images/default_profile.png' %}{% endif %}"
+                    <img src="{% if user.profile.profile_pic %}{{ user.profile.profile_pic.url }}{% else %}{{ MEDIA_URL }}default_profile.png{% endif %}"
                         alt="Profile" class="profile-pic" id="profile-icon">
                 </li>
                 {% else %}
@@ -77,7 +81,7 @@
             <span></span>
         </div>
     </header>
-    <!-- ✅ Move these OUTSIDE header -->
+    <!-- sidebar -->
     {% if user.is_authenticated %}
     <div id="profile-panel" class="profile-panel">
         <div class="profile-header">
@@ -89,6 +93,7 @@
         <ul class="profile-links">
             <li><a href="{% url 'profile_view' user.username %}">Profile</a></li>
             <li><a href="{% url 'dashboard' %}">Dashboard</a></li>
+            <li><a href="{% url 'contact' %}">Contact Us</a></li>
             <li>
                 <form method="post" action="{% url 'logout' %}">
                     {% csrf_token %}

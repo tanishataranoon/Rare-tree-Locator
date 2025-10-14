@@ -1,4 +1,4 @@
-{% load static %} 
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 
@@ -34,7 +34,11 @@
 
         <!-- Featured Post -->
         <div class="featured-card">
+            {% if featured.image %}
             <img src="{{ featured.image.url }}" alt="{{ featured.title }}">
+            {% else %}
+            <img src="{% static 'images/default_blog.png' %}" alt="{{ featured.title }}">
+            {% endif %}
             <div class="overlay">
                 <a href="{% url 'blog_detail' featured.id %}">
                     <h2>{{ featured.title }}</h2>
@@ -47,7 +51,8 @@
                 {% if user.is_authenticated and user == featured.author %}
                 <div class="post-actions">
                     <a href="{% url 'edit_blog' featured.id %}" class="btn edit-btn">Edit</a>
-                    <button class="btn delete-btn" data-post-id="{{ featured.id }}" data-post-title="{{ featured.title }}">
+                    <button class="btn delete-btn" data-post-id="{{ featured.id }}"
+                        data-post-title="{{ featured.title }}">
                         Delete
                     </button>
                 </div>
@@ -61,7 +66,12 @@
             {% for post in page_obj %}
             <div class="card">
                 <a href="{% url 'blog_detail' post.id %}">
+                    {% if post.image %}
                     <img src="{{ post.image.url }}" alt="{{ post.title }}">
+                    {% else %}
+                    <img src="{% static 'images/default_blog.png' %}" alt="{{ post.title }}">
+                    {% endif %}
+
                     <h4>{{ post.title }}</h4>
                 </a>
                 <p>By <a href="#">{{ post.author.username }}</a></p>
@@ -104,4 +114,5 @@
     {% endblock %}
     {% include 'Common/footer.html' %}
 </body>
+
 </html>

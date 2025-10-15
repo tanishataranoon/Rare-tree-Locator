@@ -5,10 +5,13 @@
 <head>
     <meta charset="UTF-8">
     <title>Answer Request - {{ tree_request.title }}</title>
-    <link rel="stylesheet" href="{% static 'css/Request/answer_page.css' %}">
+    <link rel="stylesheet" href="{% static 'css/Request/answer_request.css' %}">
 </head>
 
 <body>
+    {% include 'common/header.html' %}
+    <a href="{% url 'dashboard' %}" class="back-link">&larr; Back to Dashboard</a>
+
     <div class="container">
         <h1>🌳 {{ tree_request.title }}</h1>
         <p><strong>Location:</strong> {{ tree_request.location }}</p>
@@ -56,6 +59,7 @@
         </form>
         {% endif %}
     </div>
+    {% include 'common/footer.html' %}
 </body>
 
 </html>

@@ -140,7 +140,7 @@ def dashboard(request):
 @login_required
 def tree_requests(request):
     # Whatever logic you used in your old `request_list` view
-    my_requests = TreeRequest.objects.filter(user=request.user)
+    my_requests = TreeRequest.objects.filter(requester=request.user)
     all_requests = TreeRequest.objects.all().order_by('-created_at')
 
     context = {

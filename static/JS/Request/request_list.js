@@ -189,3 +189,21 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 });
+$("#new-request-form").on("submit", function(e) {
+    e.preventDefault();
+    $.ajax({
+        url: "{% url 'create_request' %}",
+        type: "POST",
+        data: new FormData(this),
+        processData: false,
+        contentType: false,
+        success: function(data) {
+            if (data.success) {
+                alert("Request created successfully!");
+                location.reload(); // reload to show the new request
+            } else {
+                alert("Error: " + JSON.stringify(data.errors));
+            }
+        }
+    });
+});

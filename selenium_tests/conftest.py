@@ -48,10 +48,10 @@ def login_normal_user(driver):
     password_field = driver.find_element(By.NAME, "password")
 
     # Fill credentials (normal user account)
-    username_field.send_keys("normal_user")  
-    password_field.send_keys("password123", Keys.RETURN)
+    username_field.send_keys("teacher")  
+    password_field.send_keys("<3yourself97", Keys.RETURN)
 
     WebDriverWait(driver, 10).until(EC.url_contains("profile"))
-    print("✅ Successfully logged in as normal user. Redirected to profile page.")
+    print("✅ Successfully logged in as Common  user. Redirected to profile page.")
 
     return driver

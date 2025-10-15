@@ -78,6 +78,7 @@ map.on('locationerror', onLocationError);
           if (!isNaN(lat) && !isNaN(lng)) {
             const popupContent = `
               <div style="text-align:center; max-width:160px;">
+                <a href="/trees/${tree.id}/" style="text-decoration:none; color:inherit;">
                 <b>${tree.street_name}</b><br>
                 ${tree.description ? `<small>${tree.description}</small><br>` : ""}
                 ${tree.image_url ? `<img src="${tree.image_url}" alt="${tree.street_name}" style="width:120px; border-radius:8px; margin-top:5px;">` : ""}

@@ -11,6 +11,10 @@
 
 <body>
   {% include 'Common/header.html' %}
+  <div class="falling-lights">
+    <span></span><span></span><span></span><span></span><span></span>
+    <span></span><span></span><span></span><span></span><span></span>
+  </div>
 
   <div class="page-container">
 
@@ -41,16 +45,19 @@
       <form method="POST">
         {% csrf_token %}
         {% if messages %}
-        <ul class="messages">
-          {% for message in messages %}
-          {% if "login" in message.tags %}
-          <li style="color:red;">{{ message }}</li>
-          {% endif %}
-          {% endfor %}
-        </ul>
+        {% for message in messages %}
+        <div class="alert-warning" style="
+        background-color: #fff3cd;
+        color: #856404;
+        padding: 10px 15px;
+        border-radius: 8px;
+        margin-bottom: 15px;
+        border: 1px solid #ffeeba;
+        text-align: center;">
+          {{ message }}
+        </div>
+        {% endfor %}
         {% endif %}
-
-
         <label>Email or Username</label>
         <input type="text" name="username" placeholder="Enter your email or username" required>
 
@@ -68,6 +75,41 @@
       <a href="{% url 'HomePage' %}">← Back to Home</a>
     </div>
   </div>
+  <script>
+    // Cursor glow follow
+    const cursorGlow = document.createElement("div");
+    cursorGlow.classList.add("cursor-glow");
+    document.body.appendChild(cursorGlow);
+
+    document.addEventListener("mousemove", (e) => {
+      cursorGlow.style.top = e.clientY + "px";
+      cursorGlow.style.left = e.clientX + "px";
+    });
+
+    // Optional: enlarge glow briefly when clicking
+    document.addEventListener("mousedown", () => {
+      cursorGlow.classList.add("active");
+
+      // Create pulse circle
+      const pulse = document.createElement("div");
+      pulse.classList.add("cursor-pulse");
+      pulse.style.left = cursorGlow.style.left;
+      pulse.style.top = cursorGlow.style.top;
+      document.body.appendChild(pulse);
+
+      // Remove pulse after animation
+      setTimeout(() => {
+        pulse.remove();
+      }, 600);
+
+      setTimeout(() => {
+        cursorGlow.classList.remove("active");
+      }, 200);
+    });
+
+  </script>
+
+
 
   {% include 'Common/footer.html' %}
 </body>

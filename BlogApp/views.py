@@ -99,3 +99,20 @@ def delete_blog(request, pk):
     
     # Redirect back to blog list in any case
     return redirect('blog_list')
+
+
+@login_required
+def edit_comment(request, comment_id):
+    comment = get_object_or_404(Comment, id=comment_id, user=request.user)
+    if request.method == "POST":
+        content = request.POST.get("content")
+        comment.content = content
+        comment.save()
+        return redirect('blog_detail', pk=comment.post.pk)
+    return render(request, 'blog/edit_comment.html', {'comment': comment})
+@login_required
+def delete_comment(request, comment_id):
+    comment = get_object_or_404(Comment, id=comment_id, user=request.user)
+    post_pk = comment.post.pk
+    comment.delete()
+    return redirect('blog_detail', pk=post_pk)

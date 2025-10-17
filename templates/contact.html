@@ -93,16 +93,22 @@
 
     /* Page container */
     .container{
-      margin:120px auto 48px;
+      margin:70px auto 48px;
     }
 
     .title {
-      text-align:center;margin-bottom:24px;
+      text-align:center;
+      margin-bottom:24px;
     }
     .title h1{
-      margin:0;font-size:34px;color:var(--green);letter-spacing:0.2px;
+      margin:0;
+      font-size:34px;
+      color:var(--green);
+      letter-spacing:0.2px;
     }
-    .title p{margin:10px 0 0;color:var(--muted)}
+    .title p{margin:10px 0 0;
+      color:var(--muted);
+    }
 
     /* layout */
     .grid {
@@ -124,7 +130,7 @@
   max-width: 650px; /* added - keeps it nicely sized */
   transform-origin: center;
   animation: fadeUp .6s ease both;
-  margin: 0 auto; /* centers the form */
+  margin: 19px auto; /* centers the form */
 }
     @keyframes fadeUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
 
@@ -224,19 +230,17 @@
   <div class="bg-blob" aria-hidden="true"></div>
 
   <header>
-     {% include 'Common/header.html' %}
-
-  <div class="gallery-container">
-    <!-- Header -->
-    <div class="gallery-header">
-      <h1>🌴 Explore the Rare Trees of Dhaka</h1>
-      <p>A curated gallery of unique and endangered trees shared by our contributors</p>
-    </div>
-
-    
+    {% include 'Common/header.html' %}
   </header>
+  
 
   <main class="container">
+    <div class="gallery-container">
+    <!-- Header -->
+      <div class="gallery-header">
+        <h1>🌴 Explore the Rare Trees of Dhaka</h1>
+        <p>A curated gallery of unique and endangered trees shared by our contributors</p>
+    </div>
     <div class="title">
       <h1>Contact Us</h1>
       <p>Have a discovery, question, or want to help protect rare trees? Drop us a line — we reply quickly.</p>
@@ -245,7 +249,9 @@
     <div class="grid">
       <!-- LEFT: FORM -->
       <section class="card" aria-labelledby="contact-heading">
-        <div class="floating-badge">Join 🌱</div>
+        <a href="{% url 'login' %}" style="text-decoration: none; color: inherit;">
+          <div class="floating-badge">Join 🌱</div>
+        </a>
 
         <div class="form-intro">
           <div class="icon">✉️</div>
@@ -298,9 +304,7 @@
 
         <div class="info-card">
           <h4>📍 Our Location</h4>
-          <p>Raza Bazar, Indira Road, Farmgate
-
-Dhaka, Bangladesh</p>
+          <p>Raza Bazar, Indira Road, Farmgate,Dhaka, Bangladesh</p>
         </div>
 
         <div class="info-card">

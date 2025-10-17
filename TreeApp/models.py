@@ -5,6 +5,36 @@ from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django.utils import timezone
 from MyApp.models import User, Profile
+from django.contrib.auth import get_user_model
+from django.db import migrations
+
+def fix_null_treeanswers(apps, schema_editor):
+    TreeAnswer = apps.get_model("TreeApp", "TreeAnswer")
+    User = apps.get_model("auth", "User")
+
+    try:
+        default_user = User.objects.get(username="admin")  # replace with a real user
+    except User.DoesNotExist:
+        return
+
+    # Fill missing answered_by
+    TreeAnswer.objects.filter(answered_by__isnull=True).update(answered_by=default_user)
+
+    # Fill missing response_text
+    TreeAnswer.objects.filter(response_text__isnull=True).update(response_text="No response provided")
+
+class Migration(migrations.Migration):
+
+    dependencies = [
+        ('TreeApp', 'previous_migration_name'),  # replace with your last migration
+    ]
+
+    operations = [
+        migrations.RunPython(fix_null_treeanswers),
+    ]
+
+
+
 
 #tree profile model
 class TreeProfile(models.Model):
@@ -93,14 +123,28 @@ class TreeRequest(models.Model):
     
 # Answer Model
 class TreeAnswer(models.Model):
-    tree_request = models.ForeignKey("TreeRequest", on_delete=models.CASCADE, related_name="answers"
+    tree_request = models.ForeignKey(
+        "TreeRequest",
+        on_delete=models.CASCADE,
+        related_name="answers"
     )
-    answered_by = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="answers_given") #need to change 
-    response_text = models.TextField(blank=True, null=True)
+    answered_by = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name="answers_given"
+    )
+    response_text = models.TextField(default="", blank=False)  # ✅ Default avoids migration issues
     reference_image = models.ImageField(upload_to="answer_images/", blank=True, null=True)
     video_url = models.URLField(blank=True, null=True)
     external_url = models.URLField(blank=True, null=True)
     created_at = models.DateTimeField(default=timezone.now)
+
+    def save(self, *args, **kwargs):
+        super().save(*args, **kwargs)
+        # ✅ Automatically mark request as answered
+        if self.tree_request.status != "answered":
+            self.tree_request.status = "answered"
+            self.tree_request.save()
 
     def __str__(self):
         return f"Answer to {self.tree_request.title} by {self.answered_by.username}"

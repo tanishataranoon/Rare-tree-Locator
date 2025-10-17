@@ -1,6 +1,9 @@
 {% extends 'Dashboard/dashboard_base.html' %}
+
 {% block title %}Dashboard Overview{% endblock %}
+
 {% block content %}
+
 <section class="overview">
     <h1>Dashboard Overview</h1>
     <p>Monitor your activity and manage tree requests</p>
@@ -22,11 +25,6 @@
         <h3>Trees Added</h3>
         <div class="count">{{ trees_added }}</div>
         <span class="icon">🌲</span>
-    </div>
-    <div class="card">
-        <h3>Total Contributions</h3>
-        <div class="count">{{ total_contrib }}</div>
-        <span class="icon">✅</span>
     </div>
 </section>
 

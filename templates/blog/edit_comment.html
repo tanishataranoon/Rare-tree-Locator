@@ -1,0 +1,6 @@
+<form method="POST">
+    {% csrf_token %}
+    <textarea name="content" required>{{ comment.content }}</textarea>
+    <button type="submit">Save Changes</button>
+    <a href="{% url 'blog_detail' comment.post.pk %}">Cancel</a>
+</form>

@@ -6,18 +6,21 @@ from TreeApp.models import *
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.decorators import login_required
 from .models import User, Profile
+from django.db.models import Count
 from django.urls import reverse
 from BlogApp.models import BlogPost
+from django.contrib.auth import get_user_model
+
 # Home page view
 def HomePage(request):
     return render(request, 'HomePage.html')
 
 # Header view
-##def header(request):
-    return render(request, 'Common/header.html')
-# Footer view
-##def footer(request):
-    return render(request, 'Common/footer.html')
+# ##def header(request):
+#     return render(request, 'Common/header.html')
+# # Footer view
+# ##def footer(request):
+#     return render(request, 'Common/footer.html')
 
 
 # Signup view
@@ -103,3 +106,17 @@ def edit_profile(request):
     }
     return render(request, "Profile/edit_profile.html", context)
 
+
+User = get_user_model()
+def user_overview(request):
+    users = User.objects.order_by('-date_joined')
+    total_users = users.count()
+    total_contributors = users.filter(user_type='contributor').count()
+    total_common = users.filter(user_type='common').count()
+
+    return render(request, 'Profile/user_overview.html', {
+        'users': users,
+        'total_users': total_users,
+        'total_contributors': total_contributors,
+        'total_common': total_common,
+    })

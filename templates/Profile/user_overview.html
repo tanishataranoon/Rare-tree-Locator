@@ -1,0 +1,86 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>User Overview</title>
+    <link rel="stylesheet" href="{% static 'css/Profile/contributor_list.css' %}">
+</head>
+
+<body>
+    {% include 'common/header.html' %}
+    <div class="falling-lights">
+        <span></span><span></span><span></span><span></span><span></span>
+        <span></span><span></span><span></span><span></span><span></span>
+    </div>
+    <div class="dashboard-summary">
+        <a href="{% url 'HomePage' %}" class="back-link">&larr; Back to Home</a>
+        <div class="summary-card" data-filter="all">
+            <p>Total Users</p>
+            <h2>{{ total_users }}</h2>
+        </div>
+        <div class="summary-card" data-filter="contributor">
+            <p>Contributors</p>
+            <h2>{{ total_contributors }}</h2>
+        </div>
+        <div class="summary-card" data-filter="common">
+            <p>Common Users</p>
+            <h2>{{ total_common }}</h2>
+        </div>
+    </div>
+
+    <div class="users-container">
+
+        <div class="user-grid">
+            {% for user in users %}
+            <div class="user-card" data-type="{{ user.user_type }}">
+                <div class="image-container">
+                    <img src="  {% if user.profile.profile_pic %}
+                                    {{ user.profile.profile_pic.url }}
+                                {% else %}
+                                    {{ MEDIA_URL }}default_profile.png
+                                {% endif %}"
+                                    alt="{{ user.username }}">
+                </div>
+                <div class="info">
+                    <h2>{{ user.username }}</h2>
+                    <p>{{ user.profession|default:"Tree Enthusiast" }}</p>
+                    <span class="role-tag {{ user.user_type }}">{{ user.get_user_type_display }}</span>
+                    <a href="{% url 'profile_view' user.username %}" class="view-btn">View Profile</a>
+                </div>
+            </div>
+            {% empty %}
+            <p>No users found.</p>
+            {% endfor %}
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            const cards = document.querySelectorAll(".summary-card");
+            const users = document.querySelectorAll(".user-card");
+
+            cards.forEach(card => {
+                card.addEventListener("click", () => {
+                    const filter = card.dataset.filter;
+                    users.forEach(u => {
+                        if (filter === "all" || u.dataset.type === filter) {
+                            u.style.display = "block";
+                        } else {
+                            u.style.display = "none";
+                        }
+                    });
+
+                    // highlight active filter
+                    cards.forEach(c => c.classList.remove("active"));
+                    card.classList.add("active");
+                });
+            });
+        });
+    </script>
+
+</body>
+
+</html>

@@ -44,5 +44,8 @@ class TreeAnswerForm(forms.ModelForm):
         model = TreeAnswer
         fields = ["response_text", "reference_image", "video_url", "external_url"]
         widgets = {
-            "response_text": forms.Textarea(attrs={"placeholder": "Provide your expert identification and any additional information..."}),
+            "response_text": forms.Textarea(attrs={
+                "placeholder": "Provide your expert identification and any additional information...",
+                "rows": 4
+            }),
         }

@@ -12,6 +12,10 @@
 
 <body>
     {% include "Common/header.html" %}
+    <div class="falling-lights">
+        <span></span><span></span><span></span><span></span><span></span>
+        <span></span><span></span><span></span><span></span><span></span>
+    </div>
 
     <main class="main-content">
         <div class="profile-card">
@@ -124,8 +128,10 @@
                         <p>Created on {{ req.created_at|date:"M d, Y" }}</p>
 
                         <div class="request-actions">
-                            <button class="btn delete-btn" data-request-id="{{ req.id }}" data-request-title="{{ req.title }}">Delete</button>
-
+                            {% if request.user == profile_user %}
+                            <button class="btn delete-btn" data-request-id="{{ req.id }}"
+                                data-request-title="{{ req.title }}">Delete</button>
+                            {% endif %}
                         </div>
                     </div>
                     {% endfor %}
@@ -151,8 +157,11 @@
                         {% if user.is_authenticated and user.id == post.author.id %}
                         <div class="post-actions">
                             <a href="{% url 'edit_blog' post.id %}" class="btn edit-btn">Edit</a>
-                            <button class="btn delete-btn" data-type="post"data-id="{{ post.id }}" data-title="{{ post.title }}">Delete</button>
-                    
+                            {% if request.user == profile_user %}
+                            <button class="btn delete-btn" data-request-id="{{ req.id }}"
+                                data-request-title="{{ req.title }}">Delete</button>
+                            {% endif %}
+
                         </div>
                         {% endif %}
                     </div>

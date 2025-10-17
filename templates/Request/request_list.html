@@ -17,60 +17,61 @@
         <div class="request-header">
             <h2>Tree Requests</h2>
             {% if user.is_authenticated and user.user_type == 'common' %}
-                <button id="new-request-btn" class="btn-primary" data-create-request-url="{% url 'create_request' %}">
-                    + New Request
-                </button>
+            <button id="new-request-btn" class="btn-primary" data-create-request-url="{% url 'create_request' %}">
+                + New Request
+            </button>
             {% elif not user.is_authenticated %}
-                <p>You must be logged in to create a new request.</p>
+            <p>You must be logged in to create a new request.</p>
             {% endif %}
         </div>
 
         <!-- Request List -->
         {% if requests %}
-            <div class="request-grid">
-                {% for req in requests %}
-                    <div class="request-card-modern" data-id="{{ req.id }}" data-title="{{ req.title }}"
-                        data-description="{{ req.description }}" data-requester="{{ req.requester.username }}"
-                        data-location="{{ req.location }}" data-has-answer="{% if req.answer %}true{% else %}false{% endif %}">
-                        <div class="image-box">
-                            {% if req.image %}
-                                <img src="{{ req.image.url }}" alt="{{ req.title }}">
-                            {% else %}
-                                <div class="no-image">No Image</div>
-                            {% endif %}
-                        </div>
+        <div class="request-grid">
+            {% for req in requests %}
+            <div class="request-card-modern" 
+                 data-id="{{ req.id }}" 
+                 data-title="{{ req.title }}"
+                 data-description="{{ req.description }}"
+                 data-requester="{{ req.requester.username }}"
+                 data-location="{{ req.location }}"
+                 data-has-answer="{% if req.answers.exists %}true{% else %}false{% endif %}">
+                 
+                <div class="image-box">
+                    {% if req.image %}
+                    <img src="{{ req.image.url }}" alt="{{ req.title }}">
+                    {% else %}
+                    <div class="no-image">No Image</div>
+                    {% endif %}
+                </div>
 
-                        <div class="card-body">
-                            <h3>{{ req.title }}</h3>
-                            <p class="description">{{ req.description|truncatewords:10 }}</p>
-                            <div class="meta">
-                                <span class="status-tag {{ req.status }}">{{ req.get_status_display }}</span>
-                                <span class="date">{{ req.created_at|date:"M d, Y" }}</span>
-                            </div>
-
-                            <!-- Footer Buttons -->
-                            <div class="card-footer">
-                                <button class="btn-view">View Details</button>
-
-                                {% if user.is_authenticated and user.user_type == 'common' and req.requester == user %}
-                                    <button class="btn-delete" data-id="{{ req.id }}">Delete</button>
-                                {% endif %}
-                            </div>
-                        </div>
+                <div class="card-body">
+                    <h3>{{ req.title }}</h3>
+                    <p class="description">{{ req.description|truncatewords:10 }}</p>
+                    <div class="meta">
+                        <span class="status-tag {{ req.status }}">{{ req.get_status_display }}</span>
+                        <span class="date">{{ req.created_at|date:"M d, Y" }}</span>
                     </div>
-                {% endfor %}
+
+                    <div class="card-footer">
+                        <button class="btn-view">View Details</button>
+
+                        {% if user.is_authenticated and user.user_type == 'common' and req.requester == user %}
+                        <button class="btn-delete" data-id="{{ req.id }}">Delete</button>
+                        {% endif %}
+                    </div>
+                </div>
             </div>
+            {% endfor %}
+        </div>
         {% else %}
-            <p class="empty-msg">No requests found.</p>
+        <p class="empty-msg">No requests found.</p>
         {% endif %}
 
-        <!-- ========================= -->
-        <!-- New Request Modal -->
-        <!-- ========================= -->
+        <!-- ================= New Request Modal ================= -->
         <div id="new-request-modal" class="modal">
             <div class="modal-content new-request-modern">
                 <span id="new-request-close" class="close">&times;</span>
-
                 <div class="modal-header">
                     <h2>Create New Tree Request</h2>
                     <p class="modal-subtitle">Submit details and an image to identify or record a tree.</p>
@@ -111,14 +112,11 @@
             </div>
         </div>
 
-        <!-- ========================= -->
-        <!-- Request Details Modal -->
-        <!-- ========================= -->
+        <!-- ================= Request Details Modal ================= -->
         <div id="request-modal" class="modal">
             <div class="modal-content details-modal">
                 <span class="close">&times;</span>
 
-                <!-- Header Section -->
                 <div class="modal-header-info">
                     <h2 id="modal-title">Request Details</h2>
                     <div class="info-grid">
@@ -129,7 +127,6 @@
                     </div>
                 </div>
 
-                <!-- Main Body Grid -->
                 <div class="modal-body-grid">
                     <div class="left-section">
                         <h4>Submitted Image</h4>
@@ -149,27 +146,20 @@
                     </div>
                 </div>
 
-                <!-- Footer Buttons -->
                 <div class="modal-footer">
-                    {% comment %} Role-based buttons {% endcomment %}
-                    {% if user.is_authenticated %}
-                        {% if user.user_type == 'common' %}
-                            {% if req.answer %}
-                                <button class="btn-view-answer">View Answer</button>
-                            {% endif %}
-                        {% else %}
-                            <button class="btn btn-skip">Skip / Avoid</button>
-                            <button class="btn btn-answer">Answer Directly</button>
-                            <button class="btn btn-add">Add Tree Officially</button>
-                        {% endif %}
+                    <button id="view-answer-btn" class="btn-view-answer" style="display:none;">View Answer</button>
+
+                    {% if user.is_authenticated and user.user_type != 'common' %}
+                    <a id="answer-btn" href="#" class="btn btn-primary">Answer</a>
+                    <button class="btn btn-skip">Skip / Avoid</button>
                     {% endif %}
+
+                    <a href="#" class="btn btn-add">Add Tree Officially</a>
                 </div>
             </div>
         </div>
 
-        <!-- ========================= -->
-        <!-- Delete Confirmation Modal -->
-        <!-- ========================= -->
+        <!-- ================= Delete Confirmation Modal ================= -->
         <div id="delete-modal" class="modal">
             <div class="modal-content">
                 <span class="close">&times;</span>
@@ -182,8 +172,7 @@
             </div>
         </div>
     </div>
-    
-    
+
     <script src="{% static 'js/Request/request_list.js' %}"></script>
 </body>
 </html>

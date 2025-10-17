@@ -21,7 +21,7 @@
                     <a href="{% url 'request_list' %}"><i data-feather="file-text"></i> Tree Requests</a>
                 </li>
                 <li><a href="#"><i data-feather="tree"></i> Added Trees</a></li>
-                <li><a href="#"><i data-feather="user"></i> Profile</a></li>
+                <li><a href="{% url 'profile_view' user.username %}"><i data-feather="user"></i> Profile</a></li>
             </ul>
         </aside>
 

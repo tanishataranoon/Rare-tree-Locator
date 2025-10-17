@@ -13,7 +13,8 @@
     {% include 'Common/header.html' %}
 
     <div class="post-container">
-        <h2>{{ action }} Blog Post</h2>
+        <a href="{% url 'blog_list' %}" class="back-link">&larr; Back to List </a>
+        
         <form method="post" enctype="multipart/form-data" id="blogForm">
             {% csrf_token %}
 
@@ -43,6 +44,9 @@
                 <label for="id_category">Category</label>
                 <input type="text" id="id_category" name="category"
                     value="{{ form.instance.category|default_if_none:'' }}" placeholder="e.g. Conservation, Wildlife">
+                <label for="id_video_url">Video URL</label>
+                <input type="url" id="id_video_url" name="video_url"
+                    value="{{ form.instance.video_url|default_if_none:'' }}" placeholder="Enter video link...">
             </div>
 
             <!-- Post Content -->

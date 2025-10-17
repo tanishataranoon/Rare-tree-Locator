@@ -65,6 +65,7 @@
 
 
                 {% if user.is_authenticated %}
+                <li><a href="{% url 'user_overview' %}">All Users</a></li>
                 <li class="profile-menu">
                     <img src="{% if user.profile.profile_pic %}{{ user.profile.profile_pic.url }}{% else %}{{ MEDIA_URL }}default_profile.png{% endif %}"
                         alt="Profile" class="profile-pic" id="profile-icon">
@@ -81,7 +82,7 @@
             <span></span>
         </div>
     </header>
-    <!-- ✅ Move these OUTSIDE header -->
+    <!-- sidebar -->
     {% if user.is_authenticated %}
     <div id="profile-panel" class="profile-panel">
         <div class="profile-header">
@@ -93,6 +94,7 @@
         <ul class="profile-links">
             <li><a href="{% url 'profile_view' user.username %}">Profile</a></li>
             <li><a href="{% url 'dashboard' %}">Dashboard</a></li>
+            <li><a href="{% url 'contact' %}">Contact Us</a></li>
             <li>
                 <form method="post" action="{% url 'logout' %}">
                     {% csrf_token %}

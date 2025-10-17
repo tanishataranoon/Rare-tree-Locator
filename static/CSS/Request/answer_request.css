@@ -1,0 +1,160 @@
+body {
+    font-family: "Segoe UI", Arial, sans-serif;
+    background-color: #f8fafc;
+    margin: 0;
+    padding-top: 80px;   /* leave space for header */
+    padding-bottom: 60px; /* leave space for footer */
+}
+
+/* ====== Main Container ====== */
+.container {
+    max-width: 1100px;
+    margin: 40px auto;
+    padding: 25px;
+    background: #ffffff;
+    border-radius: 15px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+}
+
+/* ====== Request Info ====== */
+.container h1 {
+    color: #2e7d32;
+    margin-bottom: 10px;
+}
+
+.container p {
+    color: #333;
+    line-height: 1.6;
+    margin: 6px 0;
+}
+
+.request-img {
+    width: 100%;
+    max-width: 500px;
+    height: auto;
+    border-radius: 12px;
+    display: block;
+    margin: 15px auto;
+    object-fit: cover;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+hr {
+    border: none;
+    border-top: 2px solid #e0e0e0;
+    margin: 25px 0;
+}
+
+/* ====== Answers Section ====== */
+h2 {
+    color: #1b5e20;
+    margin-bottom: 15px;
+}
+
+.answer-card {
+    background-color: #f1f8e9;
+    border-radius: 12px;
+    padding: 15px 20px;
+    margin-bottom: 20px;
+    border-left: 5px solid #4caf50;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+    transition: transform 0.2s ease;
+}
+
+.answer-card:hover {
+    transform: translateY(-3px);
+}
+
+.answer-card p {
+    margin: 6px 0;
+    color: #333;
+}
+
+.answer-img {
+    width: 100%;
+    max-width: 350px;   /* smaller, neat size */
+    height: auto;
+    border-radius: 10px;
+    display: block;
+    margin: 10px auto;
+    object-fit: cover;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.timestamp {
+    color: #777;
+    font-size: 0.9em;
+}
+
+/* ====== Links inside answers ====== */
+.answer-card a {
+    color: #2e7d32;
+    font-weight: 500;
+    text-decoration: none;
+}
+
+.answer-card a:hover {
+    text-decoration: underline;
+}
+
+/* ====== Form Section (for contributors) ====== */
+form {
+    margin-top: 25px;
+    background-color: #f9fbe7;
+    padding: 20px;
+    border-radius: 12px;
+    border-left: 5px solid #8bc34a;
+}
+
+form textarea,
+form input[type="url"],
+form input[type="file"] {
+    width: 100%;
+    padding: 8px;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    margin-bottom: 12px;
+    font-family: inherit;
+}
+
+.btn-primary {
+    background-color: #2e7d32;
+    color: #fff;
+    padding: 10px 18px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 1rem;
+    transition: background-color 0.3s ease;
+}
+
+.btn-primary:hover {
+    background-color: #1b5e20;
+}
+
+/* ====== No Answers ====== */
+.no-ans {
+    text-align: center;
+    color: #888;
+    font-style: italic;
+    margin-top: 20px;
+}
+/* ====== Back Link Styling ====== */
+.back-link {
+    display: inline-block;
+    margin-top: 100px;        /* same as header height */
+    margin-left: 30px;
+    position: relative;
+    z-index: 10;
+    color: #2e7d32;           /* forest green tone */
+    font-weight: 600;
+    text-decoration: none;
+    font-size: 1rem;
+    transition: all 0.2s ease;
+}
+
+.back-link:hover {
+    color: #1b5e20;
+    text-decoration: underline;
+    transform: translateX(-3px);
+}

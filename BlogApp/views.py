@@ -1,11 +1,11 @@
 from django.shortcuts import render, get_object_or_404, redirect
-from .models import BlogPost , Comment
+from .models import BlogPost , Comment, Notification
 from MyApp.models import User
 from django.core.paginator import Paginator
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from .forms import BlogPostForm
-
+from django.http import JsonResponse
 # Create your views here.
 def is_contributor(user):
     return user.user_type == 'contributor'
@@ -33,8 +33,34 @@ def blog_detail(request, pk):
         content = request.POST.get("content")
         parent_id = request.POST.get("parent_id")
         parent_comment = Comment.objects.filter(id=parent_id).first() if parent_id else None
-        Comment.objects.create(post=post, user=request.user, content=content, parent=parent_comment)
+
+    # create the comment
+        comment = Comment.objects.create(post=post, user=request.user, content=content, parent=parent_comment)
+
+    # create notification for post author (if different)
+        if post.author and post.author != request.user:
+            Notification.objects.create(
+                recipient=post.author,
+                sender=request.user,
+                notif_type='comment',
+                post=post,
+                comment=comment,
+                message=f"{request.user.username} commented on your post '{post.title}'."
+            )
+
+    # if this was a reply, notify the parent comment's author (if different)
+        if parent_comment and parent_comment.user != request.user:
+            Notification.objects.create(
+                recipient=parent_comment.user,
+                sender=request.user,
+                notif_type='reply',
+                post=post,
+                comment=comment,
+                message=f"{request.user.username} replied to your comment on '{post.title}'."
+            )
+
         return redirect("blog_detail", pk=pk)
+
 
     return render(request, "blog/blog_detail.html", {"post": post, "comments": comments})
 # Add a blog post
@@ -101,6 +127,49 @@ def delete_blog(request, pk):
     return redirect('blog_list')
 
 
+
+
+def add_comment(request, post_id):
+    post = BlogPost.objects.get(id=post_id)
+    comment = Comment.objects.create(
+        post=post,
+        user=request.user,
+        content=request.POST.get('content')
+    )
+
+    # Notify the post author if they are not the commenter
+    if post.author != request.user:
+        Notification.objects.create(
+            recipient=post.author,
+            sender=request.user,
+            notif_type='comment',
+            post=post,
+            comment=comment,
+            message=f"{request.user.username} commented on your post '{post.title}'."
+        )
+    return redirect('post_detail', post_id=post.id)
+
+def add_reply(request, comment_id):
+    parent_comment = Comment.objects.get(id=comment_id)
+    reply = Comment.objects.create(
+        post=parent_comment.post,
+        user=request.user,
+        content=request.POST.get('content'),
+        parent=parent_comment
+    )
+
+    # Notify the original commenter if they are not the replier
+    if parent_comment.user != request.user:
+        Notification.objects.create(
+            recipient=parent_comment.user,
+            sender=request.user,
+            notif_type='reply',
+            post=parent_comment.post,
+            comment=reply,
+            message=f"{request.user.username} replied to your comment on '{parent_comment.post.title}'."
+        )
+    return redirect('post_detail', post_id=parent_comment.post.id)
+
 @login_required
 def edit_comment(request, comment_id):
     comment = get_object_or_404(Comment, id=comment_id, user=request.user)
@@ -116,3 +185,21 @@ def delete_comment(request, comment_id):
     post_pk = comment.post.pk
     comment.delete()
     return redirect('blog_detail', pk=post_pk)
+
+@login_required
+def mark_notifications_read(request):
+    if request.method == "POST":
+        request.user.notifications.update(is_read=True)
+        return JsonResponse({"success": True})
+    return JsonResponse({"success": False}, status=400)
+
+
+@login_required
+def mark_single_notification_read(request, notif_id):
+    if request.method == "POST":
+        notif = request.user.notifications.filter(id=notif_id).first()
+        if notif:
+            notif.is_read = True
+            notif.save()
+            return JsonResponse({"success": True})
+    return JsonResponse({"success": False}, status=400)

@@ -24,6 +24,7 @@ urlpatterns = [
     path('profile_view/<str:username>/', myapp_views.profile_view, name='profile_view'),  # Profile view
     path('user-overview/', myapp_views.user_overview, name='user_overview'),
 
+
     # Blog app views
     path('blog_list', blogapp_views.blog_list, name='blog_list'),  # Added blog list view
     path('blog_list/<int:pk>/', blogapp_views.blog_detail, name='blog_detail'),  # Detail view
@@ -33,6 +34,10 @@ urlpatterns = [
 
     path('comment/edit/<int:comment_id>/', blogapp_views.edit_comment, name='edit_comment'),
     path('comment/delete/<int:comment_id>/', blogapp_views.delete_comment, name='delete_comment'),
+    path('notifications/mark_read/', blogapp_views.mark_notifications_read, name='mark_notifications_read'),
+    path('notifications/mark_read/<int:notif_id>/', blogapp_views.mark_single_notification_read, name='mark_single_notification_read'),
+
+    
     # Tree app views
     path('trees/', treeapp_views.TreeProfiles, name = 'TreeProfiles'),# Tree profiles view
     path('map/', treeapp_views.map_page, name='map_page'),

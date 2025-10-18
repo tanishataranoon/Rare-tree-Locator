@@ -25,7 +25,8 @@
 
                 <!-- Trees -->
                 <li class="dropdown">
-                    <a href="{% url 'TreeProfiles' %}" class="dropdown-toggle
+                    <a href="{% url 'TreeProfiles' %}"
+                        class="dropdown-toggle
                         {% if request.resolver_match.url_name == 'TreeProfiles' or request.resolver_match.url_name == 'create_tree' or request.resolver_match.url_name == 'my_trees' %} active {% endif %}">
                         Trees
                     </a>
@@ -37,11 +38,12 @@
                     </ul>
                     {% endif %}
                 </li>
-                
+
 
                 <!-- Blog -->
                 <li class="dropdown">
-                    <a href="{% url 'blog_list' %}" class="dropdown-toggle
+                    <a href="{% url 'blog_list' %}"
+                        class="dropdown-toggle
                         {% if request.resolver_match.url_name == 'blog_list' or request.resolver_match.url_name == 'add_blog' or request.resolver_match.url_name == 'my_posts' %} active {% endif %}">
                         Blog
                     </a>
@@ -53,11 +55,12 @@
                     </ul>
                     {% endif %}
                 </li>
-                
+
 
                 <!-- Map -->
                 <li>
-                    <a href="{% url 'map_page' %}" class="{% if request.resolver_match.url_name == 'map_page' %}active{% endif %}">
+                    <a href="{% url 'map_page' %}"
+                        class="{% if request.resolver_match.url_name == 'map_page' %}active{% endif %}">
                         Map
                     </a>
                 </li>
@@ -67,8 +70,14 @@
                 {% if user.is_authenticated %}
                 <li><a href="{% url 'user_overview' %}">All Users</a></li>
                 <li class="profile-menu">
-                    <img src="{% if user.profile.profile_pic %}{{ user.profile.profile_pic.url }}{% else %}{{ MEDIA_URL }}default_profile.png{% endif %}"
-                        alt="Profile" class="profile-pic" id="profile-icon">
+                    <div class="notif-wrapper">
+                        <img src="{% if user.profile.profile_pic %}{{ user.profile.profile_pic.url }}{% else %}{{ MEDIA_URL }}default_profile.png{% endif %}"
+                            alt="Profile" class="profile-pic" id="profile-icon">
+
+                        {% if user.unread_notifications_count %}
+                        <span class="notif-count">{{ user.unread_notifications_count }}</span>
+                        {% endif %}
+                    </div>
                 </li>
                 {% else %}
                 <li><a href="{% url 'login' %}">Log In</a></li>
@@ -96,17 +105,51 @@
             <li><a href="{% url 'dashboard' %}">Dashboard</a></li>
             <li><a href="{% url 'contact' %}">Contact Us</a></li>
             <li>
+                <a href="#" id="notif-link">
+                    Notifications
+                    {% if user.unread_notifications_count %}
+                    <span class="notif-count">{{ user.unread_notifications_count }}</span>
+                    {% endif %}
+                </a>
+            </li>
+            
+
+            <li>
                 <form method="post" action="{% url 'logout' %}">
                     {% csrf_token %}
                     <button type="submit" class="logout-btn">Log Out</button>
                 </form>
             </li>
         </ul>
+
+        <div id="notif-popup" class="notif-popup">
+            <h4>Notifications</h4>
+            <button id="mark-read-btn">Mark all as read</button>
+            <ul>
+                {% for notif in user.notifications.all %}
+                <li class="{% if not notif.is_read %}unread{% endif %}" data-id="{{ notif.id }}">
+                    <a href="{% if notif.post %}{% url 'blog_detail' notif.post.id %}{% else %}#{% endif %}">
+                        {{ notif.message }}
+                        <small>{{ notif.created_at|timesince }} ago</small>
+                    </a>
+                </li>
+                {% empty %}
+                <li>No notifications</li>
+                {% endfor %}
+            </ul>
+        </div>
+        
+
+
     </div>
 
     <div id="overlay"></div>
     {% endif %}
-
+    <script>
+        // Make these available to your JS file
+        const markReadUrl = "{% url 'mark_notifications_read' %}";
+        const markSingleUrlBase = "{% url 'mark_single_notification_read' 0 %}".replace(/0\/?$/, '');
+    </script>
     <script src="{% static 'JS/common/header.js' %}"></script>
 </body>
 

@@ -10,6 +10,8 @@ from django.db.models import Count
 from django.urls import reverse
 from BlogApp.models import BlogPost
 from django.contrib.auth import get_user_model
+from django.http import JsonResponse
+
 
 # Home page view
 def HomePage(request):
@@ -120,3 +122,4 @@ def user_overview(request):
         'total_contributors': total_contributors,
         'total_common': total_common,
     })
+

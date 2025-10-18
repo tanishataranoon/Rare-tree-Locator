@@ -6,7 +6,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="{% static 'css/blog/blog_detail.css' %}">
-    <script src="{% static 'js/blog/blog_detail.js' %}" defer></script>
+    
     <title>{{ post.title }}</title>
 </head>
 
@@ -68,6 +68,7 @@
                         </div>
                         <a href="{% url 'profile_view' comment.user.username %}" class="comment-username">{{ comment.user.username }}</a>
                         <small>{{ comment.created_at|timesince }} ago</small>
+
                     </div>
             
                     <p class="comment-content">{{ comment.content }}</p>
@@ -114,6 +115,14 @@
     </div>
     {% endblock %}
     {% include 'Common/footer.html' %}
+    <script>
+        // define URLs & CSRF for the static JS to use (Django will render these)
+        const markReadUrl = "{% url 'mark_notifications_read' %}";
+        const markSingleUrlBase = "{% url 'mark_single_notification_read' 0 %}".replace(/0\/?$/, ''); 
+        // markSingleUrlBase will be like "/notifications/mark_read" so we can append "/<id>/"
+        const csrfToken = "{{ csrf_token }}";
+    </script>
+    <script src="{% static 'js/blog/blog_detail.js' %}" defer></script>
 </body>
 
 </html>

@@ -103,7 +103,6 @@
         <ul class="profile-links">
             <li><a href="{% url 'profile_view' user.username %}">Profile</a></li>
             <li><a href="{% url 'dashboard' %}">Dashboard</a></li>
-            <li><a href="{% url 'contact' %}">Contact Us</a></li>
             <li>
                 <a href="#" id="notif-link">
                     Notifications
@@ -112,6 +111,8 @@
                     {% endif %}
                 </a>
             </li>
+            <li><a href="{% url 'donate' %}">Donate</a></li>
+            <li><a href="{% url 'contact' %}">Contact Us</a></li>
             
 
             <li>

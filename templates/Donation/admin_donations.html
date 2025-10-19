@@ -1,0 +1,35 @@
+<h2>All Donations (Admin)</h2>
+
+<p>Total Donations (PAID): {{ total }} BDT</p>
+
+<form method="get">
+    <label>Filter by status:</label>
+    <select name="status">
+        <option value="">All</option>
+        <option value="PENDING" {% if status_filter=='PENDING' %}selected{% endif %}>Pending</option>
+        <option value="PAID" {% if status_filter=='PAID' %}selected{% endif %}>Paid</option>
+        <option value="FAILED" {% if status_filter=='FAILED' %}selected{% endif %}>Failed</option>
+    </select>
+    <button type="submit">Filter</button>
+</form>
+
+<table border="1">
+    <tr>
+        <th>User</th>
+        <th>Order ID</th>
+        <th>Amount</th>
+        <th>Status</th>
+        <th>Date</th>
+    </tr>
+    {% for d in donations %}
+    <tr>
+        <td>{{ d.user.username }}</td>
+        <td>{{ d.order_id }}</td>
+        <td>{{ d.amount }} {{ d.currency }}</td>
+        <td>{{ d.status }}</td>
+        <td>{{ d.created_at|date:"Y-m-d H:i" }}</td>
+    </tr>
+    {% empty %}
+    <tr><td colspan="5">No donations yet.</td></tr>
+    {% endfor %}
+</table>

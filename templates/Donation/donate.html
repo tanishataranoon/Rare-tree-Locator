@@ -1,0 +1,46 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Donate | Rare Tree Locator</title>
+    <link rel="stylesheet" href="{% static 'CSS/Donate/donate.css' %}">
+</head>
+
+<body>
+    {% include 'Common/header.html' %}
+
+    <section class="donation-hero">
+        <div class="donation-card">
+            <div class="donation-content">
+                <h2>Make a Difference 🌱</h2>
+                <p>Your donation helps plant more trees and protect biodiversity worldwide.</p>
+
+                <form method="POST" class="donation-form">
+                    {% csrf_token %}
+                    {{ form.as_p }}
+
+                    {% if error %}
+                    <p class="error-msg">{{ error }}</p>
+                    {% endif %}
+
+                    <button type="submit" class="donation-btn">Donate Now</button>
+                </form>
+            </div>
+
+            <!-- illustration / video -->
+            <div class="donation-illustration-wrapper">
+                <video autoplay loop muted playsinline class="donation-illustration">
+                    <source src="{% static 'videos/treetree.mp4' %}" type="video/mp4">
+                </video>
+            </div>
+        </div>
+    </section>
+    
+
+    {% include 'Common/footer.html' %}
+</body>
+
+</html>

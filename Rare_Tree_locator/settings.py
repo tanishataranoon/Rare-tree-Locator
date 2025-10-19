@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     'MyApp.apps.MyappConfig',  # Myapp is listed here
     'TreeApp.apps.TreeappConfig', # TreeApp is listed here
     'BlogApp.apps.BlogappConfig', # BlogApp is listed here
+    'DonationApp.apps.DonationappConfig', # DonationApp is listed here
     'import_export',  # Added for import-export functionality
 ]
 
@@ -85,7 +86,10 @@ DATABASES = {
         'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
-
+# SSLCOMMERZ Sandbox Credentials
+SSLC_STORE_ID = 'raret68f48babe08eb'        # e.g., testbox
+SSLC_STORE_PASS = 'raret68f48babe08eb@ssl'
+SSLC_MODE = 'sandbox'  # change to 'live' later
 
 # Password validation
 # https://docs.djangoproject.com/en/5.2/ref/settings/#auth-password-validators

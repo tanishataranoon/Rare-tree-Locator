@@ -1,0 +1,79 @@
+/* ==== Donation Success Page ==== */
+
+body {
+    margin: 0;
+    font-family: "Poppins", sans-serif;
+    background-color: #f4fdf6;
+}
+
+/* Section wrapper to center content */
+.success-section {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 70vh;
+    padding: 50px 20px;
+}
+
+/* Card-like success box */
+.success-box {
+    background-color: #ffffff;
+    border-radius: 15px;
+    text-align: center;
+    padding: 40px 50px;
+    max-width: 500px;
+    width: 100%;
+    box-shadow: 0 6px 25px rgba(0, 0, 0, 0.1);
+    border-top: 6px solid #1b4332;
+    animation: fadeUp 0.8s ease-in-out;
+}
+
+/* Success GIF */
+.success-gif {
+    width: 140px;
+    height: auto;
+    margin-bottom: 20px;
+}
+
+/* Headline */
+.success-box h1 {
+    font-size: 1.8rem;
+    color: #1b4332;
+    margin-bottom: 10px;
+}
+
+/* Message */
+.success-box p {
+    color: #333;
+    font-size: 1rem;
+    margin-bottom: 30px;
+    line-height: 1.5;
+}
+
+/* Return button */
+.home-btn {
+    background-color: #1b4332;
+    color: #fff;
+    text-decoration: none;
+    padding: 12px 30px;
+    border-radius: 30px;
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+
+.home-btn:hover {
+    background-color: #2d6a4f;
+    transform: translateY(-2px);
+}
+
+/* Animation */
+@keyframes fadeUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}

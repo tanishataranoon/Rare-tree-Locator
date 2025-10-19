@@ -304,4 +304,83 @@ body {
     height: auto;
   }
 }
-  
+/* ===== Donate Section ===== */
+.donate-section {
+  background: linear-gradient(to right, #e8f5e9, #f1f8e9);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 5rem 1rem;
+}
+
+.donate-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #ffffff;
+  border-radius: 1.5rem;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+  max-width: 1100px;
+  width: 100%;
+  padding: 3rem 4rem;
+  gap: 3rem;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.donate-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.12);
+}
+
+.donate-text {
+  flex: 1;
+}
+
+.donate-text h2 {
+  color: #2e7d32;
+  font-size: 2.2rem;
+  font-weight: 700;
+  margin-bottom: 1rem;
+}
+
+.donate-text p {
+  color: #4b5563;
+  line-height: 1.6;
+  margin-bottom: 2rem;
+  font-size: 1.1rem;
+}
+
+.donate-btn {
+  background-color: #3A7D44;
+  color: white;
+  border: none;
+  padding: 0.9rem 2.5rem;
+  font-size: 1rem;
+  border-radius: 9999px;
+  cursor: pointer;
+  transition: background 0.3s ease, transform 0.2s ease;
+}
+
+.donate-btn:hover {
+  background-color: #2e7d32;
+  transform: scale(1.05);
+}
+
+.donate-image {
+  flex: 1;
+  background: url("{% static 'images/tree_illustration.png' %}") no-repeat center/contain;
+  height: 300px;
+  min-width: 280px;
+}
+
+@media (max-width: 900px) {
+  .donate-card {
+    flex-direction: column;
+    text-align: center;
+    padding: 2rem;
+  }
+  .donate-image {
+    height: 220px;
+    margin-top: 1.5rem;
+  }
+}

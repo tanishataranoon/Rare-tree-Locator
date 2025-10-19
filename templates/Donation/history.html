@@ -1,19 +1,23 @@
 <h2>Your Donation History</h2>
-<table border="1">
+<table border="1" cellspacing="0" cellpadding="6">
     <tr>
         <th>Date</th>
-        <th>Amount</th>
+        <th>Amount (BDT)</th>
         <th>Status</th>
+        <th>Transaction ID</th>
+        <th>Validation ID</th>
     </tr>
     {% for d in donations %}
     <tr>
         <td>{{ d.created_at|date:"Y-m-d H:i" }}</td>
-        <td>{{ d.amount }} {{ d.currency }}</td>
+        <td>{{ d.amount }}</td>
         <td>{{ d.status }}</td>
+        <td>{{ d.order_id }}</td>
+        <td>{{ d.val_id|default:"-" }}</td>
     </tr>
     {% empty %}
     <tr>
-        <td colspan="3">No donations yet.</td>
+        <td colspan="5">No donations yet.</td>
     </tr>
     {% endfor %}
 </table>

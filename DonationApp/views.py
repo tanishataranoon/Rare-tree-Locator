@@ -127,8 +127,33 @@ def admin_donations(request):
 
 @csrf_exempt
 def donate_success(request):
-    # Your existing success logic here
-    return HttpResponse("Donation successful!")
+    val_id = request.POST.get('val_id')
+    tran_id = request.POST.get('tran_id')
+
+    if not val_id or not tran_id:
+        return HttpResponse("Missing transaction data")
+
+    # Validate with SSLCommerz
+    validation_url = (
+        f"https://sandbox.sslcommerz.com/validator/api/validationserverAPI.php?"
+        f"val_id={val_id}&store_id={settings.SSLC_STORE_ID}&store_passwd={settings.SSLC_STORE_PASS}&v=1&format=json"
+    )
+
+    res = requests.get(validation_url)
+    result = res.json()
+
+    if result.get('status') in ['VALID', 'VALIDATED']:
+        try:
+            donation = Donation.objects.get(order_id=tran_id)
+            donation.status = 'PAID'
+            donation.val_id = val_id
+            donation.save()
+            return render(request, 'Donation/success.html', {'donation': donation})
+        except Donation.DoesNotExist:
+            return HttpResponse("Donation record not found")
+    else:
+        return render(request, 'Donation/fail.html', {'error': result})
+
 
 def donate_fail(request):
     return render(request, 'Donate/fail.html')

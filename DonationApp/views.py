@@ -126,8 +126,7 @@ def admin_donations(request):
 
 
 
-
-
+# ------------------- Donation Success Handler -------------------
 @csrf_exempt
 def donate_success(request):
     val_id = request.POST.get('val_id')
@@ -158,7 +157,8 @@ def donate_success(request):
             if request.headers.get('x-requested-with') == 'XMLHttpRequest':
                 return JsonResponse({"success": True, "message": "Donation Successful!"})
 
-            return render(request, 'Donation/success.html', {'donation': donation})
+            return render(request, 'Donation/success.html', context={'donation': donation})
+
 
         except Donation.DoesNotExist:
             if request.headers.get('x-requested-with') == 'XMLHttpRequest':

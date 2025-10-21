@@ -33,7 +33,7 @@
                     {% if user.is_authenticated and user.user_type == 'contributor' %}
                     <ul class="dropdown-menu">
                         <li><a href="{% url 'add_tree_ajax' %}" class="add-symbol">Create Tree</a></li>
-                        <li><a href="#">My Trees</a></li>
+                        <li><a href="{% url 'profile_view' user.username %}"><i data-feather="user"></i>My Trees</a></li>
                         <li><a href="{% url 'TreeProfiles' %}">All Trees</a></li>
                     </ul>
                     {% endif %}
@@ -50,7 +50,7 @@
                     {% if user.is_authenticated and user.user_type == 'contributor' %}
                     <ul class="dropdown-menu">
                         <li><a href="{% url 'add_blog' %}" class="add-symbol">Create Post</a></li>
-                        <li><a href="#">My Posts</a></li>
+                        <li><a href="{% url 'profile_view' user.username %}"><i data-feather="user"></i>My Posts</a></li>
                         <li><a href="{% url 'blog_list' %}">All Posts</a></li>
                     </ul>
                     {% endif %}

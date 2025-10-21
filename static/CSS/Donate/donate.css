@@ -1,0 +1,123 @@
+body {
+    font-family: "Poppins", sans-serif;
+    margin: 0;
+    background: #f6fff8;
+    color: #374151;
+}
+
+/* === Main Section === */
+.donation-hero {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 90vh;
+    padding: 2rem;
+    background: linear-gradient(135deg, #ecfdf5, #ffffff);
+}
+
+.donation-card {
+    display: flex;
+    flex-wrap: wrap;
+    flex-direction: row;
+    background: white;
+    border-radius: 1rem;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+    max-width: 900px;
+    width: 100%;
+    overflow: hidden;
+    align-items: stretch;   /* important! stretch children to full height */
+    gap: 2rem; }
+
+/* === Content === */
+.donation-content {
+    flex: 1 1 400px;
+    padding: 2rem 3rem;
+    flex-direction: column;
+    justify-content: center; /* vertically center content */
+    padding: 2rem;        /* optional padding */
+}
+
+.donation-content h2 {
+    color: #166534;
+    font-size: 2rem;
+    margin-bottom: 0.75rem;
+}
+
+.donation-content p {
+    color: #4b5563;
+    margin-bottom: 1.5rem;
+}
+
+/* === Form === */
+.donation-form p {
+    margin-bottom: 1rem;
+}
+
+.donation-form input {
+    width: 100%;
+    padding: 0.6rem 0.8rem;
+    border: 1px solid #d1d5db;
+    border-radius: 0.5rem;
+    font-size: 1rem;
+    transition: border-color 0.2s;
+}
+
+.donation-form input:focus {
+    border-color: #3A7D44;
+    outline: none;
+}
+
+.donation-btn {
+    background-color: #3A7D44;
+    color: white;
+    border: none;
+    padding: 0.75rem 2rem;
+    border-radius: 9999px;
+    cursor: pointer;
+    font-size: 1rem;
+    transition: all 0.2s ease-in-out;
+}
+
+.donation-btn:hover {
+    background-color: #2f6336;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+}
+
+/* === Error Message === */
+.error-msg {
+    color: #dc2626;
+    font-weight: 500;
+}
+
+/* === Illustration Wrapper === */
+.donation-illustration-wrapper {
+    flex: 1 1 350px;
+    height: 100%;          /* make it fill the card height */
+    display: flex;
+    justify-content: center;
+    align-items: center;    /* center the video vertically */
+    background-color: #dcfce7;
+    overflow: hidden;
+    padding: 0;
+    margin: 0;
+}
+
+/* === Video Styling === */
+.donation-illustration {
+    display: block;       /* prevents extra space below */
+    width: 100%;
+    height: 100%;           /* fill the wrapper fully */
+    object-fit: cover;      /* cover full area without leaving gaps */
+}
+
+
+@media (max-width: 768px) {
+    .donation-card {
+        flex-direction: column-reverse;
+    }
+
+    .donation-illustration-wrapper {
+        min-height: 200px;
+        width: 100%;
+    }
+}

@@ -8,8 +8,10 @@ from django.contrib.auth.decorators import login_required
 from .models import User, Profile
 from django.db.models import Count
 from django.urls import reverse
-from BlogApp.models import BlogPost
+from BlogApp.models import BlogPost, Comment, Notification, Bookmark
 from django.contrib.auth import get_user_model
+from django.http import JsonResponse
+
 
 # Home page view
 def HomePage(request):
@@ -62,16 +64,19 @@ def profile_view(request, username):
     joined_date = profile.joined_date
     role = user.get_user_type_display()
 
-    # Role-specific logic
     if user.user_type == "contributor":
+        # Contributor sees their trees, posts, and answers
         my_trees = TreeProfile.objects.filter(submitted_by=user)
-        requests = []  # to be replaced when you build Request model
         posts = BlogPost.objects.filter(author=user)
-    else:  # common user
-        my_trees = []  # future: trees added because of requests
-        requests = TreeRequest.objects.filter(requester=user)  # fetch user requests even for common users
+        # Fetch all answers given by this contributor
+        requests = TreeAnswer.objects.filter(answered_by=user).select_related('tree_request')
+    else:
+        # Common user sees their requests
+        my_trees = []  # Not relevant
+        requests = TreeRequest.objects.filter(requester=user)
 
-        posts = []     # future: saved/liked posts
+        # Common user sees bookmarked posts
+        posts = BlogPost.objects.filter(bookmarked_by__user=user)  # <-- correct query
 
     context = {
         "profile_user": user,
@@ -82,11 +87,15 @@ def profile_view(request, username):
         "requests": requests,
         "posts": posts,
     }
-    # inside profile_view
+
+    # Clear messages
     storage = messages.get_messages(request)
     for _ in storage:
-        pass  # iterating clears them
-    return render(request,"Profile/profile_view.html", context)
+        pass
+
+    return render(request, "Profile/profile_view.html", context)
+
+
 
 # Edit profile view
 @login_required
@@ -120,3 +129,4 @@ def user_overview(request):
         'total_contributors': total_contributors,
         'total_common': total_common,
     })
+

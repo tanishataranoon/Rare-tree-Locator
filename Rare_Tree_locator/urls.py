@@ -3,6 +3,7 @@ from django.urls import path, include
 from MyApp import views as myapp_views
 from TreeApp import views as treeapp_views
 from BlogApp import views as blogapp_views  
+from DonationApp import views as donationapp_views
 from .import settings
 from django.conf.urls.static import static
 from django.contrib.auth.views import LogoutView
@@ -24,6 +25,7 @@ urlpatterns = [
     path('profile_view/<str:username>/', myapp_views.profile_view, name='profile_view'),  # Profile view
     path('user-overview/', myapp_views.user_overview, name='user_overview'),
 
+
     # Blog app views
     path('blog_list', blogapp_views.blog_list, name='blog_list'),  # Added blog list view
     path('blog_list/<int:pk>/', blogapp_views.blog_detail, name='blog_detail'),  # Detail view
@@ -33,6 +35,11 @@ urlpatterns = [
 
     path('comment/edit/<int:comment_id>/', blogapp_views.edit_comment, name='edit_comment'),
     path('comment/delete/<int:comment_id>/', blogapp_views.delete_comment, name='delete_comment'),
+    path('notifications/mark_read/', blogapp_views.mark_notifications_read, name='mark_notifications_read'),
+    path('notifications/mark_read/<int:notif_id>/', blogapp_views.mark_single_notification_read, name='mark_single_notification_read'),
+    path('post/<int:post_id>/bookmark/',blogapp_views.toggle_bookmark, name='toggle_bookmark'),
+
+    
     # Tree app views
     path('trees/', treeapp_views.TreeProfiles, name = 'TreeProfiles'),# Tree profiles view
     path('map/', treeapp_views.map_page, name='map_page'),
@@ -50,6 +57,19 @@ urlpatterns = [
     path('requests/<int:pk>/answer/', treeapp_views.answer_request, name='answer_request'),
     path('requests/<int:pk>/answer/view/', treeapp_views.view_submitted_answer, name='view_submitted_answer'),
 
-     path('contact/', treeapp_views.contact, name='contact'),
+    path('contact/', treeapp_views.contact, name='contact'),
+
+
+    # Donation app views
+    path('donate/', donationapp_views.initiate_donation, name='donate'),
+    path('donate/ipn/', donationapp_views.ssl_ipn, name='ssl_ipn'),
+    path('donate/history/', donationapp_views.donation_history, name='donation_history'),
+    path('admin/donations/', donationapp_views.admin_donations, name='admin_donations'),
+    path('donate/success/', donationapp_views.donate_success, name='donate_success'),  # <-- add this
+    path('donate/fail/',donationapp_views.donate_fail, name='donate_fail'),
+    path('donate/cancel/',donationapp_views.donate_cancel, name='donate_cancel'),
+    path('dashboard/donation-history/', donationapp_views.donation_history_dashboard, name='donation_history_dashboard'),
+
+
 
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

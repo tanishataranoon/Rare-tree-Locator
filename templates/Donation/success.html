@@ -1,0 +1,23 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Donation Successful</title>
+    <link rel="stylesheet" href="{% static 'css/Donate/donation_success.css' %}">
+</head>
+<body>
+    {% include 'Common/header.html' %}
+
+    <section class="success-section">
+        <div class="success-box">
+            <img src="{% static 'videos/success.gif' %}" alt="Success Animation" class="success-gif">
+            <h1>Thank You for Your Donation!</h1>
+            <p>Your contribution helps us protect and preserve rare trees 🌱</p>
+            <a href="{% url 'HomePage' %}" class="home-btn">Return to Home</a>
+        </div>
+    </section>
+
+    {% include 'Common/footer.html' %}
+</body>
+</html>

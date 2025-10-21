@@ -1,8 +1,10 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
 from django.conf import settings
-from MyApp.models import User
 from urllib.parse import urlparse, parse_qs
+from django.contrib.auth import get_user_model
+
+User = get_user_model()  # <-- safe cross-app reference
 
 # Create your models here.
 # Blog Post
@@ -47,3 +49,33 @@ class Comment(models.Model):
 
     def __str__(self):
         return f"Comment by {self.user.username} on {self.post.title}"
+    
+# Notification
+class Notification(models.Model):
+    NOTIF_TYPES = [
+        ('comment', 'Comment'),
+        ('reply', 'Reply'),
+    ]
+    recipient = models.ForeignKey(User, on_delete=models.CASCADE, related_name='notifications')
+    sender = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True)
+    notif_type = models.CharField(max_length=20, choices=NOTIF_TYPES)
+    post = models.ForeignKey('BlogPost', on_delete=models.CASCADE, null=True, blank=True)
+    comment = models.ForeignKey('Comment', on_delete=models.CASCADE, null=True, blank=True)
+    message = models.TextField()
+    is_read = models.BooleanField(default=False)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.sender} -> {self.recipient} ({self.notif_type})"
+    
+
+class Bookmark(models.Model):
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="bookmarks")
+    post = models.ForeignKey(BlogPost, on_delete=models.CASCADE, related_name="bookmarked_by")
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        unique_together = ("user", "post")
+
+    def __str__(self):
+        return f"{self.user.username} bookmarked {self.post.title}"

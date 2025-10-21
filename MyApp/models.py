@@ -3,6 +3,8 @@ from django.db import models
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django.utils import timezone
+from django.contrib.auth import get_user_model  
+
 
 
 #user model
@@ -14,9 +16,11 @@ class User(AbstractUser):
     user_type = models.CharField(max_length=20, choices=USER_TYPES, default='common')
     profession = models.CharField(max_length=100, blank=True, null=True)
 
+    @property
+    def unread_notifications_count(self):
+        return self.notifications.filter(is_read=False).count()
     def __str__(self):
         return f"{self.username} ({self.user_type})"
-
 # profile model
 class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)

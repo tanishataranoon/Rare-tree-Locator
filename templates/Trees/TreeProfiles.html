@@ -7,7 +7,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Rare Tree Locator | Tree Gallery</title>
 
-  <!-- Tailwind (optional, can keep for utility classes) -->
+  <!-- Tailwind (optional, keep for utility classes) -->
   <script src="https://cdn.tailwindcss.com"></script>
 
   <!-- External CSS -->
@@ -23,27 +23,29 @@
       <h1>🌴 Explore the Rare Trees of Dhaka</h1>
       <p>A curated gallery of unique and endangered trees shared by our contributors</p>
     </div>
+
+    <!-- Search Bar -->
     <div class="search-bar-container mb-6">
       <input type="text" id="treeSearch" placeholder="Search trees by name, location, or type..." class="search-input">
-        <button id="searchBtn">Search</button>
+      <button id="searchBtn">Search</button>
     </div>
 
     <!-- Grid of Tree Cards -->
     <div class="grid-container">
       {% for tree in TreeProfiles %}
-      <div class="card relative">
+      <div class="card relative" data-latitude="{{ tree.latitude }}" data-longitude="{{ tree.longitude }}">
         {% if tree.photos.first %}
-          <div class="card-image">
-            <img src="{{ tree.photos.first.image.url }}" alt="{{ tree.street_name }}">
-          </div>
+        <div class="card-image">
+          <img src="{{ tree.photos.first.image.url }}" alt="{{ tree.street_name }}">
+        </div>
         {% else %}
-          <div class="card-image">
-            <img src="{% static 'images/placeholder_tree.jpg' %}" alt="Tree Image">
-          </div>
+        <div class="card-image">
+          <img src="{% static 'images/placeholder_tree.jpg' %}" alt="Tree Image">
+        </div>
         {% endif %}
 
         {% if tree.rarity_status %}
-          <span class="badge">{{ tree.rarity_status }}</span>
+        <span class="badge">{{ tree.rarity_status }}</span>
         {% endif %}
 
         <div class="card-content">
@@ -56,6 +58,13 @@
           <a href="{% url 'tree_detail' tree.id %}" class="view-details-btn">
             View Details
           </a>
+
+          {% if user.is_authenticated and tree.submitted_by == user %}
+          <div class="contributor-actions mt-2 flex gap-2">
+            <button class="edit-btn bg-blue-500 text-white px-3 py-1 rounded" data-id="{{ tree.id }}">Edit</button>
+            <button class="delete-btn bg-red-500 text-white px-3 py-1 rounded" data-id="{{ tree.id }}">Delete</button>
+          </div>
+          {% endif %}
         </div>
       </div>
       {% empty %}
@@ -64,11 +73,52 @@
     </div>
   </div>
 
+  <!-- Edit Tree Modal -->
+  <div id="editTreeModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-50">
+    <div class="bg-white rounded-lg relative w-full max-w-lg max-h-[90vh] overflow-y-auto p-6">
+      <button id="closeModalBtn" class="absolute top-2 right-2 text-gray-600">&times;</button>
+      <h2 class="text-xl font-semibold mb-4">Edit Tree</h2>
+      <form id="editTreeForm" class="space-y-3">
+        <input type="hidden" id="editTreeId" name="tree_id">
+
+        <label>Street Name</label>
+        <input type="text" id="editStreetName" name="street_name" class="w-full border rounded px-2 py-1">
+
+        <label>Scientific Name</label>
+        <input type="text" id="editScientificName" name="scientific_name" class="w-full border rounded px-2 py-1">
+
+        <label>Habitat</label>
+        <input type="text" id="editHabitat" name="habitat" class="w-full border rounded px-2 py-1">
+
+        <label>Description</label>
+        <textarea id="editDescription" name="description" rows="3" class="w-full border rounded px-2 py-1"></textarea>
+
+        <label>Rarity Status</label>
+        <input type="text" id="editRarityStatus" name="rarity_status" class="w-full border rounded px-2 py-1">
+
+        <label>Height (m)</label>
+        <input type="number" id="editHeight" name="height_m" class="w-full border rounded px-2 py-1">
+
+        <label>Age Estimate</label>
+        <input type="number" id="editAge" name="age_estimate" class="w-full border rounded px-2 py-1">
+
+        <label>Latitude</label>
+        <input type="text" id="editLatitude" name="latitude" class="w-full border rounded px-2 py-1">
+
+        <label>Longitude</label>
+        <input type="text" id="editLongitude" name="longitude" class="w-full border rounded px-2 py-1">
+
+        <label>Photos (optional)</label>
+        <input type="file" name="tree_photos" multiple class="w-full">
+
+        <button type="submit" class="bg-green-500 text-white px-4 py-2 rounded mt-2">Save Changes</button>
+      </form>
+    </div>
+  </div>
+
   {% include 'Common/footer.html' %}
 
   <!-- External JS -->
   <script src="{% static 'JS/Trees/TreeProfiles.js' %}"></script>
-
 </body>
-
 </html>

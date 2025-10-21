@@ -150,10 +150,10 @@
 
                     {% if user.is_authenticated and user.user_type != 'common' %}
                     <a id="answer-btn" href="#" class="btn btn-primary">Answer</a>
-                    <button class="btn btn-skip">Skip / Avoid</button>
+                
                     {% endif %}
 
-                    <a href="#" class="btn btn-add">Add Tree Officially</a>
+                    <a href="{% url 'map_page' %}" class="{% if request.resolver_match.url_name == 'map_page' %}active{% endif %}">Add Tree Officially</a>
                 </div>
             </div>
         </div>

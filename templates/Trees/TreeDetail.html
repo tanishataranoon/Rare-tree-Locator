@@ -4,140 +4,106 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>{{ tree.common_name }} - Tree Details</title>
-
-  <!-- External CSS -->
-  <link rel="stylesheet" href="{% static 'CSS/Trees/TreeDetail.css' %}">
+  <title>{{ tree.street_name }} - Tree Details</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+  <link rel="stylesheet" href="{% static 'CSS/Trees/TreeDetail.css' %}">
 </head>
-
 <body>
-
   {% include 'Common/header.html' %}
 
-  <!-- ===== Header Section ===== -->
-  <header class="header">
-    <h1>{{ tree.common_name }}</h1>
-    <p><em>{{ tree.scientific_name }}</em></p>
-  </header>
+  <div class="container">
+    <!-- Main Grid: Left Info, Right Image+Map -->
+    <div class="main-grid">
+      <!-- Left Column: Tree Info -->
+      <div class="tree-info">
+        <h2 class="tree-common-name">{{ tree.street_name }}</h2>
+        <p class="tree-scientific-name"><em>{{ tree.scientific_name|default:"Unknown" }}</em></p>
 
-  <!-- ===== Tree Image Section ===== -->
-  <section class="tree-image">
-    {% if tree.image %}
-      <img src="{{ tree.image.url }}" alt="{{ tree.common_name }}">
-    {% else %}
-      <img src="{% static 'images/no_image.jpg' %}" alt="No image available">
-    {% endif %}
-  </section>
+        <div class="info-cards">
+          <div class="info-card rarity-{{ tree.rarity_status|default:"common"|lower }}">
+            <i class="fas fa-seedling"></i>
+            <span>Rarity:</span>
+            <p>{{ tree.rarity_status|default:"Common" }}</p>
+          </div>
 
-  <!-- ===== Tree Information Section ===== -->
-  <section class="tree-info">
-    <div class="info-box">
+          <div class="info-card">
+            <i class="fas fa-ruler-vertical"></i>
+            <span>Height:</span>
+            <p>{{ tree.height_m|default:"N/A" }} m</p>
+          </div>
 
-      <div class="info-item">
-        <h4>Scientific Name</h4>
-        <p>{{ tree.scientific_name }}</p>
+          <div class="info-card">
+            <i class="fas fa-hourglass-half"></i>
+            <span>Age:</span>
+            <p>{{ tree.age_estimate|default:"N/A" }} yrs</p>
+          </div>
+
+          <div class="info-card">
+            <i class="fas fa-map-marker-alt"></i>
+            <span>Location:</span>
+            <p>{{ tree.street_name }}, {{ tree.city|default:"N/A" }}</p>
+          </div>
+
+          <div class="info-card">
+            <i class="fas fa-globe-americas"></i>
+            <span>Coordinates:</span>
+            <p>{{ tree.latitude }}, {{ tree.longitude }}</p>
+          </div>
+
+          <div class="info-card">
+            <i class="fas fa-check-circle"></i>
+            <span>Verified:</span>
+            <p>{% if tree.verified %}Yes{% else %}No{% endif %}</p>
+          </div>
+        </div>
       </div>
 
-      <div class="info-item">
-        <h4>Family</h4>
-        <p>{{ tree.family }}</p>
-      </div>
+      <!-- Right Column: Image + Map -->
+      <div class="right-column">
+        <div class="tree-image">
+          {% if tree.photos.first %}
+            <img src="{{ tree.photos.first.image.url }}" alt="{{ tree.street_name }}">
+          {% else %}
+            <div class="no-image">
+              <i class="fas fa-tree"></i>
+              <p>No image available</p>
+            </div>
+          {% endif %}
+        </div>
 
-      <div class="info-item">
-        <h4>Location</h4>
-        <p>{{ tree.street_name }}, {{ tree.city }}</p>
+        <div class="map-container">
+          <div id="map"></div>
+        </div>
       </div>
-
-      <div class="info-item">
-        <h4>Latitude / Longitude</h4>
-        <p>{{ tree.latitude }}, {{ tree.longitude }}</p>
-      </div>
-
-      <div class="info-item">
-        <h4>Height</h4>
-        <p>{{ tree.height|default:"N/A" }}</p>
-      </div>
-
-      <div class="info-item">
-        <h4>Condition</h4>
-        <p>{{ tree.condition|default:"N/A" }}</p>
-      </div>
-
     </div>
-  </section>
 
-  <!-- Video Section -->
-  <section class="video-section">
-    <h2>Watch the Tree Journey</h2>
-    <div class="video-wrapper">
-      {% if tree.video_embed_id %}
-        <iframe src="https://www.youtube.com/embed/{{ tree.video_embed_id }}" allowfullscreen></iframe>
-      {% else %}
-        <iframe src="https://www.youtube.com/embed/T9RZxS3oKcM" allowfullscreen></iframe>
-      {% endif %}
-    </div>
-  </section>
-
-  <!-- ===== Map Section (Dynamic) ===== -->
-  <section class="map-section">
-<<<<<<< HEAD
-    <h2>Track the Rare Tree – See It on the Map!</h2>
-    <div class="map-wrapper">
-      <div id="map"></div>
-    </div>
-  </section>
-
-  <footer>
-    <p>&copy; 2025 Rare Tree Locator | Designed by J.G.</p>
-  </footer>
-
-  <!-- ===== Google Maps API + Dynamic Map ===== -->
-  <script>
-    function initMap() {
-      const lat = parseFloat("{{ tree.latitude|default:0 }}");
-      const lng = parseFloat("{{ tree.longitude|default:0 }}");
-      const treeLocation = { lat: parseFloat(lat), lng: parseFloat(lng) };
-
-      const map = new google.maps.Map(document.getElementById("map"), {
-        zoom: 15,
-        center: treeLocation,
-        mapTypeControl: true,
-        streetViewControl: true,
-        zoomControl: true
-      });
-
-      const marker = new google.maps.Marker({
-        position: treeLocation,
-        map: map,
-        title: "{{ tree.street_name }}"
-      });
-
-      const infoWindow = new google.maps.InfoWindow({
-        content: `<strong>{{ tree.street_name }}</strong><br>Habitat: {{ tree.habitat }}`
-      });
-
-      marker.addListener('click', function() {
-        infoWindow.open(map, marker);
-      });
-    }
-  </script>
-
-  <script async
-    src="https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY&callback=initMap">
-  </script>
-=======
-    <h2>Tree Location</h2>
-    <div id="map"></div>
-  </section>
-
+    <!-- Video Section -->
+<div class="video-section">
+  {% if embed_url %}
+    <iframe src="{{ embed_url }}" allowfullscreen></iframe>
+  {% else %}
+    <iframe src="https://www.youtube.com/embed/T9RZxS3oKcM" allowfullscreen></iframe>
+  {% endif %}
+</div>
+  </div>
 
   {% include 'Common/footer.html' %}
 
-  <!-- ===== External JS ===== -->
+  <!-- Leaflet Map Script -->
   <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
-  <script src="{% static 'JS/Trees/TreeDetail.js' %}"></script>
+  <script>
+    const lat = parseFloat("{{ tree.latitude|default:0 }}");
+    const lng = parseFloat("{{ tree.longitude|default:0 }}");
 
->>>>>>> e2ab5483853ac20f845a02463d1c1b7c2bdb2b84
+    const map = L.map('map').setView([lat, lng], 15);
+
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: '&copy; OpenStreetMap contributors'
+    }).addTo(map);
+
+    const marker = L.marker([lat, lng]).addTo(map);
+    marker.bindPopup(`<strong>{{ tree.street_name }}</strong><br><em>{{ tree.scientific_name|default:"Unknown" }}</em>`).openPopup();
+  </script>
 </body>
 </html>

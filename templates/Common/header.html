@@ -32,7 +32,8 @@
                     </a>
                     {% if user.is_authenticated and user.user_type == 'contributor' %}
                     <ul class="dropdown-menu">
-                        <li><a href="{% url 'add_tree_ajax' %}" class="add-symbol">Create Tree</a></li>
+                        <li><a href="{% url 'map_page' %}"
+                        class="{% if request.resolver_match.url_name == 'map_page' %}active{% endif %}">Create Tree</a></li>
                         <li><a href="{% url 'profile_view' user.username %}"><i data-feather="user"></i>My Trees</a></li>
                         <li><a href="{% url 'TreeProfiles' %}">All Trees</a></li>
                     </ul>

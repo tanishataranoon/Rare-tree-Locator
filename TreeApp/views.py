@@ -120,6 +120,56 @@ def add_tree_ajax(request):
     return JsonResponse({'success': False, 'error': 'Invalid request'})
 
 
+@login_required
+@csrf_exempt
+def update_tree_ajax(request, pk):
+    tree = get_object_or_404(TreeProfile, pk=pk)
+
+    if tree.submitted_by != request.user:
+        return JsonResponse({'success': False, 'error': 'You are not authorized to update this tree.'})
+
+    if request.method == 'POST':
+        try:
+            tree.street_name = request.POST.get('street_name', tree.street_name)
+            tree.scientific_name = request.POST.get('scientific_name', tree.scientific_name)
+            tree.habitat = request.POST.get('habitat', tree.habitat)
+            tree.description = request.POST.get('description', tree.description)
+            tree.rarity_status = request.POST.get('rarity_status', tree.rarity_status)
+            tree.height_m = request.POST.get('height_m') or tree.height_m
+            tree.age_estimate = request.POST.get('age_estimate') or tree.age_estimate
+            tree.latitude = request.POST.get('latitude', tree.latitude)
+            tree.longitude = request.POST.get('longitude', tree.longitude)
+            tree.save()
+
+            # Update photos if new ones uploaded
+            photos = request.FILES.getlist('tree_photos')
+            if photos:
+                tree.photos.all().delete()  # remove old photos
+                for photo in photos:
+                    TreePhoto.objects.create(tree=tree, image=photo)
+
+            return JsonResponse({'success': True, 'message': 'Tree updated successfully.'})
+        except Exception as e:
+            return JsonResponse({'success': False, 'error': str(e)})
+
+    return JsonResponse({'success': False, 'error': 'Invalid request'})
+
+@login_required
+@csrf_exempt
+def delete_tree_ajax(request, pk):
+    tree = get_object_or_404(TreeProfile, pk=pk)
+
+    if tree.submitted_by != request.user:
+        return JsonResponse({'success': False, 'error': 'You are not authorized to delete this tree.'})
+
+    if request.method == 'POST':
+        tree.delete()
+        return JsonResponse({'success': True, 'message': 'Tree deleted successfully.'})
+
+    return JsonResponse({'success': False, 'error': 'Invalid request'})
+
+
+
 def TreeDetail(request, id):
     tree = get_object_or_404(TreeProfile, id=id)
 
@@ -128,19 +178,28 @@ from .models import TreeProfile
 
 def tree_detail(request, pk):
     tree = get_object_or_404(TreeProfile, pk=pk)
-    # convert Decimal to float for JS ease (optional but ভালো)
-    try:
-        lat = float(tree.latitude)
-        lng = float(tree.longitude)
-    except Exception:
-        lat = None
-        lng = None
 
-    return render(request, 'Trees/TreeDetail.html', {
+    # Convert Decimal to float for JS ease
+    lat = float(tree.latitude) if tree.latitude else 0
+    lng = float(tree.longitude) if tree.longitude else 0
+
+    # Prepare YouTube embed URL
+    embed_url = None
+    if tree.video_url:
+        # Only convert if it's a YouTube watch link
+        if "watch?v=" in tree.video_url:
+            embed_url = tree.video_url.replace("watch?v=", "embed/")
+        else:
+            embed_url = tree.video_url
+
+    context = {
         'tree': tree,
         'tree_lat': lat,
         'tree_lng': lng,
-    })
+        'embed_url': embed_url,
+    }
+    return render(request, 'Trees/TreeDetail.html', context)
+
 
 def map_page(request):
     trees = []

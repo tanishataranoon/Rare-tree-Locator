@@ -1,150 +1,162 @@
-/* ===== Body & Fonts ===== */
+/* General */
 body {
-  font-family: "Poppins", sans-serif;
+  font-family: Arial, sans-serif;
   margin: 0;
   padding: 0;
-  background: linear-gradient(145deg, #fef9f0, #e8f5e9);
+  background: #f7f7f7;
   color: #333;
-  line-height: 1.6;
 }
 
-/* ===== Header ===== */
-.header {
-  background: linear-gradient(145deg, #ffe0b2, #ffcc80);
-  padding: 100px 20px 30px;
-  text-align: center;
-  border-bottom: 4px solid #fff;
-  position: relative;
-  z-index: 10;
+.container {
+  width: 90%;
+  max-width: 1200px;
+  margin: 100px auto 20px auto; /* extra top space for header */
 }
 
-.header h1 {
-  font-size: 2.4rem;
-  margin-bottom: 8px;
-  color: #2e7d32;
-  text-shadow: 1px 1px 6px rgba(0,0,0,0.12);
+/* Main Grid */
+.main-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 40px;
+  align-items: start;
 }
 
-.header p {
+/* Left Column: Tree Info */
+.tree-info {
+  background: #fff;
+  padding: 25px;
+  border-radius: 10px;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+}
+
+.tree-info h2.tree-common-name {
+  font-size: 2rem;
+  margin-bottom: 10px;
+}
+
+.tree-info p.tree-scientific-name {
   font-size: 1.2rem;
-  color: #1b5e20;
+  margin-bottom: 20px;
+  font-style: italic;
 }
 
-/* ===== Tree Image ===== */
-.tree-image {
-  text-align: center;
-  background: #fff8e1;
-  padding: 40px 0;
+/* Info Cards */
+.info-cards {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 15px;
+}
+
+.info-card {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  background-color: #f1f1f1;
+  padding: 12px 15px;
+  border-radius: 10px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.info-card i {
+  font-size: 1.5rem;
+  min-width: 30px;
+}
+
+/* Rarity Colors */
+.rarity-common { background-color: #d4edda; color: #155724; }
+.rarity-rare { background-color: #fff3cd; color: #856404; }
+.rarity-endangered { background-color: #f8d7da; color: #721c24; }
+
+.info-card span {
+  font-weight: bold;
+  flex-shrink: 0;
+  width: 90px;
+}
+
+.info-card p {
+  margin: 0;
+  font-size: 1rem;
+  color: #555;
+}
+
+.info-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 18px rgba(0,0,0,0.15);
+}
+
+/* Right Column */
+.right-column {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  height: 100%;
 }
 
 .tree-image img {
-  width: 60%;
-  max-width: 550px;
-  border-radius: 20px;
-  box-shadow: 0 8px 30px rgba(0,0,0,0.15);
-  transition: transform 0.5s ease, box-shadow 0.5s ease;
-}
-
-.tree-image img:hover {
-  transform: scale(1.05);
-  box-shadow: 0 12px 40px rgba(0,0,0,0.2);
-}
-
-/* ===== Info Section ===== */
-.tree-info {
-  padding: 50px 20px;
-  max-width: 1000px;
-  margin: auto;
-}
-
-.info-box {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-  gap: 25px;
-}
-
-.info-item {
-  background: #fff3e0;
-  padding: 20px;
-  border-radius: 16px;
-  box-shadow: 0 6px 20px rgba(0,0,0,0.08);
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
-}
-
-.info-item:hover {
-  transform: translateY(-6px);
-  box-shadow: 0 12px 28px rgba(0,0,0,0.15);
-}
-
-.info-item h4 {
-  color: #bf360c;
-  margin-bottom: 8px;
-  font-size: 1rem;
-}
-
-/* ===== Video Section ===== */
-.video-section {
-  text-align: center;
-  padding: 60px 20px;
-  background: #fff3e0;
-}
-
-.video-section h2 {
-  margin-bottom: 25px;
-  font-size: 1.6rem;
-  color: #2e7d32;
-}
-
-.video-wrapper {
-  max-width: 750px;
-  margin: auto;
-  border-radius: 16px;
-  overflow: hidden;
-  box-shadow: 0 6px 25px rgba(0,0,0,0.12);
-}
-
-/* ===== Map Section ===== */
-.map-section {
-  text-align: center;
-  padding: 60px 20px;
-  background: #ffffff;
-}
-
-.map-section h2 {
-  margin-bottom: 20px;
-  font-size: 1.6rem;
-  color: #2e7d32;
-}
-
-.map-wrapper, #map {
   width: 100%;
-  max-width: 1000px;
-  height: 450px;
-  margin: auto;
-  border-radius: 16px;
+  height: auto;
+  border-radius: 10px;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+}
+
+.no-image {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 300px;
+  border: 2px dashed #ccc;
+  border-radius: 10px;
+  color: #777;
+}
+
+.no-image i {
+  font-size: 3rem;
+  margin-bottom: 10px;
+}
+
+/* Map */
+.map-container {
+  flex-grow: 1;
+  border-radius: 10px;
   overflow: hidden;
-  box-shadow: 0 6px 25px rgba(0,0,0,0.12);
+  box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+  height: 500px;
 }
 
-/* ===== Footer ===== */
-footer {
-  text-align: center;
-  background: #f3f2ef;
-  padding: 20px;
-  font-size: 0.95rem;
-  color: #555;
-  margin-top: 40px;
+#map {
+  width: 100%;
+  height: 100%;
 }
 
-.back-link {
-  display: inline-block;
-  margin: 20px;
-  color: #2e7d32;
-  text-decoration: none;
-  font-weight: 600;
-  transition: color 0.3s;
+/* Video Section */
+.video-section {
+  margin-top: 30px;
+  width: 100%;
+  padding-bottom: 35%;
+  position: relative;
 }
 
-.back-link:hover {
-  color: #1b5e20;
+.video-section iframe {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  border: 0;
+}
+
+/* Responsive */
+@media (max-width: 992px) {
+  .main-grid {
+    grid-template-columns: 1fr;
+  }
+  .map-container {
+    height: 400px;
+  }
+  .container {
+    margin-top: 60px;
+  }
+  .info-cards {
+    grid-template-columns: 1fr;
+  }
 }

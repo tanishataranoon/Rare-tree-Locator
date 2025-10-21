@@ -264,3 +264,13 @@
     gap: 5px;
     flex-wrap: wrap;
 }
+#bookmark-btn {
+    background: none;
+    border: none;
+    font-size: 1rem;
+    cursor: pointer;
+}
+
+#bookmark-btn:hover {
+    opacity: 0.8;
+}

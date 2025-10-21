@@ -37,6 +37,7 @@ urlpatterns = [
     path('comment/delete/<int:comment_id>/', blogapp_views.delete_comment, name='delete_comment'),
     path('notifications/mark_read/', blogapp_views.mark_notifications_read, name='mark_notifications_read'),
     path('notifications/mark_read/<int:notif_id>/', blogapp_views.mark_single_notification_read, name='mark_single_notification_read'),
+    path('post/<int:post_id>/bookmark/',blogapp_views.toggle_bookmark, name='toggle_bookmark'),
 
     
     # Tree app views
@@ -67,5 +68,8 @@ urlpatterns = [
     path('donate/success/', donationapp_views.donate_success, name='donate_success'),  # <-- add this
     path('donate/fail/',donationapp_views.donate_fail, name='donate_fail'),
     path('donate/cancel/',donationapp_views.donate_cancel, name='donate_cancel'),
+    path('dashboard/donation-history/', donationapp_views.donation_history_dashboard, name='donation_history_dashboard'),
+
+
 
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

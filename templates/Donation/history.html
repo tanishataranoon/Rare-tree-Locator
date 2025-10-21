@@ -1,23 +1,45 @@
-<h2>Your Donation History</h2>
-<table border="1" cellspacing="0" cellpadding="6">
-    <tr>
-        <th>Date</th>
-        <th>Amount (BDT)</th>
-        <th>Status</th>
-        <th>Transaction ID</th>
-        <th>Validation ID</th>
-    </tr>
-    {% for d in donations %}
-    <tr>
-        <td>{{ d.created_at|date:"Y-m-d H:i" }}</td>
-        <td>{{ d.amount }}</td>
-        <td>{{ d.status }}</td>
-        <td>{{ d.order_id }}</td>
-        <td>{{ d.val_id|default:"-" }}</td>
-    </tr>
-    {% empty %}
-    <tr>
-        <td colspan="5">No donations yet.</td>
-    </tr>
-    {% endfor %}
-</table>
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Donation history</title>
+    <link rel="stylesheet" href="{% static 'css/Donate/donation_history.css' %}">
+
+</head>
+<body>
+    {% include 'Common/header.html' %}
+    <div class="donation-history">
+        <h2>Your Donation History</h2>
+        <table class="donation-table">
+            <thead>
+                <tr>
+                    <th>Date</th>
+                    <th>Amount (BDT)</th>
+                    <th>Status</th>
+                    <th>Transaction ID</th>
+                    <th>Validation ID</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for d in donations %}
+                <tr>
+                    <td>{{ d.created_at|date:"Y-m-d H:i" }}</td>
+                    <td>{{ d.amount }}</td>
+                    <td class="status {{ d.status|lower }}">{{ d.status }}</td>
+                    <td>{{ d.order_id }}</td>
+                    <td>{{ d.val_id|default:"-" }}</td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="5" class="empty">No donations yet.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% include 'Common/footer.html' %}
+    
+</body>
+</html>

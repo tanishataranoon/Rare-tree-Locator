@@ -7,6 +7,8 @@ from django.utils import timezone
 from MyApp.models import User, Profile
 from django.contrib.auth import get_user_model
 from django.db import migrations
+from urllib.parse import urlparse, parse_qs
+
 
 def fix_null_treeanswers(apps, schema_editor):
     TreeAnswer = apps.get_model("TreeApp", "TreeAnswer")
@@ -147,6 +149,19 @@ class TreeAnswer(models.Model):
         if self.tree_request.status != "answered":
             self.tree_request.status = "answered"
             self.tree_request.save()
-
+    def get_embed_url(self):
+        if not self.video_url:
+            return None
+        url = self.video_url.strip()
+        if "youtube.com/watch" in url:
+            query = parse_qs(urlparse(url).query)
+            video_id = query.get("v", [None])[0]
+        elif "youtu.be" in url:
+            video_id = urlparse(url).path[1:]
+        else:
+            return None
+        if video_id:
+            return f"https://www.youtube.com/embed/{video_id}"
+        return None
     def __str__(self):
         return f"Answer to {self.tree_request.title} by {self.answered_by.username}"

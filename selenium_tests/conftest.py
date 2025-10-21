@@ -27,8 +27,8 @@ def login_contributor(driver):
     password_field = driver.find_element(By.NAME, "password")
 
     # Fill credentials (your contributor account)
-    username_field.send_keys("tt")  
-    password_field.send_keys("<3yourself97", Keys.RETURN)
+    username_field.send_keys("hridy")  
+    password_field.send_keys("gN8zyQ2NWX-5GKn", Keys.RETURN)
 
     # Wait until redirected to profile page
     WebDriverWait(driver, 10).until(EC.url_contains("profile"))
@@ -48,7 +48,7 @@ def login_normal_user(driver):
     password_field = driver.find_element(By.NAME, "password")
 
     # Fill credentials (normal user account)
-    username_field.send_keys("teacher")  
+    username_field.send_keys("tan")  
     password_field.send_keys("<3yourself97", Keys.RETURN)
 
     WebDriverWait(driver, 10).until(EC.url_contains("profile"))

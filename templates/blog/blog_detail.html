@@ -4,15 +4,15 @@
 
 <head>
     <meta charset="UTF-8">
+    <meta name="csrf-token" content="{{ csrf_token }}">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="{% static 'css/blog/blog_detail.css' %}">
-    
+
     <title>{{ post.title }}</title>
 </head>
 
 <body>
     {% include 'Common/header.html' %}
-    {% block content %}
     <div class="blog-container">
         <!-- Back to Blog -->
         <a href="{% url 'blog_list' %}" class="back-link">&larr; Back to Blog</a>
@@ -23,33 +23,44 @@
             <img src="{{ post.image.url }}" class="zoom-img" alt="{{ post.title }}">
         </div>
         {% endif %}
-        
+
         <!-- Title and Author -->
         <h1 class="blog-title">{{ post.title }}</h1>
         <div class="post-author">
             <div class="author-pic">
-                <img src="{% if post.author.profile.profile_pic %}{{ post.author.profile.profile_pic.url }}{% else %}{{ MEDIA_URL }}default_profile.png{% endif %}" alt="{{ post.author.username }}">
+                <img src="{% if post.author.profile.profile_pic %}{{ post.author.profile.profile_pic.url }}{% else %}{{ MEDIA_URL }}default_profile.png{% endif %}"
+                    alt="{{ post.author.username }}">
             </div>
-            <a href="{% url 'profile_view' post.author.username %}" class="author-username">{{ post.author.username }}</a>
+            <a href="{% url 'profile_view' post.author.username %}" class="author-username">{{ post.author.username}}</a>
             <span class="post-date">• {{ post.created_at|date:"F j, Y" }}</span>
         </div>
         <p class="blog-content">{{ post.content }}</p>
+        {% if user.is_authenticated %}
+        <button id="bookmark-btn" data-post-id="{{ post.id }}">
+            {% if bookmarked %}
+            ❤️ Bookmarked
+            {% else %}
+            🤍 Bookmark
+            {% endif %}
+        </button>
+        {% endif %}
+
+
         <!-- Blog Video -->
         <div class="blog-video">
             {% if post.get_embed_url %}
-                <iframe src="{{ post.get_embed_url }}" allowfullscreen></iframe>
+            <iframe src="{{ post.get_embed_url }}" allowfullscreen></iframe>
             {% else %}
-                <iframe src="https://www.youtube.com/embed/T9RZxS3oKcM" allowfullscreen></iframe>
+            <iframe src="https://www.youtube.com/embed/T9RZxS3oKcM" allowfullscreen></iframe>
             {% endif %}
         </div>
-        
 
 
 
         <!-- Comment Section -->
         <section class="comments-section">
             <h3>Comments ({{ comments.count }})</h3>
-            
+
             <!-- Comment Form -->
             <form method="POST" class="comment-form">
                 {% csrf_token %}
@@ -57,49 +68,51 @@
                 <input type="hidden" name="parent_id" id="parent_id">
                 <button type="submit">Post Comment</button>
             </form>
-        
+
             <!-- Comments List -->
             <div class="comments-list">
                 {% for comment in comments %}
                 <div class="comment" id="comment-{{ comment.id }}">
                     <div class="comment-header">
                         <div class="comment-user-pic">
-                            <img src="{% if comment.user.profile.profile_pic %}{{ comment.user.profile.profile_pic.url }}{% else %}{{ MEDIA_URL }}default_profile.png{% endif %}" alt="{{ comment.user.username }}">
+                            <img src="{% if comment.user.profile.profile_pic %}{{ comment.user.profile.profile_pic.url }}{% else %}{{ MEDIA_URL }}default_profile.png{% endif %}"
+                                alt="{{ comment.user.username }}">
                         </div>
-                        <a href="{% url 'profile_view' comment.user.username %}" class="comment-username">{{ comment.user.username }}</a>
+                        <a href="{% url 'profile_view' comment.user.username %}" class="comment-username">{{comment.user.username }}</a>
                         <small>{{ comment.created_at|timesince }} ago</small>
 
                     </div>
-            
+
                     <p class="comment-content">{{ comment.content }}</p>
-            
+
                     <!-- Reply/Edit/Delete buttons -->
                     <div class="comment-actions">
                         <a href="#" class="reply-btn action-btn" data-id="{{ comment.id }}">Reply</a>
                         {% if comment.user == request.user %}
-                            <a href="{% url 'edit_comment' comment.id %}" class="edit-btn action-btn">Edit</a>
-                            <a href="{% url 'delete_comment' comment.id %}" class="delete-btn action-btn">Delete</a>
+                        <a href="{% url 'edit_comment' comment.id %}" class="edit-btn action-btn">Edit</a>
+                        <a href="{% url 'delete_comment' comment.id %}" class="delete-btn action-btn">Delete</a>
                         {% endif %}
                     </div>
-            
+
                     <!-- Replies -->
                     <div class="replies">
                         {% for reply in comment.replies.all %}
                         <div class="reply" id="reply-{{ reply.id }}">
                             <div class="reply-header">
                                 <div class="reply-user-pic">
-                                    <img src="{% if reply.user.profile.profile_pic %}{{ reply.user.profile.profile_pic.url }}{% else %}{{ MEDIA_URL }}default_profile.png{% endif %}" alt="{{ reply.user.username }}">
+                                    <img src="{% if reply.user.profile.profile_pic %}{{ reply.user.profile.profile_pic.url }}{% else %}{{ MEDIA_URL }}default_profile.png{% endif %}"
+                                        alt="{{ reply.user.username }}">
                                 </div>
-                                <a href="{% url 'profile_view' reply.user.username %}" class="reply-username">{{ reply.user.username }}</a>
+                                <a href="{% url 'profile_view' reply.user.username %}" class="reply-username">{{reply.user.username }}</a>
                                 <small>{{ reply.created_at|timesince }} ago</small>
                             </div>
                             <p class="reply-content">{{ reply.content }}</p>
-            
+
                             {% if reply.user == request.user %}
-                                <div class="reply-actions">
-                                    <a href="{% url 'edit_comment' reply.id %}" class="edit-btn action-btn">Edit</a>
-                                    <a href="{% url 'delete_comment' reply.id %}" class="delete-btn action-btn">Delete</a>
-                                </div>
+                            <div class="reply-actions">
+                                <a href="{% url 'edit_comment' reply.id %}" class="edit-btn action-btn">Edit</a>
+                                <a href="{% url 'delete_comment' reply.id %}" class="delete-btn action-btn">Delete</a>
+                            </div>
                             {% endif %}
                         </div>
                         {% endfor %}
@@ -109,16 +122,15 @@
                 <p>No comments yet. Be the first to comment!</p>
                 {% endfor %}
             </div>
-            
+
         </section>
-        
+
     </div>
-    {% endblock %}
     {% include 'Common/footer.html' %}
     <script>
         // define URLs & CSRF for the static JS to use (Django will render these)
         const markReadUrl = "{% url 'mark_notifications_read' %}";
-        const markSingleUrlBase = "{% url 'mark_single_notification_read' 0 %}".replace(/0\/?$/, ''); 
+        const markSingleUrlBase = "{% url 'mark_single_notification_read' 0 %}".replace(/0\/?$/, '');
         // markSingleUrlBase will be like "/notifications/mark_read" so we can append "/<id>/"
         const csrfToken = "{{ csrf_token }}";
     </script>

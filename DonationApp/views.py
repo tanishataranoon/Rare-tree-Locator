@@ -11,6 +11,7 @@ from .models import Donation
 from .forms import DonationForm
 from django.http import HttpResponseRedirect
 import json
+from django.http import JsonResponse
 
 
 
@@ -125,12 +126,16 @@ def admin_donations(request):
 
 
 
+
+
 @csrf_exempt
 def donate_success(request):
     val_id = request.POST.get('val_id')
     tran_id = request.POST.get('tran_id')
 
     if not val_id or not tran_id:
+        if request.headers.get('x-requested-with') == 'XMLHttpRequest':
+            return JsonResponse({"success": False, "error": "Missing transaction data"})
         return HttpResponse("Missing transaction data")
 
     # Validate with SSLCommerz
@@ -148,11 +153,22 @@ def donate_success(request):
             donation.status = 'PAID'
             donation.val_id = val_id
             donation.save()
+
+            # Return JSON if AJAX
+            if request.headers.get('x-requested-with') == 'XMLHttpRequest':
+                return JsonResponse({"success": True, "message": "Donation Successful!"})
+
             return render(request, 'Donation/success.html', {'donation': donation})
+
         except Donation.DoesNotExist:
+            if request.headers.get('x-requested-with') == 'XMLHttpRequest':
+                return JsonResponse({"success": False, "error": "Donation record not found"})
             return HttpResponse("Donation record not found")
     else:
+        if request.headers.get('x-requested-with') == 'XMLHttpRequest':
+            return JsonResponse({"success": False, "error": result.get('error', 'Payment failed')})
         return render(request, 'Donation/fail.html', {'error': result})
+
 
 
 def donate_fail(request):
@@ -160,3 +176,7 @@ def donate_fail(request):
 
 def donate_cancel(request):
     return render(request, 'Donate/cancel.html')
+
+def donation_history_dashboard(request):
+    donations = Donation.objects.filter(user=request.user).order_by('-created_at')
+    return render(request, 'Dashboard/dashboard_donation_history.html', {'donations': donations})

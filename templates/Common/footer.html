@@ -1,32 +1,20 @@
 {% load static %}
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Rare Tree Locator</title>
-  <link rel="stylesheet" href="{% static 'css/common/footer.css' %}">
-</head>
-<body>
-  <!-- Footer Section -->
 <footer class="footer">
   <div class="footer-container">
 
     <!-- Logo + About -->
-
     <div class="footer-section logo-section">
-  <img src="{% static 'images/logo.png' %}" alt="Logo" class="footer-logo">
-  <p>Do you know what's that tree?</p>
-</div>
-
+      <img src="{% static 'images/logo.png' %}" alt="Logo" class="footer-logo">
+      <p class="footer-about">Do you know what's that tree? Discover and preserve rare trees with us.</p>
+    </div>
 
     <!-- Address -->
     <div class="footer-section">
-      <h3>Address</h3>
+      <h3>Contact Info</h3>
       <p>Raza Bazar, Indira Road, Farmgate</p>
       <p>Dhaka, Bangladesh</p>
-      <p>Email: rahmansajid2985@gmail.com</p>
-      <p>Phone: +880 179 573 3422</p>
+      <p>Email: <a href="mailto:rahmansajid2985@gmail.com">rahmansajid2985@gmail.com</a></p>
+      <p>Phone: <a href="tel:+8801795733422">+880 179 573 3422</a></p>
     </div>
 
     <!-- Social Links -->
@@ -37,17 +25,17 @@
         <a href="#" target="_blank">Twitter</a>
         <a href="#" target="_blank">Instagram</a>
         <a href="#" target="_blank">LinkedIn</a>
-        <h3><a href="{% url 'contact' %}">Contact Us</a> </h3>
+        <a href="{% url 'contact' %}">Contact</a>
       </div>
     </div>
   </div>
 
   <!-- Bottom Section -->
   <div class="footer-bottom">
-    <p>© <span id="year"></span> Sajid & Tanisha & Sanjida. All rights reserved.</p>
+    <p>© <span id="year"></span> Sajid, Tanisha & Sanjida. All rights reserved.</p>
   </div>
 </footer>
-  <!-- <script src="JS/common/footer.js"></script> -->
-  <script src="{% static 'JS/common/footer.js' %}"></script>
-</body>
-</html>
+
+<!-- External CSS & JS -->
+<link rel="stylesheet" href="{% static 'css/common/footer.css' %}">
+<script src="{% static 'JS/common/footer.js' %}"></script>

@@ -12,6 +12,7 @@
 
 <body>
     {% include "Common/header.html" %}
+
     <div class="falling-lights">
         <span></span><span></span><span></span><span></span><span></span>
         <span></span><span></span><span></span><span></span><span></span>
@@ -22,149 +23,166 @@
             <div class="card">
                 <!-- Header: profile picture + info -->
                 <div class="header">
-                    <!-- Profile Picture -->
                     <div class="profile-left">
                         <img src="{% if profile.profile_pic %}{{ profile.profile_pic.url }}{% else %}{{ MEDIA_URL }}default_profile.png{% endif %}"
                             alt="Profile Picture" class="profile-pic">
-
                     </div>
 
-                    <!-- Profile Info -->
                     <div class="profile-right">
                         <h2 class="profile-name">{{ profile_user.first_name }} {{ profile_user.last_name }}</h2>
                         <p class="username">@{{ profile_user.username }}</p>
 
-                        {% if profile.profession %}
-                        <p class="profession">{{ profile.profession }}</p>
-                        {% endif %}
-
-                        {% if profile.bio %}
-                        <p class="bio">"{{ profile.bio }}"</p>
-                        {% endif %}
-
+                        {% if profile.profession %}<p class="profession">{{ profile.profession }}</p>{% endif %}
+                        {% if profile.bio %}<p class="bio">"{{ profile.bio }}"</p>{% endif %}
                         <p class="joined">Joined {{ profile.joined_date|date:"F Y" }}</p>
 
                         {% if profile.phone or profile.linkedin or profile.instagram or profile.twitter or profile.personal_website %}
-
                         <button class="toggle-details-btn">Show More Details</button>
-
                         <div id="extra-details" class="extra-details">
                             <hr>
-                            {% if profile.phone %}
-                            <h4>📞 Contact</h4>
-                            <p>{{ profile.phone }}</p>
-                            {% endif %}
-
-                            {% if profile.linkedin or profile.instagram or profile.twitter or profile.personal_website%}
+                            {% if profile.phone %}<h4>📞 Contact</h4><p>{{ profile.phone }}</p>{% endif %}
+                            {% if profile.linkedin or profile.instagram or profile.twitter or profile.personal_website %}
                             <h4>🌐 Social Links</h4>
                             <ul>
-                                {% if profile.linkedin %}
-                                <li><a href="{{ profile.linkedin }}" target="_blank">LinkedIn</a></li>
-                                {% endif %}
-                                {% if profile.instagram %}
-                                <li><a href="https://instagram.com/{{ profile.instagram }}"
-                                        target="_blank">Instagram</a></li>
-                                {% endif %}
-                                {% if profile.twitter %}
-                                <li><a href="https://twitter.com/{{ profile.twitter }}" target="_blank">Twitter</a></li>
-                                {% endif %}
-                                {% if profile.personal_website %}
-                                <li><a href="{{ profile.personal_website }}" target="_blank">Website</a></li>
-                                {% endif %}
+                                {% if profile.linkedin %}<li><a href="{{ profile.linkedin }}" target="_blank">LinkedIn</a></li>{% endif %}
+                                {% if profile.instagram %}<li><a href="https://instagram.com/{{ profile.instagram }}" target="_blank">Instagram</a></li>{% endif %}
+                                {% if profile.twitter %}<li><a href="https://twitter.com/{{ profile.twitter }}" target="_blank">Twitter</a></li>{% endif %}
+                                {% if profile.personal_website %}<li><a href="{{ profile.personal_website }}" target="_blank">Website</a></li>{% endif %}
                             </ul>
                             {% endif %}
                         </div>
                         {% endif %}
+
                         {% if request.user == profile_user %}
                         <a href="{% url 'edit_profile' %}" class="btn edit-btn">Edit Profile</a>
                         {% endif %}
                     </div>
-                </div> <!-- header -->
+                </div>
 
                 <!-- Stats -->
                 <div class="stats">
-                    <div>{{ my_trees|length }} <br> Trees Found</div>
-                    <div>{{ requests|length }} <br> Requests</div>
-                    <div>{{ posts|length }} <br> Posts</div>
+                    {% if profile_user.user_type == "contributor" %}
+                        <div>{{ my_trees|length }} <br> Trees Found</div>
+                        <div>{{ posts|length }} <br> Posts</div>
+                        <div>{{ requests|length }} <br> Answers</div>
+                    {% else %}
+                        <div>{{ requests|length }} <br> Requests</div>
+                        <div>{{ posts|length }} <br> Bookmarked Posts</div>
+                    {% endif %}
                 </div>
 
                 <!-- Tabs -->
                 <div class="tabs">
-                    <button onclick="showTab('trees', event)" class="active">My Trees</button>
-                    <button onclick="showTab('requests', event)">Requests</button>
-                    <button onclick="showTab('posts', event)">Posts</button>
-                </div>
-
-                <!-- Trees Tab -->
-                <div id="trees" class="tab-content active">
-                    {% if my_trees %}
-                    {% for tree in my_trees %}
-                    <div class="card">
-                        <h3>{{ tree.street_name }}</h3>
-                        <p><em>{{ tree.scientific_name }}</em></p>
-                        <p>Location: {{ tree.latitude }}, {{ tree.longitude }}</p>
-                        <span>Status: {{ tree.rarity_status }}</span>
-                        <p>Added: {{ tree.created_at|date:"M d, Y" }}</p>
-                    </div>
-                    {% endfor %}
+                    {% if profile_user.user_type == "contributor" %}
+                        <button onclick="showTab('trees', event)" class="active">My Trees</button>
+                        <button onclick="showTab('posts', event)">Posts</button>
+                        <button onclick="showTab('answers', event)">Answers</button>
                     {% else %}
-                    <p>No trees yet.</p>
+                        <button onclick="showTab('requests', event)" class="active">Requests</button>
+                        <button onclick="showTab('bookmarks', event)">Bookmarked Posts</button>
                     {% endif %}
                 </div>
 
-                <!-- Requests Tab -->
-                <div id="requests" class="tab-content">
-                    {% if requests %}
-                    {% for req in requests %}
-                    <div class="card">
-                        <h3>{{ req.title|default:"Request" }}</h3>
-
-                        {% if req.image %}
-                        <img src="{{ req.image.url }}" alt="Request Image" style="max-width:200px;">
-                        {% endif %}
-
-                        <p>{{ req.description|truncatewords:20 }}</p>
-                        <p>Status: {{ req.status }}</p>
-                        <p>Created on {{ req.created_at|date:"M d, Y" }}</p>
-
-                        <div class="request-actions">
-                            <button class="btn delete-btn" data-request-id="{{ req.id }}" data-request-title="{{ req.title }}">Delete</button>
-
+                <!-- Contributor Tabs -->
+                {% if profile_user.user_type == "contributor" %}
+                    <!-- Trees -->
+                    <div id="trees" class="tab-content active">
+                        {% if my_trees %}
+                        <div class="card-grid">
+                            {% for tree in my_trees %}
+                                <div class="card {% if forloop.counter > 3 %}hidden-card{% endif %}">
+                                    <h3>{{ tree.street_name }}</h3>
+                                    <p><em>{{ tree.scientific_name }}</em></p>
+                                    <p>Location: {{ tree.latitude }}, {{ tree.longitude }}</p>
+                                    <span>Status: {{ tree.rarity_status }}</span>
+                                    <p>Added: {{ tree.created_at|date:"M d, Y" }}</p>
+                                </div>
+                            {% endfor %}
                         </div>
+                        {% if my_trees|length > 3 %}<button id="see-more-btn" class="btn">See More</button>{% endif %}
+                        {% else %}<p>No trees yet.</p>{% endif %}
                     </div>
-                    {% endfor %}
-                    {% else %}
-                    <p>You haven't created any requests yet.</p>
-                    {% endif %}
-                </div>
 
-
-
-                <!-- Posts Tab -->
-                <div id="posts" class="tab-content">
-                    {% if posts %}
-                    {% for post in posts %}
-                    <div class="card">
-                        <h3><a href="{% url 'blog_detail' post.id %}">{{ post.title }}</a></h3>
-                        {% if post.image %}
-                        <img src="{{ post.image.url }}" alt="Post Image" style="max-width:200px;">
-                        {% endif %}
-                        <p>{{ post.content|truncatewords:20 }}</p>
-                        <p>Posted on {{ post.date_posted|date:"M d, Y" }}</p>
-
-                        {% if user.is_authenticated and user.id == post.author.id %}
-                        <div class="post-actions">
-                            <a href="{% url 'edit_blog' post.id %}" class="btn edit-btn">Edit</a>
-                            <button class="btn delete-btn" data-type="post"data-id="{{ post.id }}" data-title="{{ post.title }}">Delete</button>
-                    
+                    <!-- Posts -->
+                    <div id="posts" class="tab-content">
+                        {% if posts %}
+                        <div class="card-grid">
+                            {% for post in posts %}
+                                <div class="card {% if forloop.counter > 3 %}hidden-card{% endif %}">
+                                    <h3><a href="{% url 'blog_detail' post.id %}">{{ post.title }}</a></h3>
+                                    {% if post.image %}<img src="{{ post.image.url }}" alt="Post Image" style="max-width:200px;">{% endif %}
+                                    <p>{{ post.content|truncatewords:20 }}</p>
+                                    <p>Posted on {{ post.date_posted|date:"M d, Y" }}</p>
+                                </div>
+                            {% endfor %}
                         </div>
-                        {% endif %}
+                        {% if posts|length > 3 %}<button id="see-more-btn" class="btn">See More</button>{% endif %}
+                        {% else %}<p>No posts yet.</p>{% endif %}
                     </div>
-                    {% endfor %}
-                    {% else %}
-                    <p>No posts yet.</p>
-                    {% endif %}
-                </div>
+
+                    <!-- Answers -->
+                    <div id="answers" class="tab-content">
+                        {% if requests %}
+                        <div class="card-grid">
+                            {% for answer in requests %}
+                                <div class="card {% if forloop.counter > 3 %}hidden-card{% endif %}">
+                                    <h3>{{ answer.tree_request.title|default:"Request" }}</h3>
+                                    {% if answer.reference_image %}<img src="{{ answer.reference_image.url }}" alt="Answer Image" style="max-width:200px;">{% endif %}
+                                    <p>{{ answer.response_text|truncatewords:20 }}</p>
+                                    <p>Answered on {{ answer.created_at|date:"M d, Y" }}</p>
+                                    <div class="request-actions">
+                                        <a href="{% url 'view_submitted_answer' answer.tree_request.id %}" class="btn view-btn">View Answer</a>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        </div>
+                        {% if requests|length > 3 %}<button id="see-more-btn" class="btn">See More</button>{% endif %}
+                        {% else %}<p>No answers yet.</p>{% endif %}
+                    </div>
+
+                {% else %}
+                    <!-- Common User Tabs -->
+
+                    <!-- Requests -->
+                    <div id="requests" class="tab-content active">
+                        {% if requests %}
+                        <div class="card-grid">
+                            {% for req in requests %}
+                                <div class="card {% if forloop.counter > 3 %}hidden-card{% endif %}">
+                                    <h3>{{ req.title|default:"Request" }}</h3>
+                                    {% if req.image %}<img src="{{ req.image.url }}" alt="Request Image" style="max-width:200px;">{% endif %}
+                                    <p>{{ req.description|truncatewords:20 }}</p>
+                                    <p>Status: {{ req.get_status_display }}</p>
+                                    <p>Created on {{ req.created_at|date:"M d, Y" }}</p>
+                                    <div class="request-actions">
+                                        <a href="{% url 'request_list' %}" class="btn view-btn">View Request</a>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        </div>
+                        {% if requests|length > 3 %}<button id="see-more-btn" class="btn">See More</button>{% endif %}
+                        {% else %}<p>You haven't created any requests yet.</p>{% endif %}
+                    </div>
+
+                    <!-- Bookmarked Posts -->
+                    <div id="bookmarks" class="tab-content">
+                        {% if posts %}
+                        <div class="card-grid">
+                            {% for post in posts %}
+                                <div class="card {% if forloop.counter > 3 %}hidden-card{% endif %}">
+                                    <h3><a href="{% url 'blog_detail' post.id %}">{{ post.title }}</a></h3>
+                                    {% if post.image %}<img src="{{ post.image.url }}" alt="Post Image" style="max-width:200px;">{% endif %}
+                                    <p>{{ post.content|truncatewords:20 }}</p>
+                                    <p>Posted on {{ post.date_posted|date:"M d, Y" }}</p>
+                                </div>
+                            {% endfor %}
+                        </div>
+                        {% if posts|length > 3 %}<button id="see-more-btn" class="btn">See More</button>{% endif %}
+                        {% else %}<p>No bookmarked posts yet.</p>{% endif %}
+                    </div>
+
+                {% endif %}
+
             </div> <!-- card -->
         </div> <!-- profile-card -->
     </main>

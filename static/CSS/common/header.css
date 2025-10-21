@@ -265,6 +265,7 @@ header.scrolled {
 
 .profile-links li {
   margin: 10px 0;
+  position: relative; /* popup will be positioned relative to link */
 }
 
 .profile-links a,
@@ -335,3 +336,106 @@ body.no-scroll {
   }
 }
 
+.notif-wrapper {
+  position: relative;
+  display: inline-block;
+}
+
+.notif-bell {
+  position: absolute;
+  top: 0;
+  right: -10px;
+  font-size: 1.2rem;
+  cursor: pointer;
+}
+
+.notif-count {
+  position: absolute;
+  top: -5px;
+  right: -20px;
+  background-color: red;
+  color: white;
+  border-radius: 50%;
+  padding: 2px 6px;
+  font-size: 0.7rem;
+  font-weight: bold;
+}
+.notif-popup {
+  display: none;
+  position: absolute;
+  top: 50px; /* adjust based on your header height */
+  right: 0;
+  width: 350px;
+  max-height: 400px;
+  background: #fff;
+  border: 1px solid #ccc;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+  padding: 10px;
+  z-index: 1000;
+  overflow-y: auto;
+  border-radius: 8px;
+  font-family: sans-serif;
+}
+
+.notif-popup h4 {
+  margin-top: 0;
+}
+.notif-popup .notif-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.notif-popup .notif-header button {
+  background: #1b4332;
+  color: white;
+  border: none;
+  padding: 4px 8px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.notif-popup ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.notif-popup li {
+  padding: 8px;
+  border-bottom: 1px solid #eee;
+}
+
+.notif-popup li.unread {
+  background-color: #eef;
+  font-weight: bold;
+}
+.notif-popup li {
+  padding: 8px 5px;
+  border-bottom: 1px solid #eee;
+}
+
+.notif-popup li.unread {
+  background: #e8f5e9;
+}
+
+.notif-popup li a {
+  text-decoration: none;
+  color: #333;
+  display: flex;
+  justify-content: space-between;
+}
+
+.notif-popup li a small {
+  color: #999;
+  font-size: 0.8rem;
+}
+.notif-count {
+  background-color: red;
+  color: white;
+  border-radius: 50%;
+  padding: 2px 6px;
+  font-size: 0.7rem;
+  font-weight: bold;
+  margin-left: 5px;
+}

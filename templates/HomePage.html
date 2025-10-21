@@ -62,26 +62,55 @@
       </div>
     </div>
   </section>
+  <!-- SAFE Donate Section (no JS) -->
+  <section class="donate-section-safe">
+    <div class="donate-card-safe">
+      <div class="donate-content-safe">
+        <h2>Help Us Plant Trees to Save Our Earth</h2>
+        <p>
+          Together we can make our planet greener and cleaner.
+          Your small contribution today helps grow a better tomorrow.
+        </p>
+        <!-- plain link — no onclick, no script -->
+        <a href="{% url 'donate' %}" class="donate-btn-safe">Donate Now</a>
+      </div>
+  
+      <!-- media container: image OR video — using inline style so Django static works -->
+      <div class="donate-media-safe">
+        <div class="donate-bg-safe"
+            style="background: url('{% static "images/tree.jpg" %}') no-repeat center/cover;">
+        </div>
+  
+        <!-- If you prefer video instead, replace the inner block above with this and comment the .donate-bg-safe:
+        <video autoplay loop muted playsinline class="donate-video-safe">
+          <source src="{% static 'videos/tree_bg.mp4' %}" type="video/mp4">
+        </video>
+        -->
+      </div>
+    </div>
+  </section>
+  
 
   {% include 'Common/footer.html' %}
 
   <script>
-  document.addEventListener("DOMContentLoaded", () => {
-    const slides = document.querySelectorAll(".slideshow .slide");
-    let currentIndex = 0;
+    document.addEventListener("DOMContentLoaded", () => {
+      const slides = document.querySelectorAll(".slideshow .slide");
+      let currentIndex = 0;
 
-    function showNextSlide() {
-      slides[currentIndex].classList.remove("active");
-      currentIndex = (currentIndex + 1) % slides.length;
-      slides[currentIndex].classList.add("active");
-    }
+      function showNextSlide() {
+        slides[currentIndex].classList.remove("active");
+        currentIndex = (currentIndex + 1) % slides.length;
+        slides[currentIndex].classList.add("active");
+      }
 
-    // Change slide every 3 seconds
-    setInterval(showNextSlide, 3000);
-  });
-</script>
+      // Change slide every 3 seconds
+      setInterval(showNextSlide, 3000);
+    });
+  </script>
 
 
-  
+
 </body>
+
 </html>

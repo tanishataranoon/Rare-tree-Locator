@@ -11,7 +11,7 @@ body {
     background: #f5f6fa;
     margin: 0;
     padding: 20px;
-    margin-top: 100px; /* adjust for your header height */
+    margin-top: 130px; /* adjust for your header height */
 }
 main {
     padding-top: 70px; /* same as header height */
@@ -19,6 +19,7 @@ main {
 .post-container {
     max-width: 800px;
     margin: 0 auto;
+    margin-top: 100px; /* adjust for your header height */
 }
 
 h2 {
@@ -121,4 +122,17 @@ footer {
   margin-top: 0;
   padding: 0 0;
   width: 100%;     /* make it span full page width */
+}
+/* Back to Blog Link */
+.back-link {
+    display: inline-block;
+    margin-bottom: 15px;
+    color: #006d3d;
+    font-weight: bold;
+    text-decoration: none;
+    padding-left: 0%;
+}
+
+.back-link:hover {
+    text-decoration: underline;
 }

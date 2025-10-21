@@ -13,7 +13,12 @@ from django.utils import timezone
 from django.db.models import Count
 from django.contrib import messages
 
-# Create your views here.
+def is_contributor(user):
+    # Option A: based on a custom user_type field
+    return hasattr(user, 'user_type') and user.user_type == 'contributor'
+    
+    # Option B: based on group membership
+    # return user.groups.filter(name="Contributors").exists()
 
 
 def homepage(request):
@@ -66,6 +71,9 @@ def get_trees_json(request):
 @login_required
 @csrf_exempt
 def add_tree_ajax(request):
+    if not is_contributor(request.user):
+        return JsonResponse({'success': False, 'error': 'Only contributors can add trees.'})
+
     if request.method == 'POST':
         try:
             street_name = request.POST.get('street_name')
@@ -104,14 +112,21 @@ def add_tree_ajax(request):
 
     return JsonResponse({'success': False, 'error': 'Invalid request'})
 
+
 def TreeDetail(request, id):
     tree = get_object_or_404(TreeProfile, id=id)
 
     return render(request, 'Trees/TreeDetail.html', {'tree': tree})
 
 def map_page(request):
-    return render(request, 'map.html')
+    trees = TreeProfile.objects.all().values('id', 'street_name', 'description', 'latitude', 'longitude')
+    trees_json = json.dumps(list(trees), cls=DjangoJSONEncoder)
 
+    can_add_tree = False
+    if request.user.is_authenticated:
+        can_add_tree = is_contributor(request.user)
+
+    return render(request, 'map.html', {'trees_json': trees_json, 'can_add_tree': can_add_tree})
 
 # Dashboard
 @login_required

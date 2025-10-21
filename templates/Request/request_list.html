@@ -30,13 +30,12 @@
         <div class="request-grid">
             {% for req in requests %}
             <div class="request-card-modern" 
-                 data-id="{{ req.id }}" 
-                 data-title="{{ req.title }}"
-                 data-description="{{ req.description }}"
-                 data-requester="{{ req.requester.username }}"
-                 data-location="{{ req.location }}"
-                 data-has-answer="{% if req.answers.exists %}true{% else %}false{% endif %}">
-                 
+                data-id="{{ req.id }}" 
+                data-title="{{ req.title }}"
+                data-description="{{ req.description }}"
+                data-requester="{{ req.requester.username }}"
+                data-location="{{ req.location }}"
+                data-has-answer="{% if req.answers.exists %}true{% else %}false{% endif %}">
                 <div class="image-box">
                     {% if req.image %}
                     <img src="{{ req.image.url }}" alt="{{ req.title }}">

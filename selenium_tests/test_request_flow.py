@@ -14,6 +14,7 @@ sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "Rare_Tree_locator.settings")
 django.setup()
 
+
 @pytest.mark.order(4)
 def test_tree_request_creation_then_profile(login_normal_user):
     driver = login_normal_user

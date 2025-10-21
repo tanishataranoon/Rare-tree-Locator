@@ -12,6 +12,7 @@ from django.http import HttpResponseForbidden ,JsonResponse
 from django.utils import timezone
 from django.db.models import Count
 from django.contrib import messages
+from .models import TreeProfile
 
 def is_contributor(user):
     # Option A: based on a custom user_type field
@@ -116,7 +117,24 @@ def add_tree_ajax(request):
 def TreeDetail(request, id):
     tree = get_object_or_404(TreeProfile, id=id)
 
-    return render(request, 'Trees/TreeDetail.html', {'tree': tree})
+from django.shortcuts import render, get_object_or_404
+from .models import TreeProfile
+
+def tree_detail(request, pk):
+    tree = get_object_or_404(TreeProfile, pk=pk)
+    # convert Decimal to float for JS ease (optional but ভালো)
+    try:
+        lat = float(tree.latitude)
+        lng = float(tree.longitude)
+    except Exception:
+        lat = None
+        lng = None
+
+    return render(request, 'Trees/TreeDetail.html', {
+        'tree': tree,
+        'tree_lat': lat,
+        'tree_lng': lng,
+    })
 
 def map_page(request):
     trees = TreeProfile.objects.all().values('id', 'street_name', 'description', 'latitude', 'longitude')

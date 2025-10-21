@@ -49,8 +49,10 @@ class TreeProfile(models.Model):
     video_url = models.URLField(blank=True, null=True)
 
     # Location
-    latitude = models.DecimalField(max_digits=9, decimal_places=6)   # e.g., 23.810331
-    longitude = models.DecimalField(max_digits=9, decimal_places=6)  # e.g., 90.412521
+    latitude = models.FloatField()   # e.g., 23.810331
+    longitude = models.FloatField() 
+    def __str__(self):
+        return f"{self.street_name}"
 
     # Extra attributes
     rarity_status = models.CharField(

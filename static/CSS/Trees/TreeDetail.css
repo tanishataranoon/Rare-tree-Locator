@@ -1,0 +1,150 @@
+/* ===== Body & Fonts ===== */
+body {
+  font-family: "Poppins", sans-serif;
+  margin: 0;
+  padding: 0;
+  background: linear-gradient(145deg, #fef9f0, #e8f5e9);
+  color: #333;
+  line-height: 1.6;
+}
+
+/* ===== Header ===== */
+.header {
+  background: linear-gradient(145deg, #ffe0b2, #ffcc80);
+  padding: 100px 20px 30px;
+  text-align: center;
+  border-bottom: 4px solid #fff;
+  position: relative;
+  z-index: 10;
+}
+
+.header h1 {
+  font-size: 2.4rem;
+  margin-bottom: 8px;
+  color: #2e7d32;
+  text-shadow: 1px 1px 6px rgba(0,0,0,0.12);
+}
+
+.header p {
+  font-size: 1.2rem;
+  color: #1b5e20;
+}
+
+/* ===== Tree Image ===== */
+.tree-image {
+  text-align: center;
+  background: #fff8e1;
+  padding: 40px 0;
+}
+
+.tree-image img {
+  width: 60%;
+  max-width: 550px;
+  border-radius: 20px;
+  box-shadow: 0 8px 30px rgba(0,0,0,0.15);
+  transition: transform 0.5s ease, box-shadow 0.5s ease;
+}
+
+.tree-image img:hover {
+  transform: scale(1.05);
+  box-shadow: 0 12px 40px rgba(0,0,0,0.2);
+}
+
+/* ===== Info Section ===== */
+.tree-info {
+  padding: 50px 20px;
+  max-width: 1000px;
+  margin: auto;
+}
+
+.info-box {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 25px;
+}
+
+.info-item {
+  background: #fff3e0;
+  padding: 20px;
+  border-radius: 16px;
+  box-shadow: 0 6px 20px rgba(0,0,0,0.08);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.info-item:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 12px 28px rgba(0,0,0,0.15);
+}
+
+.info-item h4 {
+  color: #bf360c;
+  margin-bottom: 8px;
+  font-size: 1rem;
+}
+
+/* ===== Video Section ===== */
+.video-section {
+  text-align: center;
+  padding: 60px 20px;
+  background: #fff3e0;
+}
+
+.video-section h2 {
+  margin-bottom: 25px;
+  font-size: 1.6rem;
+  color: #2e7d32;
+}
+
+.video-wrapper {
+  max-width: 750px;
+  margin: auto;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 6px 25px rgba(0,0,0,0.12);
+}
+
+/* ===== Map Section ===== */
+.map-section {
+  text-align: center;
+  padding: 60px 20px;
+  background: #ffffff;
+}
+
+.map-section h2 {
+  margin-bottom: 20px;
+  font-size: 1.6rem;
+  color: #2e7d32;
+}
+
+.map-wrapper, #map {
+  width: 100%;
+  max-width: 1000px;
+  height: 450px;
+  margin: auto;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 6px 25px rgba(0,0,0,0.12);
+}
+
+/* ===== Footer ===== */
+footer {
+  text-align: center;
+  background: #f3f2ef;
+  padding: 20px;
+  font-size: 0.95rem;
+  color: #555;
+  margin-top: 40px;
+}
+
+.back-link {
+  display: inline-block;
+  margin: 20px;
+  color: #2e7d32;
+  text-decoration: none;
+  font-weight: 600;
+  transition: color 0.3s;
+}
+
+.back-link:hover {
+  color: #1b5e20;
+}

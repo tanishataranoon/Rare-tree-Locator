@@ -77,6 +77,7 @@ def add_tree_ajax(request):
 
     if request.method == 'POST':
         try:
+            # Tree info
             street_name = request.POST.get('street_name')
             scientific_name = request.POST.get('scientific_name')
             habitat = request.POST.get('habitat')
@@ -99,6 +100,11 @@ def add_tree_ajax(request):
                 longitude=longitude,
                 submitted_by=request.user
             )
+
+            # Save uploaded photos
+            photos = request.FILES.getlist('tree_photos')
+            for photo in photos:
+                TreePhoto.objects.create(tree=tree, image=photo)
 
             return JsonResponse({
                 'success': True,
@@ -137,14 +143,23 @@ def tree_detail(request, pk):
     })
 
 def map_page(request):
-    trees = TreeProfile.objects.all().values('id', 'street_name', 'description', 'latitude', 'longitude')
-    trees_json = json.dumps(list(trees), cls=DjangoJSONEncoder)
+    trees = []
+    for tree in TreeProfile.objects.all():
+        first_photo = tree.photos.first()
+        trees.append({
+            "id": tree.id,
+            "street_name": tree.street_name,
+            "description": tree.description,
+            "latitude": float(tree.latitude),
+            "longitude": float(tree.longitude),
+            "image_url": first_photo.image.url if first_photo else ""
+        })
+    trees_json = json.dumps(trees, cls=DjangoJSONEncoder)
 
-    can_add_tree = False
-    if request.user.is_authenticated:
-        can_add_tree = is_contributor(request.user)
+    can_add_tree = is_contributor(request.user) if request.user.is_authenticated else False
 
     return render(request, 'map.html', {'trees_json': trees_json, 'can_add_tree': can_add_tree})
+
 
 # Dashboard
 @login_required

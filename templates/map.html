@@ -20,10 +20,11 @@
     <!-- Map -->
     <div id="map"></div>
 
-    <!-- Form -->
+    <!-- Add Tree Form: Only visible for contributors -->
+    {% if can_add_tree %}
     <div id="map-form-container">
       <h3>🪴 Add a New Tree</h3>
-      <form method="POST" id="tree-form">{% csrf_token %}
+      <form method="POST" id="tree-form" enctype="multipart/form-data">{% csrf_token %}
         <input type="text" name="street_name" placeholder="Street / Local Name" required><br>
         <input type="text" name="scientific_name" placeholder="Scientific Name"><br>
         <input type="text" name="habitat" placeholder="Habitat"><br>
@@ -33,9 +34,13 @@
         <input type="number" name="age_estimate" placeholder="Age estimate"><br>
         <input type="hidden" id="id_latitude" name="latitude">
         <input type="hidden" id="id_longitude" name="longitude">
+        <input type="file" name="tree_photos" multiple><br>
         <button type="submit">Submit Tree</button>
+
       </form>
     </div>
+    {% endif %}
+
   </section>
 
   {% include 'Common/footer.html' %}
@@ -44,52 +49,47 @@
   <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
   <script>
   document.addEventListener("DOMContentLoaded", function () {
+    // Initialize map
     var map = L.map('map').setView([23.8103, 90.4125], 12);
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
       attribution: '&copy; OpenStreetMap contributors'
     }).addTo(map);
 
+    // Optional: Locate user
     map.locate({ setView: true, maxZoom: 16 });
+    map.on('locationfound', function(e) {
+      L.marker(e.latlng)
+        .addTo(map)
+        .bindPopup("You are within " + Math.round(e.accuracy) + " meters")
+        .openPopup();
+      L.circle(e.latlng, e.accuracy).addTo(map);
+    });
+    map.on('locationerror', function(e){ alert(e.message); });
 
-function onLocationFound(e) {
-  var radius = e.accuracy;
-  L.marker(e.latlng)
-    .addTo(map)
-    .bindPopup("You are within " + Math.round(radius) + " meters from this point")
-    .openPopup();
-  L.circle(e.latlng, radius).addTo(map);
-}
+    // Load existing trees
+    const trees = {{ trees_json|safe }};
+    trees.forEach(tree => {
+    const lat = parseFloat(tree.latitude);
+    const lng = parseFloat(tree.longitude);
+    if (!isNaN(lat) && !isNaN(lng)) {
+        const firstPhotoUrl = tree.image_url || '';  // MUST match the key from JSON
+        const popupContent = `
+            <div style="text-align:center; max-width:160px;">
+                <a href="/tree/${tree.id}/" style="text-decoration:none; color:inherit;">
+                    <b>${tree.street_name}</b><br>
+                    ${tree.description ? `<small>${tree.description}</small>` : ""}
+                    ${firstPhotoUrl ? `<br><img src="${firstPhotoUrl}" style="width:100px; height:auto; margin-top:5px;">` : ""}
+                </a>
+            </div>`;
+        const marker = L.marker([lat, lng]).addTo(map).bindPopup(popupContent);
+        marker._icon?.classList.add('glow');
+    }
+});
 
-function onLocationError(e) {
-  alert(e.message);
-}
-
-map.on('locationfound', onLocationFound);
-map.on('locationerror', onLocationError);
 
 
-    // === Load trees ===
-    fetch("{% url 'get_trees_json' %}")
-      .then(res => res.json())
-      .then(trees => {
-        trees.forEach(tree => {
-          const lat = parseFloat(tree.latitude);
-          const lng = parseFloat(tree.longitude);
-          if (!isNaN(lat) && !isNaN(lng)) {
-            const popupContent = `
-              <div style="text-align:center; max-width:160px;">
-                <a href="/trees/${tree.id}/" style="text-decoration:none; color:inherit;">
-                <b>${tree.street_name}</b><br>
-                ${tree.description ? `<small>${tree.description}</small><br>` : ""}
-                ${tree.image_url ? `<img src="${tree.image_url}" alt="${tree.street_name}" style="width:120px; border-radius:8px; margin-top:5px;">` : ""}
-              </div>`;
-            const marker = L.marker([lat, lng]).addTo(map).bindPopup(popupContent);
-            marker._icon.classList.add('glow');
-          }
-        });
-      });
-
-    // === Add new marker on click ===
+    // === Only contributors can add trees ===
+    {% if can_add_tree %}
     let marker;
     map.on('click', function (e) {
       const lat = e.latlng.lat.toFixed(6);
@@ -97,12 +97,11 @@ map.on('locationerror', onLocationError);
       if (marker) map.removeLayer(marker);
       marker = L.marker([lat, lng]).addTo(map)
         .bindPopup(`Lat: ${lat}, Lng: ${lng}`).openPopup();
-      marker._icon.classList.add('glow');
+      marker._icon?.classList.add('glow');
       document.getElementById('id_latitude').value = lat;
       document.getElementById('id_longitude').value = lng;
     });
 
-    // === Form submission ===
     const form = document.getElementById('tree-form');
     form.addEventListener('submit', function (e) {
       e.preventDefault();
@@ -118,7 +117,7 @@ map.on('locationerror', onLocationError);
           alert("🌿 Tree added successfully!");
           const newMarker = L.marker([data.latitude, data.longitude]).addTo(map)
             .bindPopup(`<b>${data.street_name}</b><br>${data.description || ''}`).openPopup();
-          newMarker._icon.classList.add('glow');
+          newMarker._icon?.classList.add('glow');
           form.reset();
           if (marker) map.removeLayer(marker);
         } else {
@@ -126,6 +125,8 @@ map.on('locationerror', onLocationError);
         }
       });
     });
+    {% endif %}
+
   });
   </script>
 

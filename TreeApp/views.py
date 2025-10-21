@@ -12,8 +12,14 @@ from django.http import HttpResponseForbidden ,JsonResponse
 from django.utils import timezone
 from django.db.models import Count
 from django.contrib import messages
+from .models import TreeProfile
 
-# Create your views here.
+def is_contributor(user):
+    # Option A: based on a custom user_type field
+    return hasattr(user, 'user_type') and user.user_type == 'contributor'
+    
+    # Option B: based on group membership
+    # return user.groups.filter(name="Contributors").exists()
 
 
 def homepage(request):
@@ -66,8 +72,12 @@ def get_trees_json(request):
 @login_required
 @csrf_exempt
 def add_tree_ajax(request):
+    if not is_contributor(request.user):
+        return JsonResponse({'success': False, 'error': 'Only contributors can add trees.'})
+
     if request.method == 'POST':
         try:
+            # Tree info
             street_name = request.POST.get('street_name')
             scientific_name = request.POST.get('scientific_name')
             habitat = request.POST.get('habitat')
@@ -91,6 +101,11 @@ def add_tree_ajax(request):
                 submitted_by=request.user
             )
 
+            # Save uploaded photos
+            photos = request.FILES.getlist('tree_photos')
+            for photo in photos:
+                TreePhoto.objects.create(tree=tree, image=photo)
+
             return JsonResponse({
                 'success': True,
                 'street_name': tree.street_name,
@@ -104,13 +119,46 @@ def add_tree_ajax(request):
 
     return JsonResponse({'success': False, 'error': 'Invalid request'})
 
+
 def TreeDetail(request, id):
     tree = get_object_or_404(TreeProfile, id=id)
 
-    return render(request, 'Trees/TreeDetail.html', {'tree': tree})
+from django.shortcuts import render, get_object_or_404
+from .models import TreeProfile
+
+def tree_detail(request, pk):
+    tree = get_object_or_404(TreeProfile, pk=pk)
+    # convert Decimal to float for JS ease (optional but ভালো)
+    try:
+        lat = float(tree.latitude)
+        lng = float(tree.longitude)
+    except Exception:
+        lat = None
+        lng = None
+
+    return render(request, 'Trees/TreeDetail.html', {
+        'tree': tree,
+        'tree_lat': lat,
+        'tree_lng': lng,
+    })
 
 def map_page(request):
-    return render(request, 'map.html')
+    trees = []
+    for tree in TreeProfile.objects.all():
+        first_photo = tree.photos.first()
+        trees.append({
+            "id": tree.id,
+            "street_name": tree.street_name,
+            "description": tree.description,
+            "latitude": float(tree.latitude),
+            "longitude": float(tree.longitude),
+            "image_url": first_photo.image.url if first_photo else ""
+        })
+    trees_json = json.dumps(trees, cls=DjangoJSONEncoder)
+
+    can_add_tree = is_contributor(request.user) if request.user.is_authenticated else False
+
+    return render(request, 'map.html', {'trees_json': trees_json, 'can_add_tree': can_add_tree})
 
 
 # Dashboard

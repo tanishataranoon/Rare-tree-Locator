@@ -42,7 +42,7 @@ def test_contributor_answers_request(login_contributor):
             driver.execute_script("arguments[0].click();", answer_btn)
             print("✅ Clicked 'Answer' button")
         except TimeoutException:
-            print("⚠️ No answer button for this user/session. Skipping answer submission.")
+            print(" Answer submission.")
         return  # Skip rest of the test if no answer-btn is available
         # 6️⃣ Wait for the answer form to appear
         response_field = WebDriverWait(driver, 10).until(

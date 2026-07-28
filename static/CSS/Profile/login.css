@@ -1,3 +1,10 @@
+/* Universal Box Sizing & Body Setup */
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+}
+
 html, body {
     height: 100%;
     margin: 0;
@@ -7,20 +14,21 @@ html, body {
     flex-direction: column;
 }
 
+/* Page Layout Container */
 .page-container {
-    flex: 1; /* pushes footer down */
+    flex: 1; /* Pushes footer down */
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    padding: 30px 20px;
-    z-index: 10; /* ensure it's above the animated background */
+    padding: 100px 40px 20px;
+    z-index: 10; /* Keeps form above animated background */
 }
 
-/* Title above login box */
+/* Title Block Above Login Card */
 .page-title {
     text-align: center;
-    margin: 60px 0 25px;  /* top space from header, bottom space before login box */
+    margin-bottom: 20px;
 }
 
 .page-title h2 {
@@ -32,24 +40,23 @@ html, body {
 .page-title .subtitle {
     font-size: 16px;
     color: #555;
-    margin: 5px 0 0;
+    margin: 6px 0 0;
 }
 
 /* Login Card */
 .login-container {
     background-color: #fff;
-    padding: 50px 40px;   /* bigger box */
+    padding: 40px;
     border-radius: 12px;
-    box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.1);
-    max-width: 420px;     /* wider */
+    box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.08);
+    max-width: 420px;
     width: 100%;
     text-align: center;
-    margin-top: 50px; /* adjust spacing from header */
 }
 
 .login-container h3 {
     font-size: 22px;
-    margin-bottom: 5px;
+    margin: 0 0 5px 0;
     color: #2e5939;
 }
 
@@ -59,6 +66,7 @@ html, body {
     margin-bottom: 25px;
 }
 
+/* Form & Input Controls */
 form {
     text-align: left;
 }
@@ -79,36 +87,39 @@ input {
     border-radius: 8px;
     font-size: 14px;
     outline: none;
-    transition: border 0.2s;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
 }
 
 input:focus {
     border-color: #2e5939;
+    box-shadow: 0 0 0 3px rgba(46, 89, 57, 0.15);
 }
 
-button {
+button[type="submit"] {
     width: 100%;
     padding: 14px;
     background-color: #2e5939;
     border: none;
     border-radius: 8px;
-    color: #fff;
+    color: #ffffff;
     font-size: 16px;
     font-weight: bold;
     cursor: pointer;
     margin-top: 5px;
-    transition: background-color 0.2s, transform 0.1s;
+    transition: background-color 0.2s ease, transform 0.1s ease;
 }
 
-button:hover {
+button[type="submit"]:hover {
     background-color: #24472d;
-    transform: scale(1.02);
+    transform: scale(1.01);
 }
 
+/* Links inside & outside the card */
 .login-container a {
     color: #2e5939;
     text-decoration: none;
     font-size: 14px;
+    font-weight: 500;
 }
 
 .login-container a:hover {
@@ -118,109 +129,133 @@ button:hover {
 .login-container p {
     margin-top: 15px;
     font-size: 14px;
+    color: #444;
 }
+
 .back-home {
     margin-top: 20px;
 }
 
 .back-home a {
     text-decoration: none;
-    color: #007BFF;
-    font-weight: 500;
+    color: #2e5939; /* Matched to site green palette */
+    font-weight: 600;
+    font-size: 14px;
 }
 
 .back-home a:hover {
     text-decoration: underline;
 }
 
+/* Dynamic Alert Styles */
+.alert {
+    padding: 10px 15px;
+    border-radius: 8px;
+    margin-bottom: 18px;
+    font-size: 13.5px;
+    text-align: center;
+}
 
-/* === Falling Light Background === */
-/* === Container === */
+.alert-warning {
+    background-color: #fff3cd;
+    color: #856404;
+    border: 1px solid #ffeeba;
+}
+
+.alert-danger {
+    background-color: #f8d7da;
+    color: #721c24;
+    border: 1px solid #f5c6cb;
+}
+
+.alert-success {
+    background-color: #d4edda;
+    color: #155724;
+    border: 1px solid #c3e6cb;
+}
+
+/* === Falling Light Background (Fixed Screen Boundary) === */
 .falling-lights {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  overflow: hidden;
-  z-index: 0;
-  pointer-events: none;
+    position: fixed;
+    inset: 0;
+    overflow: hidden;
+    z-index: 0;
+    pointer-events: none;
 }
 
 .falling-lights span {
-  position: absolute;
-  top: -60px;
-  width: 2px;
-  border-radius: 1px;
-  background: linear-gradient(to bottom, rgba(46,204,113,0.95), rgba(46,204,113,0));
-  animation: fall linear infinite;
-  filter: blur(0.3px);
+    position: absolute;
+    top: -60px;
+    width: 2px;
+    border-radius: 1px;
+    background: linear-gradient(to bottom, rgba(46, 204, 113, 0.95), rgba(46, 204, 113, 0));
+    animation: fall linear infinite;
+    filter: blur(0.3px);
 }
 
-.falling-lights span:nth-child(1) { left: 5%;  height: 40px; animation-duration: 3s;  animation-delay: 0s; }
-.falling-lights span:nth-child(2) { left: 15%; height: 50px; animation-duration: 2.8s; animation-delay: 1s; }
-.falling-lights span:nth-child(3) { left: 25%; height: 35px; animation-duration: 3.2s; animation-delay: 0.5s; }
-.falling-lights span:nth-child(4) { left: 35%; height: 45px; animation-duration: 2.6s; animation-delay: 1.3s; }
-.falling-lights span:nth-child(5) { left: 45%; height: 55px; animation-duration: 3.4s; animation-delay: 2s; }
-.falling-lights span:nth-child(6) { left: 55%; height: 40px; animation-duration: 2.9s; animation-delay: 0.8s; }
-.falling-lights span:nth-child(7) { left: 65%; height: 50px; animation-duration: 3.1s; animation-delay: 1.6s; }
-.falling-lights span:nth-child(8) { left: 75%; height: 35px; animation-duration: 2.7s; animation-delay: 2.2s; }
-.falling-lights span:nth-child(9) { left: 85%; height: 60px; animation-duration: 3.3s; animation-delay: 0.3s; }
-.falling-lights span:nth-child(10){ left: 95%; height: 45px; animation-duration: 2.5s; animation-delay: 1.1s; }
+.falling-lights span:nth-child(1)  { left: 5%;  height: 40px; animation-duration: 3s;   animation-delay: 0s; }
+.falling-lights span:nth-child(2)  { left: 15%; height: 50px; animation-duration: 2.8s; animation-delay: 1s; }
+.falling-lights span:nth-child(3)  { left: 25%; height: 35px; animation-duration: 3.2s; animation-delay: 0.5s; }
+.falling-lights span:nth-child(4)  { left: 35%; height: 45px; animation-duration: 2.6s; animation-delay: 1.3s; }
+.falling-lights span:nth-child(5)  { left: 45%; height: 55px; animation-duration: 3.4s; animation-delay: 2s; }
+.falling-lights span:nth-child(6)  { left: 55%; height: 40px; animation-duration: 2.9s; animation-delay: 0.8s; }
+.falling-lights span:nth-child(7)  { left: 65%; height: 50px; animation-duration: 3.1s; animation-delay: 1.6s; }
+.falling-lights span:nth-child(8)  { left: 75%; height: 35px; animation-duration: 2.7s; animation-delay: 2.2s; }
+.falling-lights span:nth-child(9)  { left: 85%; height: 60px; animation-duration: 3.3s; animation-delay: 0.3s; }
+.falling-lights span:nth-child(10) { left: 95%; height: 45px; animation-duration: 2.5s; animation-delay: 1.1s; }
 
 @keyframes fall {
-  0% { transform: translateY(-60px); opacity: 0.9; }
-  100% { transform: translateY(110vh); opacity: 0; }
+    0% { transform: translateY(-60px); opacity: 0.9; }
+    100% { transform: translateY(105vh); opacity: 0; }
 }
 
+/* === Glowing Cursor (Desktops only) === */
+@media (hover: hover) and (pointer: fine) {
+    .cursor-glow {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 18px;
+        height: 18px;
+        border-radius: 50%;
+        background: radial-gradient(circle, rgba(46, 204, 113, 0.8) 0%, rgba(0, 255, 191, 0.15) 70%);
+        box-shadow: 0 0 20px 4px rgba(46, 204, 113, 0.5);
+        pointer-events: none;
+        transform: translate(-50%, -50%);
+        transition: width 0.2s ease, height 0.2s ease, box-shadow 0.3s ease;
+        z-index: 9999;
+    }
 
-/* === Glowing Cursor === */
-/* ===== Cursor Glow ===== */
-.cursor-glow {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 18px;
-  height: 18px;
-  border-radius: 50%;
-  background: radial-gradient(circle, rgba(46,204,113,0.8) 0%, rgba(0,255,191,0.15) 70%);
-  box-shadow: 0 0 20px 4px rgba(46,204,113,0.5);
-  pointer-events: none;
-  transform: translate(-50%, -50%);
-  transition: width 0.2s ease, height 0.2s ease, box-shadow 0.3s ease;
-  z-index: 9999;
-}
+    .cursor-glow.active {
+        width: 30px;
+        height: 30px;
+        box-shadow: 0 0 35px 10px rgba(46, 204, 113, 0.7);
+    }
 
-.cursor-glow.active {
-  width: 30px;
-  height: 30px;
-  box-shadow: 0 0 35px 10px rgba(46,204,113,0.7);
-}
+    .cursor-pulse {
+        position: fixed;
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        transform: translate(-50%, -50%);
+        background: rgba(46, 204, 113, 0.5);
+        pointer-events: none;
+        animation: pulseAnim 0.6s ease-out forwards;
+        z-index: 9998;
+    }
 
-/* ===== Click Pulse ===== */
-.cursor-pulse {
-  position: fixed;
-  width: 10px;
-  height: 10px;
-  border-radius: 50%;
-  transform: translate(-50%, -50%);
-  background: rgba(46,204,113,0.5);
-  pointer-events: none;
-  animation: pulseAnim 0.6s ease-out forwards;
-  z-index: 9998;
-}
-
-@keyframes pulseAnim {
-  0% {
-    transform: translate(-50%, -50%) scale(0.2);
-    opacity: 1;
-  }
-  70% {
-    transform: translate(-50%, -50%) scale(3);
-    opacity: 0.6;
-  }
-  100% {
-    transform: translate(-50%, -50%) scale(5);
-    opacity: 0;
-  }
+    @keyframes pulseAnim {
+        0% {
+            transform: translate(-50%, -50%) scale(0.2);
+            opacity: 1;
+        }
+        70% {
+            transform: translate(-50%, -50%) scale(3);
+            opacity: 0.6;
+        }
+        100% {
+            transform: translate(-50%, -50%) scale(5);
+            opacity: 0;
+        }
+    }
 }

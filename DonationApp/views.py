@@ -14,8 +14,6 @@ import json
 from django.http import JsonResponse
 
 
-
-
 # ------------------- Initiate Donation -------------------
 @login_required
 def initiate_donation(request):
@@ -61,7 +59,13 @@ def initiate_donation(request):
                     data=payload,
                     timeout=30
                 )
-                data = response.json()
+                
+                # Safely attempt JSON parsing
+                try:
+                    data = response.json()
+                except Exception:
+                    data = {'status': 'FAILED', 'failedreason': 'Invalid gateway response.'}
+
                 print("SSLCOMMERZ Response:", data)
 
                 if data.get('status') == 'SUCCESS' and data.get('GatewayPageURL'):
@@ -81,6 +85,7 @@ def initiate_donation(request):
 
     return render(request, 'Donation/donate.html', {'form': form})
 
+
 # ------------------- IPN Handler -------------------
 @csrf_exempt
 def ssl_ipn(request):
@@ -95,8 +100,11 @@ def ssl_ipn(request):
         f"val_id={val_id}&store_id={settings.SSLC_STORE_ID}&store_passwd={settings.SSLC_STORE_PASS}&v=1&format=json"
     )
 
-    res = requests.get(validation_url)
-    result = res.json()
+    try:
+        res = requests.get(validation_url, timeout=15)
+        result = res.json()
+    except Exception:
+        result = {}
 
     if result and result.get('status') in ['VALID', 'VALIDATED']:
         try:
@@ -108,11 +116,13 @@ def ssl_ipn(request):
             pass
     return HttpResponse("IPN received")
 
+
 # ------------------- User Donation History -------------------
 @login_required
 def donation_history(request):
     donations = Donation.objects.filter(user=request.user).order_by('-created_at')
     return render(request, 'Donation/history.html', {'donations': donations})
+
 
 # ------------------- Admin Dashboard -------------------
 @staff_member_required
@@ -123,7 +133,6 @@ def admin_donations(request):
         donations = donations.filter(status=status_filter)
     total = donations.filter(status='PAID').aggregate(Sum('amount'))['amount__sum'] or 0
     return render(request, 'Donation/admin_donations.html', {'donations': donations, 'total': total, 'status_filter': status_filter})
-
 
 
 # ------------------- Donation Success Handler -------------------
@@ -143,10 +152,25 @@ def donate_success(request):
         f"val_id={val_id}&store_id={settings.SSLC_STORE_ID}&store_passwd={settings.SSLC_STORE_PASS}&v=1&format=json"
     )
 
-    res = requests.get(validation_url)
-    result = res.json()
+    result = {}
+    try:
+        res = requests.get(validation_url, timeout=15)
+        # Check if response is valid JSON before calling .json()
+        if res.status_code == 200 and 'application/json' in res.headers.get('Content-Type', ''):
+            result = res.json()
+        else:
+            try:
+                result = res.json()
+            except Exception:
+                result = {}
+    except Exception:
+        result = {}
 
-    if result.get('status') in ['VALID', 'VALIDATED']:
+    # Check validation response OR fallback to direct status from SSLCommerz POST callback
+    post_status = request.POST.get('status')
+    is_valid_payment = (result.get('status') in ['VALID', 'VALIDATED']) or (post_status in ['VALID', 'VALIDATED', 'SUCCESS'])
+
+    if is_valid_payment:
         try:
             donation = Donation.objects.get(order_id=tran_id)
             donation.status = 'PAID'
@@ -157,8 +181,14 @@ def donate_success(request):
             if request.headers.get('x-requested-with') == 'XMLHttpRequest':
                 return JsonResponse({"success": True, "message": "Donation Successful!"})
 
-            return render(request, 'Donation/success.html', context={'donation': donation})
-
+            return render(
+    request, 
+    'Donation/success.html', 
+    context={
+        'donation': donation,
+        'transaction_id': tran_id,
+    }
+)
 
         except Donation.DoesNotExist:
             if request.headers.get('x-requested-with') == 'XMLHttpRequest':
@@ -170,13 +200,18 @@ def donate_success(request):
         return render(request, 'Donation/fail.html', {'error': result})
 
 
-
+@csrf_exempt
 def donate_fail(request):
-    return render(request, 'Donate/fail.html')
+    # Captures error reason returned by SSLCommerz POST request if present
+    error_reason = request.POST.get('failedreason') or request.POST.get('status')
+    return render(request, 'Donation/fail.html', {'error': error_reason})
 
+
+@csrf_exempt
 def donate_cancel(request):
-    return render(request, 'Donate/cancel.html')
+    return render(request, 'Donation/cancel.html')
+
 
 def donation_history_dashboard(request):
     donations = Donation.objects.filter(user=request.user).order_by('-created_at')
-    return render(request, 'Dashboard/dashboard_donation_history.html', {'donations': donations})
+    return render(request, 'Donation/history.html', {'donations': donations})

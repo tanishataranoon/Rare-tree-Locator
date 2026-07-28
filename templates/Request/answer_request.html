@@ -1,65 +1,183 @@
+{% extends 'Dashboard/dashboard_base.html' %}
 {% load static %}
-<!DOCTYPE html>
-<html lang="en">
 
-<head>
-    <meta charset="UTF-8">
-    <title>Answer Request - {{ tree_request.title }}</title>
-    <link rel="stylesheet" href="{% static 'css/Request/answer_request.css' %}">
-</head>
+{% block title %}Answer Request - {{ tree_request.title }}{% endblock %}
 
-<body>
-    {% include 'common/header.html' %}
-    <a href="{% url 'dashboard' %}" class="back-link">&larr; Back to Dashboard</a>
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'CSS/Request/answer_request.css' %}">
+{% endblock %}
 
-    <div class="container">
-        <h1>🌳 {{ tree_request.title }}</h1>
-        <p><strong>Location:</strong> {{ tree_request.location }}</p>
-        <p><strong>Submitted by:</strong> {{ tree_request.requester.username }}</p>
-        <p>{{ tree_request.description }}</p>
+{% block content %}
+<div class="answer-page-wrapper">
 
-        {% if tree_request.image %}
-        <img src="{{ tree_request.image.url }}" class="request-img">
-        {% endif %}
+    <!-- Main Content Grid -->
+    <div class="answer-grid">
+        
+        <!-- Left Side: Request Summary Card -->
+        <aside class="request-summary-card">
+            <div class="card-header">
+                <span class="status-badge {{ tree_request.status|slugify }}">
+                    {{ tree_request.get_status_display }}
+                </span>
+                <span class="request-id">Request #{{ tree_request.id }}</span>
+            </div>
 
-        <hr>
+            <h1 class="request-title">🌳 {{ tree_request.title }}</h1>
 
-        <h2>💬 Contributor Answers ({{ answers.count }})</h2>
-        {% for ans in answers %}
-        <div class="answer-card">
-            <p><strong>By:</strong>
-                <a href="{% url 'profile_view' ans.answered_by.id %}">{{ ans.answered_by.username }}</a>
-                <span class="timestamp">({{ ans.created_at|date:"M d, Y h:i A" }})</span>
-            </p>
-            <p>{{ ans.response_text }}</p>
+            <div class="meta-list">
+                <div class="meta-item">
+                    <i data-feather="user"></i>
+                    <div>
+                        <span class="meta-label">Submitted by</span>
+                        <strong class="meta-value">{{ tree_request.requester.username }}</strong>
+                    </div>
+                </div>
+                <div class="meta-item">
+                    <i data-feather="map-pin"></i>
+                    <div>
+                        <span class="meta-label">Location</span>
+                        <strong class="meta-value">{{ tree_request.location|default:"Not specified" }}</strong>
+                    </div>
+                </div>
+                <div class="meta-item">
+                    <i data-feather="calendar"></i>
+                    <div>
+                        <span class="meta-label">Date Submitted</span>
+                        <strong class="meta-value">{{ tree_request.created_at|date:"M d, Y" }}</strong>
+                    </div>
+                </div>
+            </div>
 
-            {% if ans.reference_image %}
-            <img src="{{ ans.reference_image.url }}" class="answer-img">
+            <div class="request-description">
+                <h3>Description</h3>
+                <p>{{ tree_request.description }}</p>
+            </div>
+
+            {% if tree_request.image %}
+            <div class="request-image-box">
+                <img src="{{ tree_request.image.url }}" alt="{{ tree_request.title }}">
+            </div>
+            {% endif %}
+        </aside>
+
+        <!-- Right Side: Answers & Response Form -->
+        <main class="answers-main-section">
+
+            <!-- Existing Responses -->
+            <section class="existing-answers">
+                <h2>💬 Community Answers <span class="answer-count">({{ answers.count }})</span></h2>
+
+                <div class="answers-stack">
+                    {% for ans in answers %}
+                    <div class="answer-card">
+                        <div class="answer-header">
+                            <div class="user-info">
+                                <div class="avatar-placeholder">
+                                    {{ ans.answered_by.username|slice:":1"|upper }}
+                                </div>
+                                <div>
+                                    <a href="{% url 'profile_view' ans.answered_by.username %}" class="author-name">
+                                        {{ ans.answered_by.username }}
+                                    </a>
+                                    <span class="timestamp">{{ ans.created_at|date:"M d, Y • h:i A" }}</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="answer-body">
+                            <p>{{ ans.response_text }}</p>
+
+                            {% if ans.reference_image %}
+                            <div class="answer-img-wrapper">
+                                <img src="{{ ans.reference_image.url }}" alt="Reference Image">
+                            </div>
+                            {% endif %}
+
+                            <div class="answer-links">
+                                {% if ans.video_url %}
+                                <a href="{{ ans.video_url }}" target="_blank" class="link-badge video">
+                                    <i data-feather="video"></i> Watch Video
+                                </a>
+                                {% endif %}
+
+                                {% if ans.external_url %}
+                                <a href="{{ ans.external_url }}" target="_blank" class="link-badge external">
+                                    <i data-feather="external-link"></i> External Link
+                                </a>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                    {% empty %}
+                    <div class="empty-answers">
+                        <i data-feather="message-square"></i>
+                        <p>No answers have been submitted yet. Be the first to contribute!</p>
+                    </div>
+                    {% endfor %}
+                </div>
+            </section>
+
+            <!-- Contributor / Expert Form -->
+            {% if user.is_authenticated and user.user_type != "common" or user.is_staff %}
+            <section class="submit-answer-section">
+                <h3>✏️ Submit Your Answer</h3>
+                
+                <form method="POST" enctype="multipart/form-data" class="modern-answer-form">
+                    {% csrf_token %}
+
+                    <div class="form-group">
+                        <label for="{{ form.response_text.id_for_label }}">Your Identification / Notes</label>
+                        {{ form.response_text }}
+                        {% if form.response_text.errors %}<div class="form-error">{{ form.response_text.errors }}</div>{% endif %}
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group half">
+                            <label for="{{ form.reference_image.id_for_label }}">Reference Image (Optional)</label>
+                            {{ form.reference_image }}
+                        </div>
+                        <div class="form-group half">
+                            <label for="{{ form.video_url.id_for_label }}">Video Link (Optional)</label>
+                            {{ form.video_url }}
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="{{ form.external_url.id_for_label }}">External Reference URL (Optional)</label>
+                        {{ form.external_url }}
+                    </div>
+
+                    <button type="submit" class="btn btn-primary">
+                        <i data-feather="send"></i> Post Response
+                    </button>
+                    <a href="{% url 'map_page' %}?request_id={{ tree_request.id }}" class="btn btn-secondary">
+                        <i data-feather="map-pin"></i> Add Tree Officially
+                    </a>
+                </form>
+            </section>
+            {% else %}
+            <!-- Notice for Common Users -->
+            <section class="common-user-notice">
+                <div class="info-card">
+                    <i data-feather="info"></i>
+                    <p>Submitting official identification answers is reserved for specialists and contributors. You can view all community answers above.</p>
+                </div>
+            </section>
             {% endif %}
 
-            {% if ans.video_url %}
-            <p>🎥 <a href="{{ ans.video_url }}" target="_blank">Watch Video</a></p>
-            {% endif %}
-
-            {% if ans.external_url %}
-            <p>🔗 <a href="{{ ans.external_url }}" target="_blank">More Info</a></p>
-            {% endif %}
-        </div>
-        {% empty %}
-        <p>No answers yet.</p>
-        {% endfor %}
-
-        {% if user.user_type == "contributor" %}
-        <hr>
-        <h3>✏️ Submit Your Answer</h3>
-        <form method="POST" enctype="multipart/form-data">
-            {% csrf_token %}
-            {{ form.as_p }}
-            <button type="submit" class="btn-primary">Submit Answer</button>
-        </form>
-        {% endif %}
+        </main>
     </div>
-    {% include 'common/footer.html' %}
-</body>
 
-</html>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+    // Re-initialize Feather icons if used dynamically
+    if (typeof feather !== 'undefined') {
+        feather.replace();
+    }
+});
+</script>
+{% endblock %}

@@ -6,11 +6,12 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Rare Tree Locator - Login</title>
-  <link rel="stylesheet" href="{% static 'css/Profile/login.css' %}">
+  <link rel="stylesheet" href="{% static 'CSS/Profile/login.css' %}">
 </head>
 
 <body>
   {% include 'Common/header.html' %}
+
   <div class="falling-lights">
     <span></span><span></span><span></span><span></span><span></span>
     <span></span><span></span><span></span><span></span><span></span>
@@ -18,98 +19,58 @@
 
   <div class="page-container">
 
-    <!-- Title above login box -->
+    <!-- Title above login box
     <div class="page-title">
       <h2>🌲 Rare Tree Locator</h2>
       <p class="subtitle">Welcome back!</p>
-    </div>
+    </div> -->
 
     <!-- Login Box -->
     <div class="login-container">
       <h3>Log In</h3>
       <p class="login-subtitle">Enter your credentials to access your account</p>
-      <!-- will only appear when the user was redirected to the login page -->
+
+      <!-- Warning when redirected from a login-required page -->
       {% if request.GET.next %}
-      <div class="alert-warning" style="
-                  background-color: #fff3cd;
-                  color: #856404;
-                  padding: 10px 15px;
-                  border-radius: 8px;
-                  margin-bottom: 15px;
-                  border: 1px solid #ffeeba;
-                  text-align: center;">
+      <div class="alert alert-warning">
         You must log in to view that page.
       </div>
       {% endif %}
-      <!-- 🔸 End  -->
-      <form method="POST">
-        {% csrf_token %}
-        {% if messages %}
+
+      <!-- Django Messages (Errors, Info, Warnings) -->
+      {% if messages %}
         {% for message in messages %}
-        <div class="alert-warning" style="
-        background-color: #fff3cd;
-        color: #856404;
-        padding: 10px 15px;
-        border-radius: 8px;
-        margin-bottom: 15px;
-        border: 1px solid #ffeeba;
-        text-align: center;">
+        <div class="alert alert-{% if message.tags == 'error' %}danger{% else %}{{ message.tags }}{% endif %}">
           {{ message }}
         </div>
         {% endfor %}
-        {% endif %}
-        <label>Email or Username</label>
-        <input type="text" name="username" placeholder="Enter your email or username" required>
+      {% endif %}
 
-        <label>Password</label>
-        <input type="password" name="password" placeholder="Enter your password" required>
+      <!-- Form with preserved 'next' redirect URL -->
+      <form method="POST" action="{% if request.GET.next %}?next={{ request.GET.next }}{% endif %}">
+        {% csrf_token %}
+
+        <label for="id_username">Email or Username</label>
+        <input type="text" id="id_username" name="username" placeholder="Enter your email or username" required autofocus>
+
+        <label for="id_password">Password</label>
+        <input type="password" id="id_password" name="password" placeholder="Enter your password" required>
 
         <button type="submit">Sign In</button>
       </form>
 
-      <p><a href="">Forgot your password?</a></p>
+      <!-- Action Links -->
+      <p><a href="#">Forgot your password?</a></p>
       <p>Don't have an account? <a href="{% url 'signup' %}">Sign up</a></p>
     </div>
-    <!-- Back to Home -->
+
+    <!-- Back to Home
     <div class="back-home">
-      <a href="{% url 'HomePage' %}">← Back to Home</a>
-    </div>
+      <a href="{% url 'HomePage' %}">&larr; Back to Home</a>
+    </div> -->
   </div>
-  <script>
-    // Cursor glow follow
-    const cursorGlow = document.createElement("div");
-    cursorGlow.classList.add("cursor-glow");
-    document.body.appendChild(cursorGlow);
 
-    document.addEventListener("mousemove", (e) => {
-      cursorGlow.style.top = e.clientY + "px";
-      cursorGlow.style.left = e.clientX + "px";
-    });
-
-    // Optional: enlarge glow briefly when clicking
-    document.addEventListener("mousedown", () => {
-      cursorGlow.classList.add("active");
-
-      // Create pulse circle
-      const pulse = document.createElement("div");
-      pulse.classList.add("cursor-pulse");
-      pulse.style.left = cursorGlow.style.left;
-      pulse.style.top = cursorGlow.style.top;
-      document.body.appendChild(pulse);
-
-      // Remove pulse after animation
-      setTimeout(() => {
-        pulse.remove();
-      }, 600);
-
-      setTimeout(() => {
-        cursorGlow.classList.remove("active");
-      }, 200);
-    });
-
-  </script>
-
-
+  <script src="{% static 'JS/cursor.js' %}"></script>
 
   {% include 'Common/footer.html' %}
 </body>

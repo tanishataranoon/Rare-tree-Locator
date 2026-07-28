@@ -2,38 +2,61 @@ document.addEventListener('DOMContentLoaded', function() {
     const modal = document.getElementById('deleteModal');
     const modalText = document.getElementById('modal-text');
     const deleteForm = document.getElementById('deleteForm');
+
+    // Prevent errors if modal element isn't on the current page
+    if (!modal || !deleteForm || !modalText) return;
+
     const closeBtn = modal.querySelector('.close');
     const cancelBtn = modal.querySelector('.cancel-btn');
 
-    // Select all Delete buttons (featured + posts)
-    const deleteButtons = document.querySelectorAll('.delete-btn');
+    // Function to open modal
+    function openDeleteModal(postId, postTitle) {
+        if (!postId) {
+            console.error("Post ID missing!");
+            return;
+        }
 
-    deleteButtons.forEach(btn => {
-        btn.addEventListener('click', function(e) {
-            e.preventDefault(); // Prevent page reload
+        modalText.textContent = `Are you sure you want to delete "${postTitle || 'this post'}"?`;
+        
+        // Dynamically set Django delete action URL
+        // Adjust '/blog/delete/' if your URL route is named differently in urls.py
+        // deleteForm.action = `/blog/delete/${postId}/`;
+        deleteForm.action = `/delete/${postId}/`;
+        
+        modal.style.display = 'block';
+    }
 
-            const postId = this.getAttribute('data-post-id');
-            const postTitle = this.getAttribute('data-post-title');
+    // Function to close modal
+    function closeModal() {
+        modal.style.display = 'none';
+    }
 
-            if (!postId) {
-                console.error("Post ID missing!");
-                return;
-            }
-
-            modalText.textContent = `Are you sure you want to delete "${postTitle}"?`;
-            deleteForm.action = `/delete/${postId}/`; // Correctly set form action
-            modal.style.display = 'block';
-        });
+    // Use Event Delegation so dynamically loaded posts (e.g. Load More) work seamlessly
+    document.addEventListener('click', function(e) {
+        const deleteBtn = e.target.closest('.delete-btn');
+        if (deleteBtn) {
+            e.preventDefault();
+            const postId = deleteBtn.getAttribute('data-post-id');
+            const postTitle = deleteBtn.getAttribute('data-post-title');
+            openDeleteModal(postId, postTitle);
+        }
     });
 
-    // Close modal
-    closeBtn.addEventListener('click', () => modal.style.display = 'none');
-    cancelBtn.addEventListener('click', () => modal.style.display = 'none');
+    // Close button events
+    if (closeBtn) closeBtn.addEventListener('click', closeModal);
+    if (cancelBtn) cancelBtn.addEventListener('click', closeModal);
 
-    // Close modal if clicked outside content
-    window.addEventListener('click', (e) => {
+    // Close modal if user clicks outside modal window
+    window.addEventListener('click', function(e) {
         if (e.target === modal) {
-            modal.style.display = 'none';
+            closeModal();
+        }
+    });
+
+    // Close modal on Escape key press
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape' && modal.style.display === 'block') {
+            closeModal();
         }
     });
 });

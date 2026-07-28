@@ -1,2 +1,73 @@
-<h1>Donation Failed!</h1>
-<p>The payment could not be processed.</p>
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Donation Failed | Rare Tree Locator</title>
+    <link rel="stylesheet" href="{% static 'CSS/Donate/donation_fail.css' %}">
+    <!-- Feather Icons for modern UI elements -->
+    <script src="https://unpkg.com/feather-icons"></script>
+</head>
+<body>
+    {% include 'Common/header.html' %}
+
+    <main class="fail-page-container">
+        <section class="fail-card">
+            
+            <!-- Header & Failure Icon -->
+            <div class="fail-header">
+                <div class="icon-wrapper">
+                    <i data-feather="x-circle"></i>
+                </div>
+                <div class="badge-fail">
+                    Payment Unsuccessful
+                </div>
+                <h1>Donation Failed</h1>
+                <p class="subtitle">We couldn't process your payment. Don't worry, your account was not charged.</p>
+            </div>
+
+            <!-- Error Detail Box -->
+            <div class="error-box">
+                <div class="error-header">
+                    <i data-feather="alert-triangle"></i>
+                    <h3>Reason for Failure</h3>
+                </div>
+                <p class="error-message">
+                    {% if error %}
+                        {{ error }}
+                    {% else %}
+                        The transaction was declined by the payment gateway or bank. Please double-check your payment credentials or try a different payment method.
+                    {% endif %}
+                </p>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="action-buttons">
+                <a href="{% url 'donate' %}" class="btn btn-primary">
+                    <i data-feather="refresh-cw"></i> Try Again
+                </a>
+                <a href="{% url 'HomePage' %}" class="btn btn-outline">
+                    <i data-feather="home"></i> Return to Home
+                </a>
+            </div>
+
+            <!-- Footnote -->
+            <div class="fail-footer">
+                <p>Having persistent issues? Feel free to reach out to our support team for assistance.</p>
+            </div>
+
+        </section>
+    </main>
+
+    {% include 'Common/footer.html' %}
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            if (typeof feather !== 'undefined') {
+                feather.replace();
+            }
+        });
+    </script>
+</body>
+</html>

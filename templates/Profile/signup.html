@@ -4,56 +4,108 @@
 
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Rare Tree Locator - Signup</title>
-    <link rel="stylesheet" href="{% static 'css/Profile/signup.css' %}">
+    <link rel="stylesheet" href="{% static 'CSS/Profile/signup.css' %}">
 </head>
 
 <body>
-    <header>
-        {% include "Common/header.html" %}
-    </header>
-    <h2 class="site-title">Rare Tree Locator</h2>
-    <p class="site-subtitle">Join our community of tree enthusiasts</p>
-    <div class="signup-container">
-        <h3>Create Account</h3>
-        <p class="small-subtitle">Get started on your tree discovery journey</p>
+    <!-- Header -->
+    {% include "Common/header.html" %}
 
-        <form method="POST">
-            {% csrf_token %}
-            {{ form.non_field_errors }}
-            <label>Username</label>
-            {{ form.username }}
-            <label>Full Name</label>
-            {{ form.full_name }}
-            <label>Email</label>
-            {{ form.email }}
-            <label>Password</label>
-            {{ form.password1 }}
-            <label>Confirm Password</label>
-            {{ form.password2 }}
-            <label>User Type</label>
-            {{ form.user_type }}
-            <div id="professionField" style="display:none;">
-                <label>Profession / Occupation</label>
-                {{ form.profession }}
-            </div>
-            <button type="submit">Create Account</button>
-            {% if form.errors %}
-            <div class="errorlist">
-                {{ form.errors }}
-            </div>
-            {% endif %}
-        </form>
-        <p class="login-link">Already have an account? <a href="{% url 'login' %}">Log in</a></p>
+    <!-- If you want the cursor effect here too, uncomment this -->
+    <!-- <script src="{% static 'js/cursor.js' %}"></script> -->
+
+    <!-- Main Wrapper to handle flexbox layout and footer pushing -->
+    <div class="page-container">
+        
+        <!-- <div class="page-title">
+            <h2 class="site-title">Rare Tree Locator</h2>
+            <p class="site-subtitle">Join our community of tree enthusiasts</p>
+        </div> -->
+
+        <div class="signup-container">
+            <h3>Create Account</h3>
+            <p class="small-subtitle">Get started on your tree discovery journey</p>
+
+            <form method="POST">
+    {% csrf_token %}
+
+    <!-- Top Block: General/Non-Field Errors (e.g., password mismatch or global checks) -->
+    {% if form.non_field_errors %}
+        <div class="error-banner">
+            {% for error in form.non_field_errors %}
+                <p>{{ error }}</p>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    <!-- Username -->
+    <label>Username</label>
+    {{ form.username }}
+    {% if form.username.errors %}
+        <div class="field-error">{{ form.username.errors }}</div>
+    {% endif %}
+
+    <!-- Full Name -->
+    <label>Full Name</label>
+    {{ form.full_name }}
+    {% if form.full_name.errors %}
+        <div class="field-error">{{ form.full_name.errors }}</div>
+    {% endif %}
+
+    <!-- Email -->
+    <label>Email</label>
+    {{ form.email }}
+    {% if form.email.errors %}
+        <div class="field-error">{{ form.email.errors }}</div>
+    {% endif %}
+
+    <!-- Password 1 (Rendered automatically by UserCreationForm) -->
+    <label>Password</label>
+    {{ form.password1 }}
+    {% if form.password1.errors %}
+        <div class="field-error">{{ form.password1.errors }}</div>
+    {% endif %}
+
+    <!-- Password 2 (Rendered automatically by UserCreationForm) -->
+    <label>Confirm Password</label>
+    {{ form.password2 }}
+    {% if form.password2.errors %}
+        <div class="field-error">{{ form.password2.errors }}</div>
+    {% endif %}
+
+    <!-- User Type -->
+    <label>User Type</label>
+    {{ form.user_type }}
+    {% if form.user_type.errors %}
+        <div class="field-error">{{ form.user_type.errors }}</div>
+    {% endif %}
+
+    <!-- Profession -->
+    <div id="professionField" style="display:none;">
+        <label>Profession / Occupation</label>
+        {{ form.profession }}
+        {% if form.profession.errors %}
+            <div class="field-error">{{ form.profession.errors }}</div>
+        {% endif %}
     </div>
-    <p class="back-home"><a href="{% url 'HomePage' %}">← Back to Home</a></p>
 
-    <footer>
-        {% include "Common/footer.html" %}
-    </footer>
+    <button type="submit">Create Account</button>
+</form>
 
-    <script src="{% static 'js/Profile/signup.js' %}"></script>
+            <p class="login-link">Already have an account? <a href="{% url 'login' %}">Log in</a></p>
+        </div>
 
+        <!-- <div class="back-home">
+            <a href="{% url 'HomePage' %}">&larr; Back to Home</a>
+        </div> -->
+    </div>
+
+    <!-- Footer -->
+    {% include "Common/footer.html" %}
+
+    <script src="{% static 'JS/Profile/signup.js' %}"></script>
 </body>
 
 </html>

@@ -1,109 +1,116 @@
+{% extends 'base.html' %}
 {% load static %}
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>{{ tree.street_name }} - Tree Details</title>
+
+{% block title %}{{ tree.street_name }} — Tree Details{% endblock %}
+
+{% block extra_css %}
+  <!-- Font Awesome -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+  
+  <!-- Leaflet CSS -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+  
+  <!-- Page Specific CSS -->
   <link rel="stylesheet" href="{% static 'CSS/Trees/TreeDetail.css' %}">
-</head>
-<body>
-  {% include 'Common/header.html' %}
+{% endblock %}
 
-  <div class="container">
-    <!-- Main Grid: Left Info, Right Image+Map -->
-    <div class="main-grid">
-      <!-- Left Column: Tree Info -->
-      <div class="tree-info">
-        <h2 class="tree-common-name">{{ tree.street_name }}</h2>
-        <p class="tree-scientific-name"><em>{{ tree.scientific_name|default:"Unknown" }}</em></p>
+{% block content %}
+<div class="container tree-detail-container">
+  <!-- Main Grid: Left Info, Right Image+Map -->
+  <div class="main-grid">
+    
+    <!-- Left Column: Tree Info -->
+    <div class="tree-info">
+      <h1 class="tree-common-name">{{ tree.street_name }}</h1>
+      <p class="tree-scientific-name"><em>{{ tree.scientific_name|default:"Unknown" }}</em></p>
 
-        <div class="info-cards">
-          <div class="info-card rarity-{{ tree.rarity_status|default:"common"|lower }}">
-            <i class="fas fa-seedling"></i>
-            <span>Rarity:</span>
-            <p>{{ tree.rarity_status|default:"Common" }}</p>
-          </div>
-
-          <div class="info-card">
-            <i class="fas fa-ruler-vertical"></i>
-            <span>Height:</span>
-            <p>{{ tree.height_m|default:"N/A" }} m</p>
-          </div>
-
-          <div class="info-card">
-            <i class="fas fa-hourglass-half"></i>
-            <span>Age:</span>
-            <p>{{ tree.age_estimate|default:"N/A" }} yrs</p>
-          </div>
-
-          <div class="info-card">
-            <i class="fas fa-map-marker-alt"></i>
-            <span>Location:</span>
-            <p>{{ tree.street_name }}, {{ tree.city|default:"N/A" }}</p>
-          </div>
-
-          <div class="info-card">
-            <i class="fas fa-globe-americas"></i>
-            <span>Coordinates:</span>
-            <p>{{ tree.latitude }}, {{ tree.longitude }}</p>
-          </div>
-
-          <div class="info-card">
-            <i class="fas fa-check-circle"></i>
-            <span>Verified:</span>
-            <p>{% if tree.verified %}Yes{% else %}No{% endif %}</p>
-          </div>
-        </div>
-      </div>
-
-      <!-- Right Column: Image + Map -->
-      <div class="right-column">
-        <div class="tree-image">
-          {% if tree.photos.first %}
-            <img src="{{ tree.photos.first.image.url }}" alt="{{ tree.street_name }}">
-          {% else %}
-            <div class="no-image">
-              <i class="fas fa-tree"></i>
-              <p>No image available</p>
-            </div>
-          {% endif %}
+      <div class="info-cards">
+        <div class="info-card rarity-{{ tree.rarity_status|default:'common'|lower }}">
+          <i class="fas fa-seedling"></i>
+          <span>Rarity:</span>
+          <p>{{ tree.rarity_status|default:"Common" }}</p>
         </div>
 
-        <div class="map-container">
-          <div id="map"></div>
+        <div class="info-card">
+          <i class="fas fa-ruler-vertical"></i>
+          <span>Height:</span>
+          <p>{{ tree.height_m|default:"N/A" }} m</p>
+        </div>
+
+        <div class="info-card">
+          <i class="fas fa-hourglass-half"></i>
+          <span>Age:</span>
+          <p>{{ tree.age_estimate|default:"N/A" }} yrs</p>
+        </div>
+
+        <div class="info-card">
+          <i class="fas fa-map-marker-alt"></i>
+          <span>Location:</span>
+          <p>{{ tree.street_name }}, {{ tree.city|default:"N/A" }}</p>
+        </div>
+
+        <div class="info-card">
+          <i class="fas fa-globe-americas"></i>
+          <span>Coordinates:</span>
+          <p>{{ tree.latitude }}, {{ tree.longitude }}</p>
+        </div>
+
+        <div class="info-card">
+          <i class="fas fa-check-circle"></i>
+          <span>Verified:</span>
+          <p>{% if tree.verified %}Yes{% else %}No{% endif %}</p>
         </div>
       </div>
     </div>
 
-    <!-- Video Section -->
-<div class="video-section">
-  {% if embed_url %}
-    <iframe src="{{ embed_url }}" allowfullscreen></iframe>
-  {% else %}
-    <iframe src="https://www.youtube.com/embed/T9RZxS3oKcM" allowfullscreen></iframe>
-  {% endif %}
-</div>
+    <!-- Right Column: Image + Map -->
+    <div class="right-column">
+      <div class="tree-image">
+        {% if tree.photos.first %}
+          <img src="{{ tree.photos.first.image.url }}" alt="{{ tree.street_name }}">
+        {% else %}
+          <div class="no-image">
+            <i class="fas fa-tree"></i>
+            <p>No image available</p>
+          </div>
+        {% endif %}
+      </div>
+
+      <div class="map-container">
+        <div id="map"></div>
+      </div>
+    </div>
   </div>
 
-  {% include 'Common/footer.html' %}
+  <!-- Video Section -->
+  <div class="video-section">
+    {% if embed_url %}
+      <iframe src="{{ embed_url }}" allowfullscreen title="Tree Related Video"></iframe>
+    {% else %}
+      <iframe src="https://www.youtube.com/embed/T9RZxS3oKcM" allowfullscreen title="Tree Related Video"></iframe>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}
 
-  <!-- Leaflet Map Script -->
-  <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+{% block extra_js %}
+  <!-- Leaflet JS -->
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+  
   <script>
-    const lat = parseFloat("{{ tree.latitude|default:0 }}");
-    const lng = parseFloat("{{ tree.longitude|default:0 }}");
+    document.addEventListener("DOMContentLoaded", () => {
+      // Safely parse float values
+      const lat = parseFloat("{{ tree.latitude|default:'0' }}") || 0;
+      const lng = parseFloat("{{ tree.longitude|default:'0' }}") || 0;
 
-    const map = L.map('map').setView([lat, lng], 15);
+      const map = L.map('map').setView([lat, lng], 15);
 
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-      attribution: '&copy; OpenStreetMap contributors'
-    }).addTo(map);
+      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+      }).addTo(map);
 
-    const marker = L.marker([lat, lng]).addTo(map);
-    marker.bindPopup(`<strong>{{ tree.street_name }}</strong><br><em>{{ tree.scientific_name|default:"Unknown" }}</em>`).openPopup();
+      const marker = L.marker([lat, lng]).addTo(map);
+      marker.bindPopup(`<strong>{{ tree.street_name|escapejs }}</strong><br><em>{{ tree.scientific_name|default:"Unknown"|escapejs }}</em>`).openPopup();
+    });
   </script>
-</body>
-</html>
+{% endblock %}

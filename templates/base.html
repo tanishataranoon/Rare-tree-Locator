@@ -1,0 +1,39 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% block title %}Rare Tree Locator{% endblock %}</title>
+
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+  
+  <!-- Global Shared CSS -->
+  <link rel="stylesheet" href="{% static 'CSS/common/header.css' %}">
+  <link rel="stylesheet" href="{% static 'CSS/common/footer.css' %}">
+
+  <!-- Block for page-specific CSS -->
+  {% block extra_css %}{% endblock %}
+</head>
+<body>
+
+  <!-- Global Header -->
+  {% include 'common/header.html' %}
+
+  <!-- Main Dynamic Page Content -->
+  <main class="page-container">
+    {% block content %}
+    {% endblock %}
+  </main>
+
+  <!-- Global Footer -->
+  {% include 'common/footer.html' %}
+
+  <!-- Global JavaScript -->
+  <script>
+    const csrfToken = "{{ csrf_token }}";
+  </script>
+  {% block extra_js %}{% endblock %}
+</body>
+</html>

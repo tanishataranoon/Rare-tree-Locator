@@ -7,13 +7,16 @@ User = get_user_model()
 
 # Custom Sign-Up Form
 class SignUpForm(UserCreationForm):
-    full_name = forms.CharField(max_length=100, required=True)
-    user_type = forms.ChoiceField(choices=User.USER_TYPES, required=True)
-    profession = forms.CharField(max_length=100, required=False)
+    full_name = forms.CharField(max_length=100, required=True, label="Full Name")
+    email = forms.EmailField(required=True, label="Email")
+    user_type = forms.ChoiceField(choices=User.USER_TYPES, required=True, label="User Type")
+    profession = forms.CharField(max_length=100, required=False, label="Profession / Occupation")
 
     class Meta:
         model = User
-        fields = ['username', 'full_name', 'email', 'password1', 'password2', 'user_type', 'profession']
+        # NOTE: Do NOT put 'password1' or 'password2' in fields. 
+        # UserCreationForm manages them automatically.
+        fields = ['username', 'full_name', 'email', 'user_type', 'profession']
 
     def clean(self):
         cleaned_data = super().clean()
@@ -28,14 +31,16 @@ class SignUpForm(UserCreationForm):
     def save(self, commit=True):
         user = super().save(commit=False)
         user.first_name = self.cleaned_data['full_name']
+        user.email = self.cleaned_data['email']
         user.user_type = self.cleaned_data['user_type']
         user.profession = self.cleaned_data.get('profession', '')
+        
         if commit:
             user.save()
         return user
 
-# Profile Update Form
 
+# Profile Update Form
 class ProfileForm(forms.ModelForm):
     class Meta:
         model = Profile
@@ -52,11 +57,13 @@ class ProfileForm(forms.ModelForm):
         widgets = {
             "bio": forms.Textarea(attrs={"rows": 4}),
         }
-        # make all optional
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+        # Make all profile fields optional
         for field in self.fields.values():
             field.required = False
+
 
 # Password Change Form
 class CustomPasswordChangeForm(PasswordChangeForm):
@@ -75,13 +82,11 @@ class CustomPasswordChangeForm(PasswordChangeForm):
 
     def clean(self):
         cleaned_data = super().clean()
-        # only validate if any password field is filled
         old = cleaned_data.get("old_password")
         new1 = cleaned_data.get("new_password1")
         new2 = cleaned_data.get("new_password2")
 
         if not (old or new1 or new2):
-            # all empty, skip validation
             self.cleaned_data = {}
             return self.cleaned_data
 

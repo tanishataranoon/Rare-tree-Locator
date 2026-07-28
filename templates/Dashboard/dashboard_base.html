@@ -4,38 +4,78 @@
 
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}Dashboard{% endblock %}</title>
-    <link rel="stylesheet" href="{% static 'css/Request/dashboard.css' %}">
+
+    <!-- Base Dashboard CSS -->
+    <link rel="stylesheet" href="{% static 'CSS/Request/dashboard.css' %}">
+
+    <!-- Block for extra CSS injected by child templates -->
+    {% block extra_css %}{% endblock %}
+
     <script src="https://unpkg.com/feather-icons"></script>
 </head>
 
-<body>
-    {% include "Common/header.html" %}
+<body class="dashboard-body">
+
+    <!-- Global Site Header -->
+    <header class="dashboard-header-container">
+        {% include "Common/header.html" %}
+    </header>
+
+    <!-- Main Workspace Area -->
     <div class="dashboard-wrapper">
-        <aside class="sidebar">
-            <ul>
-                <li class="{% if request.resolver_match.url_name == 'dashboard' %}active{% endif %}">
-                    <a href="{% url 'dashboard' %}"><i data-feather="grid"></i> Dashboard</a>
-                </li>
-                <li class="{% if request.resolver_match.url_name == 'request_list' %}active{% endif %}">
-                    <a href="{% url 'request_list' %}"><i data-feather="file-text"></i> Tree Requests</a>
-                </li>
-                <li class="{% if request.resolver_match.url_name == 'donation_history' %}active{% endif %}">
-                    <a href="{% url 'donation_history_dashboard' %}">
-                        <i data-feather="file-text"></i> Donation History
-                    </a>
-                </li>
-                <li><a href="{% url 'profile_view' user.username %}"><i data-feather="user"></i> Profile</a></li>
-            </ul>
+        <!-- Icon Rail Sidebar -->
+        <aside class="sidebar-rail" id="sidebarRail" aria-label="Dashboard Navigation">
+            <div class="rail-header">
+                <button type="button" class="toggle-btn" id="toggleSidebar" title="Expand Sidebar">
+                    <i data-feather="chevron-right" class="toggle-icon"></i>
+                </button>
+            </div>
+
+            <nav class="rail-nav">
+                <ul>
+                    <li class="{% if request.resolver_match.url_name == 'dashboard' %}active{% endif %}">
+                        <a href="{% url 'dashboard' %}" data-tooltip="Dashboard">
+                            <i data-feather="grid" class="nav-icon"></i>
+                            <span class="link-text">Dashboard</span>
+                        </a>
+                    </li>
+                    <li class="{% if request.resolver_match.url_name == 'request_list' or request.resolver_match.url_name == 'tree_requests' %}active{% endif %}">
+                        <a href="{% url 'request_list' %}" data-tooltip="Tree Requests">
+                            <i data-feather="file-text" class="nav-icon"></i>
+                            <span class="link-text">Tree Requests</span>
+                        </a>
+                    </li>
+                    <li class="{% if request.resolver_match.url_name == 'donation_history' %}active{% endif %}">
+                        <a href="{% url 'donation_history_dashboard' %}" data-tooltip="Donation History">
+                            <i data-feather="dollar-sign" class="nav-icon"></i>
+                            <span class="link-text">Donation History</span>
+                        </a>
+                    </li>
+                    <!-- <li>
+                        <a href="{% url 'profile_view' user.username %}" data-tooltip="Profile">
+                            <i data-feather="user" class="nav-icon"></i>
+                            <span class="link-text">Profile</span>
+                        </a>
+                    </li> -->
+                </ul>
+            </nav>
         </aside>
 
+        <!-- Main Workspace View -->
         <main class="dashboard-content">
             {% block content %}{% endblock %}
         </main>
     </div>
 
     {% include "Common/footer.html" %}
-    <script>feather.replace();</script>
+
+    <script src="{% static 'JS/Request/dashboard.js' %}"></script>
+    <script>
+        feather.replace();
+    </script>
+    {% block extra_js %}{% endblock %}
 </body>
 
 </html>

@@ -1,96 +1,149 @@
 document.addEventListener("DOMContentLoaded", () => {
-  const cards = document.querySelectorAll(".card");
-
-  // Hover glow
-  cards.forEach(card => {
-    card.addEventListener("mouseenter", () => card.style.boxShadow = "0 15px 40px rgba(0,0,0,0.2)");
-    card.addEventListener("mouseleave", () => card.style.boxShadow = "0 6px 20px rgba(0,0,0,0.08)");
-  });
-
-  // Search/filter
+  
+  // ==========================================================
+  // 1. Live Search & Filtering
+  // ==========================================================
   const searchInput = document.getElementById("treeSearch");
   const searchBtn = document.getElementById("searchBtn");
+  const cards = document.querySelectorAll(".tree-card");
+
   function filterTrees() {
-    const q = searchInput.value.toLowerCase();
+    if (!searchInput) return;
+    const query = searchInput.value.toLowerCase().trim();
+
     cards.forEach(card => {
-      const name = card.querySelector("h3")?.textContent.toLowerCase() || "";
-      const sci = card.querySelector("p")?.textContent.toLowerCase() || "";
-      const loc = card.querySelector(".meta span")?.textContent.toLowerCase() || "";
-      card.style.display = (name.includes(q) || sci.includes(q) || loc.includes(q)) ? "" : "none";
+      const streetName = card.querySelector("h3")?.textContent.toLowerCase() || "";
+      const scientificName = card.querySelector(".scientific-name")?.textContent.toLowerCase() || "";
+      const metaText = card.querySelector(".meta")?.textContent.toLowerCase() || "";
+
+      const matches = streetName.includes(query) || 
+                      scientificName.includes(query) || 
+                      metaText.includes(query);
+
+      card.style.display = matches ? "" : "none";
     });
   }
-  searchBtn.addEventListener("click", filterTrees);
-  searchInput.addEventListener("keyup", e => { if(e.key==="Enter") filterTrees(); });
 
-  // -----------------------
-  // Contributor actions
-  // -----------------------
-  // Delete tree
+  if (searchBtn && searchInput) {
+    searchBtn.addEventListener("click", filterTrees);
+    searchInput.addEventListener("keyup", (e) => {
+      if (e.key === "Enter") filterTrees();
+    });
+  }
+
+  // ==========================================================
+  // 2. Contributor Delete Action
+  // ==========================================================
   document.querySelectorAll(".delete-btn").forEach(btn => {
     btn.addEventListener("click", () => {
       const treeId = btn.dataset.id;
-      if(!confirm("Are you sure you want to delete this tree?")) return;
+      if (!confirm("Are you sure you want to delete this tree record?")) return;
 
       fetch(`/trees/${treeId}/delete/`, {
-        method:'POST',
-        headers:{'X-CSRFToken': getCookie('csrftoken')}
+        method: "POST",
+        headers: {
+          "X-CSRFToken": getCookie("csrftoken"),
+          "X-Requested-With": "XMLHttpRequest"
+        }
       })
-      .then(r=>r.json())
+      .then(response => response.json())
       .then(data => {
-        if(data.success) btn.closest('.card').remove();
-        else alert(data.error);
-      });
+        if (data.success) {
+          const card = btn.closest(".card");
+          card.style.transition = "opacity 0.3s ease, transform 0.3s ease";
+          card.style.opacity = "0";
+          card.style.transform = "scale(0.9)";
+          setTimeout(() => card.remove(), 300);
+        } else {
+          alert(data.error || "Failed to delete the tree record.");
+        }
+      })
+      .catch(error => console.error("Error deleting tree:", error));
     });
   });
 
-  // Open modal
+  // ==========================================================
+  // 3. Edit Modal Management
+  // ==========================================================
   const modal = document.getElementById("editTreeModal");
   const form = document.getElementById("editTreeForm");
+  const closeModalBtn = document.getElementById("closeModalBtn");
+  const cancelModalBtn = document.getElementById("cancelModalBtn");
+
+  const hideModal = () => modal?.classList.add("hidden");
+
+  // Open & Populate Modal
   document.querySelectorAll(".edit-btn").forEach(btn => {
     btn.addEventListener("click", () => {
-      const card = btn.closest(".card");
-      document.getElementById("editTreeId").value = btn.dataset.id;
-      document.getElementById("editStreetName").value = card.querySelector("h3").innerText;
-      document.getElementById("editScientificName").value = card.querySelector("p").innerText;
-      document.getElementById("editLatitude").value = card.dataset.latitude;
-      document.getElementById("editLongitude").value = card.dataset.longitude;
-      modal.classList.remove("hidden");
+      // Read data straight from button data attributes
+      document.getElementById("editTreeId").value = btn.dataset.id || "";
+      document.getElementById("editStreetName").value = btn.dataset.street || "";
+      document.getElementById("editScientificName").value = btn.dataset.scientific || "";
+      document.getElementById("editHabitat").value = btn.dataset.habitat || "";
+      document.getElementById("editDescription").value = btn.dataset.description || "";
+      document.getElementById("editRarityStatus").value = btn.dataset.rarity || "";
+      document.getElementById("editHeight").value = btn.dataset.height || "";
+      document.getElementById("editAge").value = btn.dataset.age || "";
+      document.getElementById("editLatitude").value = btn.dataset.lat || "";
+      document.getElementById("editLongitude").value = btn.dataset.lng || "";
+
+      modal?.classList.remove("hidden");
     });
   });
 
-  // Close modal
-  document.getElementById("closeModalBtn").addEventListener("click", ()=>modal.classList.add("hidden"));
-
-  // Submit form
-  form.addEventListener("submit", e => {
-    e.preventDefault();
-    const treeId = document.getElementById("editTreeId").value;
-    const formData = new FormData(form);
-
-    fetch(`/trees/${treeId}/update/`, {
-      method:'POST',
-      headers:{'X-CSRFToken': getCookie('csrftoken')},
-      body:formData
-    })
-    .then(r=>r.json())
-    .then(data => {
-      if(data.success){
-        alert("Tree updated successfully!");
-        location.reload(); // reload to see updated card
-      } else alert(data.error);
-    });
+  // Close Modal Events
+  closeModalBtn?.addEventListener("click", hideModal);
+  cancelModalBtn?.addEventListener("click", hideModal);
+  
+  // Close modal when clicking dark overlay outside
+  window.addEventListener("click", (e) => {
+    if (e.target === modal) hideModal();
   });
 
-  // CSRF helper
-  function getCookie(name){
-    let value = null;
-    if(document.cookie && document.cookie!==''){
-      document.cookie.split(';').forEach(c=>{
-        c=c.trim();
-        if(c.startsWith(name+'=')) value = decodeURIComponent(c.substring(name.length+1));
-      });
+  // Submit Modal Form (AJAX Update)
+  if (form) {
+    form.addEventListener("submit", (e) => {
+      e.preventDefault();
+      const treeId = document.getElementById("editTreeId").value;
+      const formData = new FormData(form);
+
+      fetch(`/trees/${treeId}/update/`, {
+        method: "POST",
+        headers: {
+          "X-CSRFToken": getCookie("csrftoken"),
+          "X-Requested-With": "XMLHttpRequest"
+        },
+        body: formData
+      })
+      .then(response => response.json())
+      .then(data => {
+        if (data.success) {
+          alert("Tree updated successfully!");
+          location.reload(); // Refresh page to display updated details
+        } else {
+          alert(data.error || "Error updating tree details.");
+        }
+      })
+      .catch(error => console.error("Error submitting form:", error));
+    });
+  }
+
+  // ==========================================================
+  // Helper: Django CSRF Cookie Fetcher
+  // ==========================================================
+  function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== "") {
+      const cookies = document.cookie.split(";");
+      for (let i = 0; i < cookies.length; i++) {
+        const cookie = cookies[i].trim();
+        if (cookie.startsWith(name + "=")) {
+          cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+          break;
+        }
+      }
     }
-    return value;
+    return cookieValue;
   }
 
 });

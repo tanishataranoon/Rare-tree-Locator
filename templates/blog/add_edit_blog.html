@@ -5,69 +5,159 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{ action }} Blog Post</title>
-    <link rel="stylesheet" href="{% static 'css/blog/add_edit_blog.css' %}">
+    <title>{{ action }} Blog Post | Rare Tree Locator</title>
+    
+    <!-- Google Fonts & Feather Icons -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/feather-icons"></script>
+
+    <link rel="stylesheet" href="{% static 'CSS/blog/add_edit_blog.css' %}">
 </head>
 
 <body>
     {% include 'Common/header.html' %}
 
-    <div class="post-container">
-        <a href="{% url 'blog_list' %}" class="back-link">&larr; Back to List </a>
-        
-        <form method="post" enctype="multipart/form-data" id="blogForm">
-            {% csrf_token %}
+    <main class="editor-wrapper">
+        <div class="editor-container">
+            
+            <!-- Page Top Header -->
+            <div class="editor-header">
+                <a href="{% url 'blog_list' %}" class="back-link">
+                    <i data-feather="arrow-left"></i> Back to Articles
+                </a>
+                <h1 class="page-title">{{ action }} Blog Post</h1>
+                <p class="page-subtitle">Share rare species updates, stories, or conservation research with the community.</p>
+            </div>
 
-            <!-- Featured Image -->
-            <div class="card">
-                <h3>Featured Image</h3>
-                <div class="image-upload">
-                    <input type="file" id="id_image" name="image" accept="image/*">
-                    <label for="id_image" class="upload-box">Click or drag to upload</label>
+            <form method="post" enctype="multipart/form-data" id="blogForm" class="blog-form">
+                {% csrf_token %}
 
-                    <!-- Show existing image when editing -->
-                    <div id="preview">
-                        {% if form.instance.image %}
-                        <img src="{{ form.instance.image.url }}" alt="Current image">
-                        {% endif %}
+                <!-- Post Details Card -->
+                <div class="form-card">
+                    <div class="card-title">
+                        <i data-feather="file-text"></i>
+                        <h3>Article Information</h3>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="id_title" class="form-label">Post Title <span class="required">*</span></label>
+                        <input type="text" id="id_title" name="title" class="form-input"
+                            value="{{ form.instance.title|default_if_none:'' }}"
+                            placeholder="e.g. Discovering the Ancient Baobabs of Madagascar" required>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="id_category" class="form-label">Category</label>
+                            <div class="input-icon-wrap">
+                                <i data-feather="tag" class="input-icon"></i>
+                                <input type="text" id="id_category" name="category" class="form-input icon-indent"
+                                    value="{{ form.instance.category|default_if_none:'' }}" placeholder="e.g. Conservation, Rare Species">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="id_video_url" class="form-label">YouTube / Video URL</label>
+                            <div class="input-icon-wrap">
+                                <i data-feather="video" class="input-icon"></i>
+                                <input type="url" id="id_video_url" name="video_url" class="form-input icon-indent"
+                                    value="{{ form.instance.video_url|default_if_none:'' }}" placeholder="https://youtube.com/watch?v=...">
+                            </div>
+                        </div>
                     </div>
                 </div>
-            </div>
 
-            <!-- Post Details -->
-            <div class="card">
-                <h3>Post Details</h3>
-                <label for="id_title">Post Title *</label>
-                <input type="text" id="id_title" name="title" value="{{ form.instance.title|default_if_none:'' }}"
-                    placeholder="Enter post title..." required>
+                <!-- Featured Image Upload Card -->
+                <div class="form-card">
+                    <div class="card-title">
+                        <i data-feather="image"></i>
+                        <h3>Featured Media</h3>
+                    </div>
 
-                <label for="id_category">Category</label>
-                <input type="text" id="id_category" name="category"
-                    value="{{ form.instance.category|default_if_none:'' }}" placeholder="e.g. Conservation, Wildlife">
-                <label for="id_video_url">Video URL</label>
-                <input type="url" id="id_video_url" name="video_url"
-                    value="{{ form.instance.video_url|default_if_none:'' }}" placeholder="Enter video link...">
-            </div>
+                    <div class="upload-area" id="uploadDropzone">
+                        <input type="file" id="id_image" name="image" accept="image/*" class="file-input">
+                        
+                        <div class="upload-content" id="uploadInstructions">
+                            <div class="upload-icon-circle">
+                                <i data-feather="upload-cloud"></i>
+                            </div>
+                            <span class="upload-primary-text">Click to upload or drag & drop</span>
+                            <span class="upload-sub-text">PNG, JPG or WEBP (Max 5MB)</span>
+                        </div>
 
-            <!-- Post Content -->
-            <div class="card">
-                <h3>Post Content</h3>
-                <textarea id="id_content" name="content" rows="10"
-                    placeholder="Write your blog post here...">{{ form.instance.content|default_if_none:'' }}</textarea>
-            </div>
+                        <!-- Image Preview Slot -->
+                        <div id="preview" class="image-preview-container {% if not form.instance.image %}hidden{% endif %}">
+                            <img id="previewImg" src="{% if form.instance.image %}{{ form.instance.image.url }}{% endif %}" alt="Image preview">
+                            <div class="preview-overlay">
+                                <span class="change-photo-badge"><i data-feather="refresh-cw"></i> Change Image</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
 
-            <!-- Buttons -->
-            <div class="form-actions">
-                <button type="button" class="btn preview-btn" id="previewBtn">Preview</button>
-                <button type="submit" class="btn publish-btn">{{ action }} Post</button>
-            </div>
-        </form>
-    </div>
+                <!-- Post Content Card -->
+                <div class="form-card">
+                    <div class="card-title">
+                        <i data-feather="edit-3"></i>
+                        <h3>Article Content</h3>
+                    </div>
 
-    <footer>
-        {% include 'Common/footer.html' %}
-    </footer>
-    <script src="{% static 'js/blog/add_edit_blog.js' %}" defer></script>
+                    <div class="form-group">
+                        <textarea id="id_content" name="content" class="form-textarea" rows="12"
+                            placeholder="Write your blog post narrative here..." required>{{ form.instance.content|default_if_none:'' }}</textarea>
+                    </div>
+                </div>
+
+                <!-- Action Bar -->
+                <div class="form-actions-bar">
+                    <a href="{% url 'blog_list' %}" class="btn btn-secondary">Cancel</a>
+                    <div class="actions-right">
+                            <button type="button" class="btn btn-outline" id="previewBtn">
+                                <i data-feather="eye"></i> Preview
+                            </button>
+                        <button type="submit" class="btn btn-primary">
+                            <i data-feather="check"></i> {{ action }} Post
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </main>
+
+    {% include 'Common/footer.html' %}
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            if (typeof feather !== 'undefined') {
+                feather.replace();
+            }
+
+            // Live Image Drag & Drop Preview Handler
+            const fileInput = document.getElementById('id_image');
+            const dropzone = document.getElementById('uploadDropzone');
+            const previewContainer = document.getElementById('preview');
+            const previewImg = document.getElementById('previewImg');
+            const instructions = document.getElementById('uploadInstructions');
+
+            if (fileInput) {
+                fileInput.addEventListener('change', function(e) {
+                    const file = e.target.files[0];
+                    if (file) {
+                        const reader = new FileReader();
+                        reader.onload = function(evt) {
+                            previewImg.src = evt.target.result;
+                            previewContainer.classList.remove('hidden');
+                            if (instructions) instructions.style.display = 'none';
+                        };
+                        reader.readAsDataURL(file);
+                    }
+                });
+            }
+        });
+    </script>
+    <script src="{% static 'JS/blog/add_edit_blog.js' %}" defer></script>
 </body>
 
 </html>

@@ -1,158 +1,211 @@
 {% load static %}
-<!DOCTYPE html>
-<html lang="en">
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="{% static 'CSS/common/header.css' %}">
-</head>
+<!-- Link Header CSS -->
+<link rel="stylesheet" href="{% static 'CSS/common/header.css' %}">
+<!-- Add this inside <head> on home.html, trees.html, etc. -->
+<!-- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"> -->
 
-<body>
-    <header>
-        <div class="logo">
+<header>
+    <div class="logo">
+        <a href="{% url 'HomePage' %}">
             <img src="{% static 'images/logo.png' %}" alt="Logo">
-        </div>
-        <nav>
-            <ul class="nav-links">
-                <!-- Home -->
-                <li>
-                    <a href="{% url 'HomePage' %}"
-                        class="{% if request.resolver_match.url_name == 'HomePage' %}active{% endif %}">
-                        Home
-                    </a>
-                </li>
-
-                <!-- Trees -->
-                <li class="dropdown">
-                    <a href="{% url 'TreeProfiles' %}"
-                        class="dropdown-toggle
-                        {% if request.resolver_match.url_name == 'TreeProfiles' or request.resolver_match.url_name == 'create_tree' or request.resolver_match.url_name == 'my_trees' %} active {% endif %}">
-                        Trees
-                    </a>
-                    {% if user.is_authenticated and user.user_type == 'contributor' %}
-                    <ul class="dropdown-menu">
-                        <li><a href="{% url 'map_page' %}"
-                        class="{% if request.resolver_match.url_name == 'map_page' %}active{% endif %}">Create Tree</a></li>
-                        <li><a href="{% url 'profile_view' user.username %}"><i data-feather="user"></i>My Trees</a></li>
-                        <li><a href="{% url 'TreeProfiles' %}">All Trees</a></li>
-                    </ul>
-                    {% endif %}
-                </li>
-
-
-                <!-- Blog -->
-                <li class="dropdown">
-                    <a href="{% url 'blog_list' %}"
-                        class="dropdown-toggle
-                        {% if request.resolver_match.url_name == 'blog_list' or request.resolver_match.url_name == 'add_blog' or request.resolver_match.url_name == 'my_posts' %} active {% endif %}">
-                        Blog
-                    </a>
-                    {% if user.is_authenticated and user.user_type == 'contributor' %}
-                    <ul class="dropdown-menu">
-                        <li><a href="{% url 'add_blog' %}" class="add-symbol">Create Post</a></li>
-                        <li><a href="{% url 'profile_view' user.username %}"><i data-feather="user"></i>My Posts</a></li>
-                        <li><a href="{% url 'blog_list' %}">All Posts</a></li>
-                    </ul>
-                    {% endif %}
-                </li>
-
-
-                <!-- Map -->
-                <li>
-                    <a href="{% url 'map_page' %}"
-                        class="{% if request.resolver_match.url_name == 'map_page' %}active{% endif %}">
-                        Map
-                    </a>
-                </li>
-                <li><a href="{% url 'contact' %}">Contact</a></li>
-
-
-                {% if user.is_authenticated %}
-                <li><a href="{% url 'user_overview' %}">All Users</a></li>
-                <li class="profile-menu">
-                    <div class="notif-wrapper">
-                        <img src="{% if user.profile.profile_pic %}{{ user.profile.profile_pic.url }}{% else %}{{ MEDIA_URL }}default_profile.png{% endif %}"
-                            alt="Profile" class="profile-pic" id="profile-icon">
-
-                        {% if user.unread_notifications_count %}
-                        <span class="notif-count">{{ user.unread_notifications_count }}</span>
-                        {% endif %}
-                    </div>
-                </li>
-                {% else %}
-                <li><a href="{% url 'login' %}">Log In</a></li>
-                {% endif %}
-            </ul>
-        </nav>
-
-        <div class="menu-toggle" id="mobile-menu">
-            <span></span>
-            <span></span>
-            <span></span>
-        </div>
-    </header>
-    <!-- sidebar -->
-    {% if user.is_authenticated %}
-    <div id="profile-panel" class="profile-panel">
-        <div class="profile-header">
-            <img src="{% if user.profile.profile_pic %}{{ user.profile.profile_pic.url }}{% else %}{% static 'images/default_profile.png' %}{% endif %}"
-                alt="Profile" class="profile-pic-large">
-            <h3>{{ user.username }}</h3>
-            <p>Role: {{ user.get_user_type_display }}</p>
-        </div>
-        <ul class="profile-links">
-            <li><a href="{% url 'profile_view' user.username %}">Profile</a></li>
-            <li><a href="{% url 'dashboard' %}">Dashboard</a></li>
+        </a>
+    </div>
+    
+    <nav>
+        <ul class="nav-links">
+            <!-- Home -->
             <li>
-                <a href="#" id="notif-link">
-                    Notifications
+                <a href="{% url 'HomePage' %}"
+                    class="{% if request.resolver_match.url_name == 'HomePage' %}active{% endif %}">
+                    Home
+                </a>
+            </li>
+
+            <!-- Trees Dropdown -->
+            <li class="dropdown">
+                <a href="{% url 'TreeProfiles' %}"
+                    class="dropdown-toggle {% if request.resolver_match.url_name == 'TreeProfiles' or request.resolver_match.url_name == 'create_tree' or request.resolver_match.url_name == 'my_trees' %}active{% endif %}">
+                    Trees <i data-feather="chevron-down" class="chevron-icon"></i>
+                </a>
+                {% if user.is_authenticated and user.user_type == 'contributor' %}
+                <ul class="dropdown-menu">
+                    <li>
+                        <a href="{% url 'map_page' %}" class="{% if request.resolver_match.url_name == 'map_page' %}active{% endif %}">
+                            <i data-feather="plus-circle"></i>
+                            <div>
+                                <span class="item-title">Create Tree</span>
+                                <small>Add new tree species</small>
+                            </div>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="{% url 'profile_view' user.username %}">
+                            <i data-feather="user"></i>
+                            <div>
+                                <span class="item-title">My Trees</span>
+                                <small>View contributed trees</small>
+                            </div>
+                        </a>
+                    </li>
+                    <li class="dropdown-divider"></li>
+                    <li>
+                        <a href="{% url 'TreeProfiles' %}">
+                            <i data-feather="grid"></i>
+                            <div>
+                                <span class="item-title">All Trees</span>
+                                <small>Full tree catalog</small>
+                            </div>
+                        </a>
+                    </li>
+                </ul>
+                {% endif %}
+            </li>
+
+            <!-- Blog Dropdown -->
+            <li class="dropdown">
+                <a href="{% url 'blog_list' %}"
+                    class="dropdown-toggle {% if request.resolver_match.url_name == 'blog_list' or request.resolver_match.url_name == 'add_blog' or request.resolver_match.url_name == 'my_posts' %}active{% endif %}">
+                    Blog <i data-feather="chevron-down" class="chevron-icon"></i>
+                </a>
+                {% if user.is_authenticated and user.user_type == 'contributor' %}
+                <ul class="dropdown-menu">
+                    <li>
+                        <a href="{% url 'add_blog' %}" class="add-symbol">
+                            <i data-feather="edit-3"></i>
+                            <div>
+                                <span class="item-title">Create Post</span>
+                                <small>Write an article</small>
+                            </div>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="{% url 'profile_view' user.username %}">
+                            <i data-feather="file-text"></i>
+                            <div>
+                                <span class="item-title">My Posts</span>
+                                <small>Manage your articles</small>
+                            </div>
+                        </a>
+                    </li>
+                    <li class="dropdown-divider"></li>
+                    <li>
+                        <a href="{% url 'blog_list' %}">
+                            <i data-feather="book-open"></i>
+                            <div>
+                                <span class="item-title">All Posts</span>
+                                <small>Explore all stories</small>
+                            </div>
+                        </a>
+                    </li>
+                </ul>
+                {% endif %}
+            </li>
+
+            <!-- Map -->
+            <li>
+                <a href="{% url 'map_page' %}"
+                    class="{% if request.resolver_match.url_name == 'map_page' %}active{% endif %}">
+                    Map
+                </a>
+            </li>
+
+            <!-- Contact -->
+            <li>
+                <a href="{% url 'contact' %}"
+                    class="{% if request.resolver_match.url_name == 'contact' %}active{% endif %}">
+                    Contact
+                </a>
+            </li>
+
+            {% if user.is_authenticated %}
+            <li class="profile-menu">
+                <div class="notif-wrapper">
+                    <img src="{% if user.profile.profile_pic %}{{ user.profile.profile_pic.url }}{% else %}{% static 'images/default_profile.png' %}{% endif %}"
+                        alt="Profile" class="profile-pic" id="profile-icon">
+
                     {% if user.unread_notifications_count %}
                     <span class="notif-count">{{ user.unread_notifications_count }}</span>
                     {% endif %}
+                </div>
+            </li>
+            {% else %}
+            <li><a href="{% url 'login' %}">Log In</a></li>
+            {% endif %}
+        </ul>
+    </nav>
+
+    <div class="menu-toggle" id="mobile-menu">
+        <span></span>
+        <span></span>
+        <span></span>
+    </div>
+</header>
+
+<!-- Sidebar Panel (Unchanged) -->
+{% if user.is_authenticated %}
+<div id="profile-panel" class="profile-panel">
+    <div class="profile-header">
+        <img src="{% if user.profile.profile_pic %}{{ user.profile.profile_pic.url }}{% else %}{% static 'images/default_profile.png' %}{% endif %}"
+            alt="Profile" class="profile-pic-large">
+        <h3>{{ user.username }}</h3>
+        <p>Role: {{ user.get_user_type_display }}</p>
+    </div>
+    
+    <ul class="profile-links">
+        <li><a href="{% url 'profile_view' user.username %}">Profile</a></li>
+        <li><a href="{% url 'dashboard' %}">Dashboard</a></li>
+        
+        <li>
+            <a href="{% url 'user_overview' %}" class="{% if request.resolver_match.url_name == 'user_overview' %}active{% endif %}">
+                All Users
+            </a>
+        </li>
+
+        <li>
+            <a href="#" id="notif-link">
+                Notifications
+                {% if user.unread_notifications_count %}
+                <span class="notif-count">{{ user.unread_notifications_count }}</span>
+                {% endif %}
+            </a>
+        </li>
+        <li><a href="{% url 'donate' %}">Donate</a></li>
+
+        <li>
+            <form method="post" action="{% url 'logout' %}">
+                {% csrf_token %}
+                <button type="submit" class="logout-btn">Log Out</button>
+            </form>
+        </li>
+    </ul>
+
+    <!-- Notification Popup -->
+    <div id="notif-popup" class="notif-popup">
+        <h4>Notifications</h4>
+        <button id="mark-read-btn">Mark all as read</button>
+        <ul>
+            {% for notif in user.notifications.all %}
+            <li class="{% if not notif.is_read %}unread{% endif %}" data-id="{{ notif.id }}">
+                <a href="{% if notif.post %}{% url 'blog_detail' notif.post.id %}{% else %}#{% endif %}">
+                    {{ notif.message }}
+                    <small>{{ notif.created_at|timesince }} ago</small>
                 </a>
             </li>
-            <li><a href="{% url 'donate' %}">Donate</a></li>
-            <li><a href="{% url 'contact' %}">Contact Us</a></li>
-            
-
-            <li>
-                <form method="post" action="{% url 'logout' %}">
-                    {% csrf_token %}
-                    <button type="submit" class="logout-btn">Log Out</button>
-                </form>
-            </li>
+            {% empty %}
+            <li>No notifications</li>
+            {% endfor %}
         </ul>
-
-        <div id="notif-popup" class="notif-popup">
-            <h4>Notifications</h4>
-            <button id="mark-read-btn">Mark all as read</button>
-            <ul>
-                {% for notif in user.notifications.all %}
-                <li class="{% if not notif.is_read %}unread{% endif %}" data-id="{{ notif.id }}">
-                    <a href="{% if notif.post %}{% url 'blog_detail' notif.post.id %}{% else %}#{% endif %}">
-                        {{ notif.message }}
-                        <small>{{ notif.created_at|timesince }} ago</small>
-                    </a>
-                </li>
-                {% empty %}
-                <li>No notifications</li>
-                {% endfor %}
-            </ul>
-        </div>
-        
-
-
     </div>
+</div>
 
-    <div id="overlay"></div>
-    {% endif %}
-    <script>
-        // Make these available to your JS file
-        const markReadUrl = "{% url 'mark_notifications_read' %}";
-        const markSingleUrlBase = "{% url 'mark_single_notification_read' 0 %}".replace(/0\/?$/, '');
-    </script>
-    <script src="{% static 'JS/common/header.js' %}"></script>
-</body>
+<div id="overlay"></div>
+{% endif %}
 
-</html>
+<!-- JavaScript Configuration -->
+<script>
+    const csrfToken = "{{ csrf_token }}";
+    const markReadUrl = "{% url 'mark_notifications_read' %}";
+    const markSingleUrlBase = "{% url 'mark_single_notification_read' 0 %}".replace(/0\/?$/, '');
+</script>
+<script src="{% static 'JS/common/header.js' %}"></script>

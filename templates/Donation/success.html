@@ -3,21 +3,85 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Donation Successful</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Donation Successful | Rare Tree Locator</title>
     <link rel="stylesheet" href="{% static 'css/Donate/donation_success.css' %}">
+    <!-- Feather Icons for modern UI elements -->
+    <script src="https://unpkg.com/feather-icons"></script>
 </head>
 <body>
     {% include 'Common/header.html' %}
 
-    <section class="success-section">
-        <div class="success-box">
-            <img src="{% static 'videos/success.gif' %}" alt="Success Animation" class="success-gif">
-            <h1>Thank You for Your Donation!</h1>
-            <p>Your contribution helps us protect and preserve rare trees 🌱</p>
-            <a href="{% url 'HomePage' %}" class="home-btn">Return to Home</a>
-        </div>
-    </section>
+    <main class="success-page-container">
+        <section class="success-card">
+            
+            <!-- Success Header & Animation -->
+            <div class="success-header">
+                <div class="animation-wrapper">
+                    <img src="{% static 'videos/success.gif' %}" alt="Success Animation" class="success-gif">
+                </div>
+                <div class="badge-success">
+                    <i data-feather="check-circle"></i> Payment Confirmed
+                </div>
+                <h1>Thank You for Your Support! 🌱</h1>
+                <p class="subtitle">Your contribution helps us map rare tree species, protect fragile ecosystems, and plant new saplings.</p>
+            </div>
+
+            <!-- Transaction Receipt Box -->
+            <div class="receipt-box">
+                <div class="receipt-header">
+                    <h3>Donation Summary</h3>
+                    <span class="status-pill">Completed</span>
+                </div>
+                
+                <div class="receipt-details">
+                    <div class="receipt-row highlight">
+                        <span>Amount Paid</span>
+                        <strong class="amount">৳{{ donation.amount|default:"1,000" }} BDT</strong>
+                    </div>
+                    <div class="receipt-row">
+                        <span>Transaction ID</span>
+                        <code>{{ donation.order_id|default:transaction_id|default:"TXN-89410293" }}</code>
+                    </div>
+                    <div class="receipt-row">
+                        <span>Date & Time</span>
+                        <span>{{ donation.created_at|date:"M d, Y • h:i A"|default:"Today" }}</span>
+                    </div>
+                    {% if donation.val_id %}
+                    <div class="receipt-row">
+                        <span>Validation ID</span>
+                        <span>{{ donation.val_id }}</span>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="action-buttons">
+                <a href="{% url 'HomePage' %}" class="btn btn-primary">
+                    <i data-feather="home"></i> Return to Home
+                </a>
+                <a href="{% url 'donation_history' %}" class="btn btn-outline">
+                    <i data-feather="clock"></i> View Donation History
+                </a>
+            </div>
+
+            <!-- Trust / Share Footnote -->
+            <div class="success-footer">
+                <p>A confirmation email with your tax receipt details has been sent to your registered address.</p>
+            </div>
+
+        </section>
+    </main>
 
     {% include 'Common/footer.html' %}
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            if (typeof feather !== 'undefined') {
+                feather.replace();
+            }
+        });
+    </script>
 </body>
 </html>

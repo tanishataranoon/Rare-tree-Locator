@@ -1,4 +1,7 @@
 {% load static %}
+<!-- Load stylesheet first so rules register before footer DOM elements render -->
+<link rel="stylesheet" href="{% static 'CSS/common/footer.css' %}">
+
 <footer class="footer">
   <div class="footer-container">
 
@@ -8,23 +11,23 @@
       <p class="footer-about">Do you know what's that tree? Discover and preserve rare trees with us.</p>
     </div>
 
-    <!-- Address -->
+    <!-- Address & Contact -->
     <div class="footer-section">
       <h3>Contact Info</h3>
       <p>Raza Bazar, Indira Road, Farmgate</p>
       <p>Dhaka, Bangladesh</p>
-      <p>Email: <a href="mailto:rahmansajid2985@gmail.com">rahmansajid2985@gmail.com</a></p>
-      <p>Phone: <a href="tel:+8801795733422">+880 179 573 3422</a></p>
+      <p>Email: <a href="mailto:rahmansajid2985@gmail.com" class="footer-contact-link">rahmansajid2985@gmail.com</a></p>
+      <p>Phone: <a href="tel:+8801795733422" class="footer-contact-link">+880 179 573 3422</a></p>
     </div>
 
     <!-- Social Links -->
     <div class="footer-section">
       <h3>Follow Us</h3>
       <div class="social-links">
-        <a href="#" target="_blank">Facebook</a>
-        <a href="#" target="_blank">Twitter</a>
-        <a href="#" target="_blank">Instagram</a>
-        <a href="#" target="_blank">LinkedIn</a>
+        <a href="#" target="_blank" rel="noopener noreferrer">Facebook</a>
+        <a href="#" target="_blank" rel="noopener noreferrer">Twitter</a>
+        <a href="#" target="_blank" rel="noopener noreferrer">Instagram</a>
+        <a href="#" target="_blank" rel="noopener noreferrer">LinkedIn</a>
         <a href="{% url 'contact' %}">Contact</a>
       </div>
     </div>
@@ -36,6 +39,4 @@
   </div>
 </footer>
 
-<!-- External CSS & JS -->
-<link rel="stylesheet" href="{% static 'css/common/footer.css' %}">
 <script src="{% static 'JS/common/footer.js' %}"></script>

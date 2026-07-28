@@ -7,40 +7,133 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Donate | Rare Tree Locator</title>
     <link rel="stylesheet" href="{% static 'CSS/Donate/donate.css' %}">
+    <!-- Feather Icons for clean UI elements -->
+    <script src="https://unpkg.com/feather-icons"></script>
 </head>
 
 <body>
     {% include 'Common/header.html' %}
 
-    <section class="donation-hero">
-        <div class="donation-card">
-            <div class="donation-content">
-                <h2>Make a Difference 🌱</h2>
-                <p>Your donation helps plant more trees and protect biodiversity worldwide.</p>
+    <main class="donate-page-container">
+        <section class="donation-hero">
+            <div class="donation-card">
+                
+                <!-- Left Side: Form Content -->
+                <div class="donation-content">
+                    <div class="badge-tag">🌱 Support Nature</div>
+                    <h2>Make a Difference</h2>
+                    <p class="subtitle">Your contribution directly funds rare tree mapping, seedling planting, and global biodiversity preservation.</p>
 
-                <form method="POST" class="donation-form">
-                    {% csrf_token %}
-                    {{ form.as_p }}
+                    <form method="POST" class="donation-form" id="donationForm">
+                        {% csrf_token %}
 
-                    {% if error %}
-                    <p class="error-msg">{{ error }}</p>
-                    {% endif %}
+                        <!-- Display Django Form Validation Errors -->
+                        {% if form.non_field_errors %}
+                            <div class="error-banner">
+                                <i data-feather="alert-circle"></i>
+                                <span>{{ form.non_field_errors }}</span>
+                            </div>
+                        {% endif %}
+                        {% if error %}
+                            <div class="error-banner">
+                                <i data-feather="alert-circle"></i>
+                                <span>{{ error }}</span>
+                            </div>
+                        {% endif %}
 
-                    <button type="submit" class="donation-btn">Donate Now</button>
-                </form>
+                        <!-- Quick Choice Buttons -->
+                        <div class="form-group">
+                            <label class="input-label">Select Amount (BDT)</label>
+                            <div class="amount-presets">
+                                <button type="button" class="preset-btn" data-amount="500">৳500</button>
+                                <button type="button" class="preset-btn active" data-amount="1000">৳1,000</button>
+                                <button type="button" class="preset-btn" data-amount="2500">৳2,500</button>
+                                <button type="button" class="preset-btn" data-amount="5000">৳5,000</button>
+                            </div>
+                        </div>
+
+                        <!-- Custom Amount Input -->
+                        <div class="form-group">
+                            <label for="id_amount" class="input-label">Or Enter Custom Amount</label>
+                            <div class="input-wrapper">
+                                <span class="currency-symbol">৳</span>
+                                <input type="number" name="amount" id="id_amount" class="custom-amount-input" value="1000" min="10" step="10" placeholder="Enter amount" required>
+                            </div>
+                        </div>
+
+                        <!-- Hidden/Additional Form Fields from Django -->
+                        {% for field in form %}
+                            {% if field.name != 'amount' %}
+                                <div class="form-group">
+                                    <label for="{{ field.id_for_label }}" class="input-label">{{ field.label }}</label>
+                                    {{ field }}
+                                    {% if field.errors %}
+                                        <span class="field-error">{{ field.errors.0 }}</span>
+                                    {% endif %}
+                                </div>
+                            {% endif %}
+                        {% endfor %}
+
+                        <button type="submit" class="donation-btn">
+                            <span>Proceed to Secure Payment</span>
+                            <i data-feather="arrow-right"></i>
+                        </button>
+                    </form>
+
+                    <div class="trust-footer">
+                        <i data-feather="shield"></i> 256-Bit Encrypted & Secure SSL Payment
+                    </div>
+                </div>
+
+                <!-- Right Side: Video Illustration & Stats -->
+                <div class="donation-illustration-wrapper">
+                    <video autoplay loop muted playsinline class="donation-illustration">
+                        <source src="{% static 'videos/treetree.mp4' %}" type="video/mp4">
+                    </video>
+                    <div class="video-overlay">
+                        <div class="stat-item">
+                            <h3>10,000+</h3>
+                            <p>Trees Mapped Worldwide</p>
+                        </div>
+                    </div>
+                </div>
+
             </div>
-
-            <!-- illustration / video -->
-            <div class="donation-illustration-wrapper">
-                <video autoplay loop muted playsinline class="donation-illustration">
-                    <source src="{% static 'videos/treetree.mp4' %}" type="video/mp4">
-                </video>
-            </div>
-        </div>
-    </section>
-    
+        </section>
+    </main>
 
     {% include 'Common/footer.html' %}
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            if (typeof feather !== 'undefined') {
+                feather.replace();
+            }
+
+            // Quick Preset Amount Selector Logic
+            const presetBtns = document.querySelectorAll('.preset-btn');
+            const amountInput = document.getElementById('id_amount');
+
+            presetBtns.forEach(btn => {
+                btn.addEventListener('click', function() {
+                    presetBtns.forEach(b => b.classList.remove('active'));
+                    this.classList.add('active');
+                    amountInput.value = this.dataset.amount;
+                });
+            });
+
+            // Remove active button highlighting if user types a custom amount
+            amountInput.addEventListener('input', function() {
+                presetBtns.forEach(b => {
+                    if (b.dataset.amount === this.value) {
+                        b.classList.add('active');
+                    } else {
+                        b.classList.remove('active');
+                    }
+                });
+            });
+        });
+    </script>
 </body>
 
 </html>

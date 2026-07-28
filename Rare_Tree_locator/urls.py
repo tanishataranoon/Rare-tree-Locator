@@ -47,15 +47,16 @@ urlpatterns = [
     path('api/trees/', treeapp_views.get_trees_json, name='get_trees_json'),
     
     path("dashboard/", treeapp_views.dashboard, name="dashboard"),#user dashboard view
-    path('tree-requests/', treeapp_views.tree_requests, name='tree_requests'),
+    # path('tree-requests/', treeapp_views.tree_requests, name='tree_requests'),
 
-    path("requests/", treeapp_views.request_list, name="request_list"),
-    path("requests/create/", treeapp_views.create_request, name="create_request"),
-    path("requests/<int:pk>/detail/", treeapp_views.request_detail_ajax, name="request_detail_ajax"),
-    path('requests/<int:id>/delete/', treeapp_views.delete_request, name='delete_request'),
+    path("dashboard/requests/", treeapp_views.request_list, name="request_list"),
+    path("dashboard/requests/create/", treeapp_views.create_request, name="create_request"),
+    path("dashboard/requests/<int:pk>/detail/", treeapp_views.request_detail_ajax, name="request_detail_ajax"),
+    path('dashboard/requests/<int:id>/delete/', treeapp_views.delete_request, name='delete_request'),
 
-    path('requests/<int:pk>/answer/', treeapp_views.answer_request, name='answer_request'),
-    path('requests/<int:pk>/answer/view/', treeapp_views.view_submitted_answer, name='view_submitted_answer'),
+    path('dashboard/requests/<int:pk>/answer/', treeapp_views.answer_request, name='answer_request'),
+    path('dashboard/requests/<int:pk>/answer/view/', treeapp_views.view_submitted_answer, name='view_submitted_answer'),
+    # path('dashboard/requests/<int:pk>/refer/', treeapp_views.refer_request, name='refer_request'),
 
     path('contact/', treeapp_views.contact, name='contact'),
 
@@ -69,6 +70,9 @@ urlpatterns = [
     path('donate/fail/',donationapp_views.donate_fail, name='donate_fail'),
     path('donate/cancel/',donationapp_views.donate_cancel, name='donate_cancel'),
     path('dashboard/donation-history/', donationapp_views.donation_history_dashboard, name='donation_history_dashboard'),
+
+    # Add Django auth URLs (provides 'password_reset', 'password_reset_done', etc.)
+    # path('accounts/', include('django.contrib.auth.urls')),
 
 
 

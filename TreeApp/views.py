@@ -260,7 +260,7 @@ def tree_requests(request):
 def request_list(request):
     requests = TreeRequest.objects.all().order_by("-created_at")
     form = TreeRequestForm()
-    return render(request, "Dashboard/tree_requests.html", {"requests": requests, "form": form})
+    return render(request, "Request/request_list.html", {"requests": requests, "form": form})
 
 
 @login_required
@@ -310,12 +310,18 @@ def answer_request(request, pk):
     answers = tree_request.answers.all().order_by('-created_at')
 
     if request.method == "POST":
+        # Prevent 'common' users from submitting main answers
+        if request.user.user_type == 'common':
+            messages.error(request, "Common users are not authorized to post main answers.")
+            return redirect('answer_request', pk=pk)
+
         form = TreeAnswerForm(request.POST, request.FILES)
         if form.is_valid():
             answer = form.save(commit=False)
             answer.tree_request = tree_request
             answer.answered_by = request.user
             answer.save()
+            messages.success(request, "Answer submitted successfully!")
             return redirect('answer_request', pk=pk)
     else:
         form = TreeAnswerForm()
@@ -326,6 +332,37 @@ def answer_request(request, pk):
         'form': form,
     })
 
+# from django.contrib.auth import get_user_model
+
+# User = get_user_model()
+
+# @login_required
+# def refer_request(request, pk):
+#     """Handles referral submission from the refer modal."""
+#     tree_request = get_object_or_404(TreeRequest, pk=pk)
+
+#     if request.method == 'POST':
+#         expert_id = request.POST.get('expert_id')
+#         notes = request.POST.get('notes', '').strip()
+
+#         if not expert_id:
+#             messages.error(request, "Please select an expert to refer this request to.")
+#             return redirect('answer_request', pk=pk)
+
+#         expert = get_object_or_404(User, pk=expert_id)
+
+#         # Update assigned expert / status on TreeRequest
+#         if hasattr(tree_request, 'assigned_to'):
+#             tree_request.assigned_to = expert
+#         if hasattr(tree_request, 'status'):
+#             tree_request.status = 'referred'
+        
+#         tree_request.save()
+
+#         messages.success(request, f"Request referred to {expert.username} successfully.")
+#         return redirect('request_list')
+
+#     return redirect('answer_request', pk=pk)
 
 def view_submitted_answer(request, pk):
     tree_request = get_object_or_404(TreeRequest, pk=pk)

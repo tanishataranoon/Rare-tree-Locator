@@ -1,27 +1,49 @@
 document.addEventListener("DOMContentLoaded", () => {
+
+    // ================= Cookie Helper Function =================
+    function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let cookie of cookies) {
+                cookie = cookie.trim();
+                if (cookie.startsWith(name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+    const csrftoken = getCookie('csrftoken');
+
+
     // ================= New Request Modal =================
     const newRequestBtn = document.getElementById("new-request-btn");
     const newRequestModal = document.getElementById("new-request-modal");
     const newRequestClose = document.getElementById("new-request-close");
 
-    if (newRequestBtn) {
+    if (newRequestBtn && newRequestModal) {
         newRequestBtn.addEventListener("click", () => {
             newRequestModal.style.display = "block";
         });
     }
-    if (newRequestClose) {
+    if (newRequestClose && newRequestModal) {
         newRequestClose.addEventListener("click", () => {
             newRequestModal.style.display = "none";
         });
     }
     window.addEventListener("click", (e) => {
-        if (e.target === newRequestModal) newRequestModal.style.display = "none";
+        if (newRequestModal && e.target === newRequestModal) {
+            newRequestModal.style.display = "none";
+        }
     });
+
 
     // ================= Image Preview =================
     const imageInput = document.getElementById("image");
     const imagePreview = document.getElementById("image-preview");
-    if (imageInput) {
+    if (imageInput && imagePreview) {
         imageInput.addEventListener("change", (e) => {
             const file = e.target.files[0];
             if (file) {
@@ -36,28 +58,16 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
-    // ================= Form Submission via AJAX =================
+
+    // ================= Form Submission via Fetch API =================
     const newRequestForm = document.getElementById("new-request-form");
     if (newRequestForm) {
-        function getCookie(name) {
-            let cookieValue = null;
-            if (document.cookie && document.cookie !== '') {
-                const cookies = document.cookie.split(';');
-                for (let cookie of cookies) {
-                    cookie = cookie.trim();
-                    if (cookie.startsWith(name + '=')) {
-                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-                        break;
-                    }
-                }
-            }
-            return cookieValue;
-        }
-        const csrftoken = getCookie('csrftoken');
-
         newRequestForm.addEventListener("submit", (e) => {
             e.preventDefault();
             const formData = new FormData(newRequestForm);
+
+            // Clear previous errors
+            document.querySelectorAll(".form-error").forEach(el => el.textContent = "");
 
             fetch(newRequestForm.action, {
                 method: "POST",
@@ -85,52 +95,64 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
-    // ================= Request Details Modal =================
-    const requestModal = document.getElementById("request-modal");
-    if (requestModal) {
-        const modalClose = requestModal.querySelector(".close");
+
+// ================= Request Details Modal =================
+const requestModal = document.getElementById("request-modal");
+if (requestModal) {
+    const modalClose = requestModal.querySelector(".close");
+    if (modalClose) {
         modalClose.addEventListener("click", () => requestModal.style.display = "none");
-        window.addEventListener("click", (e) => { if (e.target === requestModal) requestModal.style.display = "none"; });
+    }
+    
+    window.addEventListener("click", (e) => { 
+        if (e.target === requestModal) requestModal.style.display = "none"; 
+    });
 
-        document.querySelectorAll(".btn-view").forEach(btn => {
-            btn.addEventListener("click", () => {
-                const card = btn.closest(".request-card-modern");
+    document.querySelectorAll(".btn-view").forEach(btn => {
+        btn.addEventListener("click", () => {
+            const card = btn.closest(".request-card-modern");
+            if (!card) return;
 
-                // Populate modal details
-                document.getElementById("modal-title").textContent = card.dataset.title;
-                document.getElementById("modal-id").textContent = card.dataset.id;
-                document.getElementById("modal-requester").textContent = card.dataset.requester;
-                document.getElementById("modal-location").textContent = card.dataset.location;
-                document.getElementById("modal-description").textContent = card.dataset.description;
-                const img = document.getElementById("modal-image");
+            const reqId = card.dataset.id;
+
+            // Populate modal details
+            const titleElem = document.getElementById("modal-title");
+            const idElem = document.getElementById("modal-id");
+            const requesterElem = document.getElementById("modal-requester");
+            const locationElem = document.getElementById("modal-location");
+            const statusElem = document.getElementById("modal-status"); // <-- ADDED
+            const dateElem = document.getElementById("modal-date");     // <-- ADDED
+            const descElem = document.getElementById("modal-description");
+
+            if (titleElem) titleElem.textContent = card.dataset.title || "Request Details";
+            if (idElem) idElem.textContent = reqId;
+            if (requesterElem) requesterElem.textContent = card.dataset.requester || "Anonymous";
+            if (locationElem) locationElem.textContent = card.dataset.location || "N/A";
+            if (statusElem) statusElem.textContent = card.dataset.status || "Pending"; // Sets actual status
+            if (dateElem) dateElem.textContent = card.dataset.date || "N/A";           // Sets actual date
+            if (descElem) descElem.textContent = card.dataset.description || "";
+            
+            const img = document.getElementById("modal-image");
+            if (img) {
                 const imageTag = card.querySelector("img");
                 img.src = imageTag ? imageTag.src : "";
+            }
 
-                // ================= View Answer Button =================
-                const viewAnswerBtn = document.getElementById("view-answer-btn");
-                if (viewAnswerBtn) {
-                    if (card.dataset.hasAnswer === "true") {
-                        viewAnswerBtn.style.display = "inline-block";
-                        viewAnswerBtn.onclick = () => {
-                            window.location.href = `/requests/${card.dataset.id}/answer/view/`;
-                        };
-                    } else {
-                        viewAnswerBtn.style.display = "none";
-                    }
+            // View Answer link update
+            const viewAnswerElem = document.getElementById("view-answer-link") || document.getElementById("view-answer-btn");
+            if (viewAnswerElem) {
+                const targetUrl = `/dashboard/requests/${reqId}/answer/`;
+                if (viewAnswerElem.tagName === "A") {
+                    viewAnswerElem.href = targetUrl;
+                } else {
+                    viewAnswerElem.onclick = () => { window.location.href = targetUrl; };
                 }
+            }
 
-                // ================= Answer Button (for contributors/admins) =================
-                const answerBtn = document.getElementById("answer-btn");
-                if (answerBtn) {
-                    const reqId = card.dataset.id;
-                    answerBtn.href = `/requests/${reqId}/answer/`;
-                    answerBtn.style.display = "inline-block";
-                }
-
-                requestModal.style.display = "block";
-            });
+            requestModal.style.display = "block";
         });
-    }
+    });
+}
 
     // ================= Delete Modal =================
     const deleteModal = document.getElementById("delete-modal");
@@ -141,69 +163,44 @@ document.addEventListener("DOMContentLoaded", () => {
         let deleteRequestId = null;
 
         document.querySelectorAll(".btn-delete").forEach(btn => {
-            btn.addEventListener("click", () => {
+            btn.addEventListener("click", (e) => {
+                e.stopPropagation(); // Prevents triggering card view click events
                 deleteRequestId = btn.dataset.id;
                 deleteModal.style.display = "block";
             });
         });
 
-        deleteClose.addEventListener("click", () => deleteModal.style.display = "none");
-        cancelDelete.addEventListener("click", () => deleteModal.style.display = "none");
-        window.addEventListener("click", (e) => { if (e.target === deleteModal) deleteModal.style.display = "none"; });
-
-        function getCookie(name) {
-            let cookieValue = null;
-            if (document.cookie && document.cookie !== '') {
-                const cookies = document.cookie.split(';');
-                for (let cookie of cookies) {
-                    cookie = cookie.trim();
-                    if (cookie.startsWith(name + '=')) {
-                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-                        break;
-                    }
-                }
-            }
-            return cookieValue;
-        }
-        const csrftoken = getCookie('csrftoken');
-
-        confirmDelete.addEventListener("click", () => {
-            if (!deleteRequestId) return;
-            fetch(`/requests/${deleteRequestId}/delete/`, {
-                method: "POST",
-                headers: {
-                    "X-CSRFToken": csrftoken,
-                    "Accept": "application/json",
-                    "Content-Type": "application/json"
-                },
-            })
-            .then(res => res.json())
-            .then(data => {
-                if (data.success) location.reload();
-                else alert(data.error || "Delete failed!");
-            })
-            .catch(err => {
-                console.error(err);
-                alert("Delete failed due to server error.");
-            });
+        if (deleteClose) deleteClose.addEventListener("click", () => deleteModal.style.display = "none");
+        if (cancelDelete) cancelDelete.addEventListener("click", () => deleteModal.style.display = "none");
+        window.addEventListener("click", (e) => { 
+            if (e.target === deleteModal) deleteModal.style.display = "none"; 
         });
-    }
-});
-$("#new-request-form").on("submit", function(e) {
-    e.preventDefault();
-    $.ajax({
-        url: "{% url 'create_request' %}",
-        type: "POST",
-        data: new FormData(this),
-        processData: false,
-        contentType: false,
-        success: function(data) {
-            if (data.success) {
-                alert("Request created successfully!");
-                location.reload(); // reload to show the new request
-            } else {
-                alert("Error: " + JSON.stringify(data.errors));
-            }
+
+        if (confirmDelete) {
+            confirmDelete.addEventListener("click", () => {
+                if (!deleteRequestId) return;
+                
+                fetch(`/dashboard/requests/${deleteRequestId}/delete/`, {
+                    method: "POST",
+                    headers: {
+                        "X-CSRFToken": csrftoken,
+                        "Accept": "application/json",
+                        "Content-Type": "application/json"
+                    },
+                })
+                .then(res => res.json())
+                .then(data => {
+                    if (data.success) {
+                        location.reload();
+                    } else {
+                        alert(data.error || "Delete failed!");
+                    }
+                })
+                .catch(err => {
+                    console.error(err);
+                    alert("Delete failed due to server error.");
+                });
+            });
         }
-    });
+    }
 });

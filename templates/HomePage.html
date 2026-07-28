@@ -1,22 +1,19 @@
+{% extends 'base.html' %}
 {% load static %}
-<!DOCTYPE html>
-<html lang="en">
 
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Home</title>
-  <link rel="stylesheet" href="{% static 'CSS/homepage.css' %}">
+{% block title %}Home — Rare Tree Locator{% endblock %}
+
+{% block extra_css %}
+  <!-- Page Specific CSS -->
+  <link rel="stylesheet" href="{% static 'css/homepage.css' %}">
+  
   <!-- Leaflet CSS -->
-  <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
-</head>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+{% endblock %}
 
-<body>
-
-  {% include 'Common/header.html' %}
-
+{% block content %}
   <!-- ===== DIAGONAL SLIDESHOW SECTION ===== -->
-  <div class="main-container">
+  <section class="main-container">
     <div class="slideshow">
       <div class="slide active" style="background-image: url('{% static "images/p_1.jpg" %}');"></div>
       <div class="slide" style="background-image: url('{% static "images/p_2.jpg" %}');"></div>
@@ -32,10 +29,9 @@
         </p>
       </div>
     </div>
-  </div>
-    </div>
   </section>
-  <!-- SAFE Donate Section (no JS) -->
+
+  <!-- ===== DONATE SECTION ===== -->
   <section class="donate-section-safe">
     <div class="donate-card-safe">
       <div class="donate-content-safe">
@@ -44,31 +40,27 @@
           Together we can make our planet greener and cleaner.
           Your small contribution today helps grow a better tomorrow.
         </p>
-        <!-- plain link — no onclick, no script -->
         <a href="{% url 'donate' %}" class="donate-btn-safe">Donate Now</a>
       </div>
-  
-      <!-- media container: image OR video — using inline style so Django static works -->
+
+      <!-- Media Container -->
       <div class="donate-media-safe">
-        <div class="donate-bg-safe"
-            style="background: url('{% static "images/tree.jpg" %}') no-repeat center/cover;">
-        </div>
-  
-        <!-- If you prefer video instead, replace the inner block above with this and comment the .donate-bg-safe:
-        <video autoplay loop muted playsinline class="donate-video-safe">
-          <source src="{% static 'videos/tree_bg.mp4' %}" type="video/mp4">
-        </video>
-        -->
+        <div class="donate-bg-safe" style="background: url('{% static "images/tree.jpg" %}') no-repeat center/cover;"></div>
       </div>
     </div>
   </section>
-  
+{% endblock %}
 
-  {% include 'Common/footer.html' %}
+{% block extra_js %}
+  <!-- Leaflet JS -->
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
 
+  <!-- Slideshow Script -->
   <script>
     document.addEventListener("DOMContentLoaded", () => {
       const slides = document.querySelectorAll(".slideshow .slide");
+      if (slides.length === 0) return;
+
       let currentIndex = 0;
 
       function showNextSlide() {
@@ -81,8 +73,4 @@
       setInterval(showNextSlide, 3000);
     });
   </script>
-
-
-</body>
-
-</html>
+{% endblock %}

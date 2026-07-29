@@ -15,7 +15,7 @@ SECRET_KEY = os.environ.get(
 )
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = os.environ.get("DEBUG", "False") == "True"
+DEBUG = os.environ.get("DEBUG", "False").lower() in ("true", "1", "t")
 
 ALLOWED_HOSTS = ["*"]
 
@@ -23,25 +23,27 @@ ALLOWED_HOSTS = ["*"]
 # Application definition
 
 INSTALLED_APPS = [
+    # Unfold Admin (Must precede django.contrib.admin)
     'unfold',
     'unfold.contrib.import_export',
+
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
 
-    # --- CLOUDINARY & STATICFILES ---
+    # Third-party Storage & Tools
     'cloudinary_storage',
     'django.contrib.staticfiles',
     'cloudinary',
-    # ---------------------------
+    'import_export',
 
+    # Project Apps
     'MyApp.apps.MyappConfig',
     'TreeApp.apps.TreeappConfig',
     'BlogApp.apps.BlogappConfig',
     'DonationApp.apps.DonationappConfig',
-    'import_export',
 ]
 
 MIDDLEWARE = [
@@ -59,7 +61,7 @@ ROOT_URLCONF = 'Rare_Tree_locator.urls'
 
 TEMPLATES = [
     {
-        'BACKEND': 'django.template.backends.DjangoTemplates',
+        'BACKEND': 'django.template.backends.django.DjangoTemplates',
         'DIRS': [BASE_DIR / 'templates'],
         'APP_DIRS': True,
         'OPTIONS': {
@@ -75,7 +77,7 @@ TEMPLATES = [
 WSGI_APPLICATION = 'Rare_Tree_locator.wsgi.application'
 
 
-# Database
+# Database Configuration
 DATABASES = {
     "default": dj_database_url.config(
         default=f"sqlite:///{BASE_DIR / 'db.sqlite3'}",
@@ -83,28 +85,19 @@ DATABASES = {
     )
 }
 
-# SSLCOMMERZ Sandbox Credentials
-SSLC_STORE_ID = 'raret68f48babe08eb'
-SSLC_STORE_PASS = 'raret68f48babe08eb@ssl'
-SSLC_MODE = 'sandbox'
 
-# Password validation
+# Custom User Model & Authentication
+AUTH_USER_MODEL = 'MyApp.User'
+
+LOGIN_URL = 'login'
+
 AUTH_PASSWORD_VALIDATORS = [
-    {
-        'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
-    },
-    {
-        'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
-    },
-    {
-        'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
-    },
-    {
-        'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
-    },
+    {'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator'},
+    {'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator'},
+    {'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator'},
+    {'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator'},
 ]
 
-AUTH_USER_MODEL = 'MyApp.User'
 
 # Internationalization
 LANGUAGE_CODE = 'en-us'
@@ -112,9 +105,8 @@ TIME_ZONE = 'UTC'
 USE_I18N = True
 USE_TZ = True
 
-LOGIN_URL = 'login'
 
-# Static files (CSS, JavaScript, Images)
+# Static Files (CSS, JavaScript, Images)
 STATIC_URL = '/static/'
 STATIC_ROOT = BASE_DIR / 'staticfiles'
 
@@ -122,38 +114,58 @@ STATICFILES_DIRS = [
     BASE_DIR / 'static',
 ]
 
-# Legacy fallback required by django-cloudinary-storage during collectstatic
-STATICFILES_STORAGE = "whitenoise.storage.CompressedStaticFilesStorage"
+# Prevents WhiteNoise manifest crashes on missing assets
+WHITENOISE_MANIFEST_STRICT = False
 
-# Django 4.2+ Storage configuration
+# Disable compression processing for unfold/admin vendor files if using compressed storage
+WHITENOISE_SKIP_COMPRESS_EXTENSIONS = (
+    'jpg', 'jpeg', 'png', 'gif', 'webp', 'zip', 'gz', 'tgz', 'bz2', 'tbz',
+    'woff', 'woff2', 'eot', 'ttf', 'otf', 'svg', 'LICENSE', 'md', 'txt'
+)
+
+
+# Cloudinary Media Storage Configuration
+CLOUDINARY_STORAGE = {
+    'CLOUD_NAME': os.environ.get('CLOUDINARY_CLOUD_NAME', 'u5s1vlhg'),
+    'API_KEY': os.environ.get('CLOUDINARY_API_KEY', '585634562132779'),
+    'API_SECRET': os.environ.get('CLOUDINARY_API_SECRET', 'usG2uri3ERNfEbHBv2Wb6YxGZOA'),
+}
+
+MEDIA_URL = '/media/'
+MEDIA_ROOT = BASE_DIR / 'media'
+
+
+# Storage Backends Configuration (Django 4.2+)
 STORAGES = {
     "default": {
         "BACKEND": "cloudinary_storage.storage.MediaCloudinaryStorage",
     },
     "staticfiles": {
-        "BACKEND": "whitenoise.storage.CompressedStaticFilesStorage",
+        # Standard WhiteNoise storage prevents multi-threaded compression race conditions
+        "BACKEND": "whitenoise.storage.StaticFilesStorage",
     },
 }
 
-# Legacy default file storage setting
-DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
+# Legacy fallback compatibility required by django-cloudinary-storage
+STATICFILES_STORAGE = "whitenoise.storage.StaticFilesStorage"
+DEFAULT_FILE_STORAGE = "cloudinary_storage.storage.MediaCloudinaryStorage"
 
-MEDIA_URL = '/media/'
-MEDIA_ROOT = BASE_DIR / 'media'
 
+# SSLCOMMERZ Credentials
+SSLC_STORE_ID = os.environ.get('SSLC_STORE_ID', 'raret68f48babe08eb')
+SSLC_STORE_PASS = os.environ.get('SSLC_STORE_PASS', 'raret68f48babe08eb@ssl')
+SSLC_MODE = os.environ.get('SSLC_MODE', 'sandbox')
+
+
+# Default primary key field type
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
+
+# Unfold Admin Theme Configuration
 UNFOLD = {
     "SITE_HEADER": "Rare Tree Locator Admin",
     "SITE_TITLE": "Rare Tree Locator",
     "SITE_SYMBOL": "🌿",
     "SHOW_HISTORY": True,
     "THEME": "light",
-}
-
-# Cloudinary Credentials (uses Environment Variables in production)
-CLOUDINARY_STORAGE = {
-    'CLOUD_NAME': os.environ.get('CLOUDINARY_CLOUD_NAME', 'u5s1vlhg'),
-    'API_KEY': os.environ.get('CLOUDINARY_API_KEY', '585634562132779'),
-    'API_SECRET': os.environ.get('CLOUDINARY_API_SECRET', 'usG2uri3ERNfEbHBv2Wb6YxGZOA')
 }

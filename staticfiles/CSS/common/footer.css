@@ -1,95 +1,132 @@
-/* Footer Overall */
+/* ==========================================================================
+   Global Footer Styles
+   Overridden with maximum specificity to remain identical on Tailwind pages
+   ========================================================================== */
+
+/* Footer Overall Outer Box */
+footer.footer, 
 .footer { 
-  background: #215732;
-  color: #c2e089;
-  padding: 40px 20px 20px;
-  font-family: Arial, sans-serif;
+  background: #215732 !important;
+  color: #c2e089 !important;
+  padding: 40px 20px 20px !important;
+  font-family: Arial, sans-serif !important;
+  box-sizing: border-box !important;
+  
+  /* Lock font rendering across all browsers */
+  line-height: 1.2 !important;
+  letter-spacing: normal !important;
+  -webkit-font-smoothing: auto !important;
+  -moz-osx-font-smoothing: auto !important;
 }
 
 /* Footer Container Grid */
-.footer-container {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-  gap: 30px;
-  max-width: 1200px;
-  margin: 0 auto;
-  align-items: start;
+.footer .footer-container {
+  display: grid !important;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)) !important;
+  gap: 30px !important;
+  max-width: 1200px !important;
+  margin: 0 auto !important;
+  align-items: start !important;
+  box-sizing: border-box !important;
 }
 
-/* Each Section Titles */
-.footer-section h3 {
-  color: #c2e089;
-  margin-bottom: 12px;
-  font-size: 18px;
+/* Section Titles (h3) */
+.footer .footer-section h3 {
+  color: #c2e089 !important;
+  margin-top: 0 !important;
+  margin-bottom: 12px !important;
+  font-size: 18px !important;
+  font-weight: bold !important;
+  line-height: 1.2 !important;
+  letter-spacing: 0 !important;
+  display: block !important;
 }
 
-/* Logo Section */
-.logo-section {
-  display: flex;
-  flex-direction: column;
-  align-items: center;    /* center horizontally */
-  justify-content: center; /* center vertically */
-  text-align: center;
+/* Logo Section Container */
+.footer .logo-section {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  justify-content: center !important;
+  text-align: center !important;
 }
 
-.footer-logo {
-  width: 120px;          /* size of the circle */
-  height: 120px;         /* must match width */
-  border-radius: 50%;    /* makes it round */
-  object-fit: cover;     /* crop image if needed */
-  display: block;
-  margin-bottom: 12px;
+/* Circular Logo Image */
+.footer .footer-logo {
+  width: 120px !important;
+  height: 120px !important;
+  border-radius: 50% !important;
+  object-fit: cover !important;
+  display: block !important;
+  margin-top: 0 !important;
+  margin-bottom: 12px !important;
+  margin-left: auto !important;
+  margin-right: auto !important;
 }
 
-/* Paragraphs inside logo section */
-.logo-section p {
-  margin: 0;
-  font-size: 14px;
+/* Paragraph Text inside Sections */
+.footer .logo-section p,
+.footer .footer-section p {
+  margin: 4px 0 !important;
+  font-size: 14px !important;
+  color: #c2e089 !important;
+  line-height: 1.4 !important;
+  letter-spacing: 0 !important;
+  display: block !important;
 }
 
-/* Address Section */
-.footer-section p {
-  margin: 4px 0;
-  font-size: 14px;
+/* Contact Links & Social Links */
+.footer .footer-contact-link,
+.footer .social-links a {
+  color: #c2e089 !important;
+  text-decoration: none !important;
+  font-weight: bold !important;
+  line-height: 1.4 !important;
+  letter-spacing: 0 !important;
+  transition: color 0.3s ease !important;
 }
 
-/* Social Links */
-.social-links a {
-  display: inline-block;
-  margin-right: 12px;
-  color: #c2e089;
-  text-decoration: none;
-  font-weight: bold;
-  transition: color 0.3s;
+.footer .social-links a {
+  display: inline-block !important;
+  margin-right: 12px !important;
 }
 
-.social-links a:hover {
-  color: #fff;
+.footer .footer-contact-link:hover,
+.footer .social-links a:hover {
+  color: #ffffff !important;
+  text-decoration: underline !important;
 }
 
-/* Footer Bottom */
-.footer-bottom {
-  text-align: center;
-  border-top: 1px solid #c2e089;
-  margin-top: 25px;
-  padding-top: 15px;
-  font-size: 14px;
+/* Bottom Bar / Copyright */
+.footer .footer-bottom {
+  text-align: center !important;
+  border-top: 1px solid #c2e089 !important;
+  margin-top: 25px !important;
+  padding-top: 15px !important;
+  font-size: 14px !important;
+  box-sizing: border-box !important;
 }
 
-/* Responsive Design */
+.footer .footer-bottom p {
+  margin: 0 !important;
+  line-height: 1.4 !important;
+  letter-spacing: 0 !important;
+}
+
+/* Responsive Mobile Rules */
 @media (max-width: 768px) {
-  .footer-container {
-    grid-template-columns: 1fr; /* single column on mobile */
-    text-align: center;
+  .footer .footer-container {
+    grid-template-columns: 1fr !important;
+    text-align: center !important;
   }
 
-  .footer-logo {
-    width: 80px;
-    height: 80px;
+  .footer .footer-logo {
+    width: 80px !important;
+    height: 80px !important;
   }
 
-  .social-links a {
-    margin-right: 10px;
-    font-size: 13px;
+  .footer .social-links a {
+    margin-right: 10px !important;
+    font-size: 13px !important;
   }
 }

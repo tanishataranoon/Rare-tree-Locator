@@ -33,10 +33,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
 
-    # Third-party Storage & Tools
-    'cloudinary_storage',
+    # Django Static Files
     'django.contrib.staticfiles',
-    'cloudinary',
     'import_export',
 
     # Project Apps
@@ -48,7 +46,7 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
-    'whitenoise.middleware.WhiteNoiseMiddleware',  # Serves static files on Render
+    'whitenoise.middleware.WhiteNoiseMiddleware',  # WhiteNoise serves CSS/JS on Render
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -114,41 +112,23 @@ STATICFILES_DIRS = [
     BASE_DIR / 'static',
 ]
 
-# Prevents WhiteNoise manifest crashes on missing assets
+# Standard WhiteNoise settings (No strict manifest checks)
 WHITENOISE_MANIFEST_STRICT = False
 
-# Disable compression processing for unfold/admin vendor files if using compressed storage
-WHITENOISE_SKIP_COMPRESS_EXTENSIONS = (
-    'jpg', 'jpeg', 'png', 'gif', 'webp', 'zip', 'gz', 'tgz', 'bz2', 'tbz',
-    'woff', 'woff2', 'eot', 'ttf', 'otf', 'svg', 'LICENSE', 'md', 'txt'
-)
-
-
-# Cloudinary Media Storage Configuration
-CLOUDINARY_STORAGE = {
-    'CLOUD_NAME': os.environ.get('CLOUDINARY_CLOUD_NAME', 'u5s1vlhg'),
-    'API_KEY': os.environ.get('CLOUDINARY_API_KEY', '585634562132779'),
-    'API_SECRET': os.environ.get('CLOUDINARY_API_SECRET', 'usG2uri3ERNfEbHBv2Wb6YxGZOA'),
-}
-
-MEDIA_URL = '/media/'
-MEDIA_ROOT = BASE_DIR / 'media'
-
-
-# Storage Backends Configuration (Django 4.2+)
+# Standard Django 4.2+ Storage
 STORAGES = {
     "default": {
-        "BACKEND": "cloudinary_storage.storage.MediaCloudinaryStorage",
+        "BACKEND": "django.core.files.storage.FileSystemStorage",
     },
     "staticfiles": {
-        # Standard WhiteNoise storage prevents multi-threaded compression race conditions
-        "BACKEND": "whitenoise.storage.StaticFilesStorage",
+        "BACKEND": "whitenoise.storage.CompressedStaticFilesStorage",
     },
 }
 
-# Legacy fallback compatibility required by django-cloudinary-storage
-STATICFILES_STORAGE = "whitenoise.storage.StaticFilesStorage"
-DEFAULT_FILE_STORAGE = "cloudinary_storage.storage.MediaCloudinaryStorage"
+
+# Media Files (Local Uploads)
+MEDIA_URL = '/media/'
+MEDIA_ROOT = BASE_DIR / 'media'
 
 
 # SSLCOMMERZ Credentials

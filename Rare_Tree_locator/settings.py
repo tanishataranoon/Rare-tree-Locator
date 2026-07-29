@@ -16,7 +16,8 @@ SECRET_KEY = os.environ.get(
 
 # SECURITY WARNING: don't run with debug turned on in production!
 # Set DEBUG = True via Render environment variables if you need to debug further
-DEBUG = os.environ.get("DEBUG", "False") == "True"
+# DEBUG = os.environ.get("DEBUG", "False") == "True"
+DEBUG = True  # Set to True for development, change to False in production
 
 ALLOWED_HOSTS = ["*"]
 

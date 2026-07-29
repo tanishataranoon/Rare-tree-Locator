@@ -15,9 +15,7 @@ SECRET_KEY = os.environ.get(
 )
 
 # SECURITY WARNING: don't run with debug turned on in production!
-# Set DEBUG = True via Render environment variables if you need to debug further
 DEBUG = os.environ.get("DEBUG", "False") == "True"
-# DEBUG = True  # Set to True for development, change to False in production
 
 ALLOWED_HOSTS = ["*"]
 
@@ -32,9 +30,8 @@ INSTALLED_APPS = [
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
-    # 'django.contrib.staticfiles',
 
-    # --- ADD CLOUDINARY HERE ---
+    # --- CLOUDINARY & STATICFILES ---
     'cloudinary_storage',
     'django.contrib.staticfiles',
     'cloudinary',
@@ -62,7 +59,7 @@ ROOT_URLCONF = 'Rare_Tree_locator.urls'
 
 TEMPLATES = [
     {
-        'BACKEND': 'django.template.backends.django.DjangoTemplates',
+        'BACKEND': 'django.template.backends.DjangoTemplates',
         'DIRS': [BASE_DIR / 'templates'],
         'APP_DIRS': True,
         'OPTIONS': {
@@ -125,15 +122,21 @@ STATICFILES_DIRS = [
     BASE_DIR / 'static',
 ]
 
-# Modern WhiteNoise configuration (prevents 500 crashes on missing static assets)
+# Legacy fallback required by django-cloudinary-storage during collectstatic
+STATICFILES_STORAGE = "whitenoise.storage.CompressedStaticFilesStorage"
+
+# Django 4.2+ Storage configuration
 STORAGES = {
     "default": {
-        "BACKEND": "django.core.files.storage.FileSystemStorage",
+        "BACKEND": "cloudinary_storage.storage.MediaCloudinaryStorage",
     },
     "staticfiles": {
         "BACKEND": "whitenoise.storage.CompressedStaticFilesStorage",
     },
 }
+
+# Legacy default file storage setting
+DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
@@ -154,6 +157,3 @@ CLOUDINARY_STORAGE = {
     'API_KEY': os.environ.get('CLOUDINARY_API_KEY', '585634562132779'),
     'API_SECRET': os.environ.get('CLOUDINARY_API_SECRET', 'usG2uri3ERNfEbHBv2Wb6YxGZOA')
 }
-
-# Set Cloudinary as default storage for uploaded MEDIA files
-DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'

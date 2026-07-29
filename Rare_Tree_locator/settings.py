@@ -33,6 +33,13 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+
+    # --- ADD CLOUDINARY HERE ---
+    'cloudinary_storage',
+    'django.contrib.staticfiles',
+    'cloudinary',
+    # ---------------------------
+
     'MyApp.apps.MyappConfig',
     'TreeApp.apps.TreeappConfig',
     'BlogApp.apps.BlogappConfig',
@@ -140,3 +147,13 @@ UNFOLD = {
     "SHOW_HISTORY": True,
     "THEME": "light",
 }
+
+# Cloudinary Credentials (uses Environment Variables in production)
+CLOUDINARY_STORAGE = {
+    'CLOUD_NAME': os.environ.get('CLOUDINARY_CLOUD_NAME', 'u5s1vlhg'),
+    'API_KEY': os.environ.get('CLOUDINARY_API_KEY', '585634562132779'),
+    'API_SECRET': os.environ.get('CLOUDINARY_API_SECRET', 'usG2uri3ERNfEbHBv2Wb6YxGZOA')
+}
+
+# Set Cloudinary as default storage for uploaded MEDIA files
+DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'

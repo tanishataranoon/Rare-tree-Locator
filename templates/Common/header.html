@@ -2,8 +2,6 @@
 
 <!-- Link Header CSS -->
 <link rel="stylesheet" href="{% static 'CSS/common/header.css' %}">
-<!-- Add this inside <head> on home.html, trees.html, etc. -->
-<!-- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"> -->
 
 <header>
     <div class="logo">
@@ -22,84 +20,20 @@
                 </a>
             </li>
 
-            <!-- Trees Dropdown -->
-            <li class="dropdown">
+            <!-- Trees Link (Clean single link, no dropdown) -->
+            <li>
                 <a href="{% url 'TreeProfiles' %}"
-                    class="dropdown-toggle {% if request.resolver_match.url_name == 'TreeProfiles' or request.resolver_match.url_name == 'create_tree' or request.resolver_match.url_name == 'my_trees' %}active{% endif %}">
-                    Trees <i data-feather="chevron-down" class="chevron-icon"></i>
+                    class="{% if request.resolver_match.url_name == 'TreeProfiles' or request.resolver_match.url_name == 'create_tree' or request.resolver_match.url_name == 'my_trees' %}active{% endif %}">
+                    Trees
                 </a>
-                {% if user.is_authenticated and user.user_type == 'contributor' %}
-                <ul class="dropdown-menu">
-                    <li>
-                        <a href="{% url 'map_page' %}" class="{% if request.resolver_match.url_name == 'map_page' %}active{% endif %}">
-                            <i data-feather="plus-circle"></i>
-                            <div>
-                                <span class="item-title">Create Tree</span>
-                                <small>Add new tree species</small>
-                            </div>
-                        </a>
-                    </li>
-                    <li>
-                        <a href="{% url 'profile_view' user.username %}">
-                            <i data-feather="user"></i>
-                            <div>
-                                <span class="item-title">My Trees</span>
-                                <small>View contributed trees</small>
-                            </div>
-                        </a>
-                    </li>
-                    <li class="dropdown-divider"></li>
-                    <li>
-                        <a href="{% url 'TreeProfiles' %}">
-                            <i data-feather="grid"></i>
-                            <div>
-                                <span class="item-title">All Trees</span>
-                                <small>Full tree catalog</small>
-                            </div>
-                        </a>
-                    </li>
-                </ul>
-                {% endif %}
             </li>
 
-            <!-- Blog Dropdown -->
-            <li class="dropdown">
+            <!-- Blog Link (Clean single link, no dropdown) -->
+            <li>
                 <a href="{% url 'blog_list' %}"
-                    class="dropdown-toggle {% if request.resolver_match.url_name == 'blog_list' or request.resolver_match.url_name == 'add_blog' or request.resolver_match.url_name == 'my_posts' %}active{% endif %}">
-                    Blog <i data-feather="chevron-down" class="chevron-icon"></i>
+                    class="{% if request.resolver_match.url_name == 'blog_list' or request.resolver_match.url_name == 'add_blog' or request.resolver_match.url_name == 'my_posts' %}active{% endif %}">
+                    Blog
                 </a>
-                {% if user.is_authenticated and user.user_type == 'contributor' %}
-                <ul class="dropdown-menu">
-                    <li>
-                        <a href="{% url 'add_blog' %}" class="add-symbol">
-                            <i data-feather="edit-3"></i>
-                            <div>
-                                <span class="item-title">Create Post</span>
-                                <small>Write an article</small>
-                            </div>
-                        </a>
-                    </li>
-                    <li>
-                        <a href="{% url 'profile_view' user.username %}">
-                            <i data-feather="file-text"></i>
-                            <div>
-                                <span class="item-title">My Posts</span>
-                                <small>Manage your articles</small>
-                            </div>
-                        </a>
-                    </li>
-                    <li class="dropdown-divider"></li>
-                    <li>
-                        <a href="{% url 'blog_list' %}">
-                            <i data-feather="book-open"></i>
-                            <div>
-                                <span class="item-title">All Posts</span>
-                                <small>Explore all stories</small>
-                            </div>
-                        </a>
-                    </li>
-                </ul>
-                {% endif %}
             </li>
 
             <!-- Map -->

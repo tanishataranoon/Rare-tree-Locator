@@ -33,8 +33,9 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
 
-    # Django Static Files
+    # Third-party Storage & Tools
     'django.contrib.staticfiles',
+    'storages',  # Required for Supabase S3 integration
     'import_export',
 
     # Project Apps
@@ -46,7 +47,7 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
-    'whitenoise.middleware.WhiteNoiseMiddleware',  # WhiteNoise serves CSS/JS on Render
+    'whitenoise.middleware.WhiteNoiseMiddleware',  # Serves CSS/JS on Render
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -104,7 +105,7 @@ USE_I18N = True
 USE_TZ = True
 
 
-# Static Files (CSS, JavaScript, Images)
+# Static Files (CSS, JavaScript)
 STATIC_URL = '/static/'
 STATIC_ROOT = BASE_DIR / 'staticfiles'
 
@@ -112,22 +113,40 @@ STATICFILES_DIRS = [
     BASE_DIR / 'static',
 ]
 
-# Standard WhiteNoise settings (No strict manifest checks)
+# Prevents WhiteNoise from crashing on missing vendor assets (e.g., Unfold)
 WHITENOISE_MANIFEST_STRICT = False
 
-# Standard Django 4.2+ Storage
+
+# Supabase Storage (S3 Protocol) Configuration
+SUPABASE_PROJECT_ID = os.environ.get('vndlpftgnsrnnslzwfcb', '')
+
+AWS_ACCESS_KEY_ID = os.environ.get('fb87820540f85e04ca81ba05d7ce3141', '')
+AWS_SECRET_ACCESS_KEY = os.environ.get('53862ea251df04cee488fc892a570966c090cdf6f872a72abd0e87e3aef5e3bb', '')
+AWS_STORAGE_BUCKET_NAME = os.environ.get('media', 'media')
+AWS_S3_REGION_NAME = os.environ.get('ap-south-1', 'global')
+
+AWS_S3_ENDPOINT_URL = f"https://{vndlpftgnsrnnslzwfcb}.supabase.co/storage/v1/s3"
+AWS_S3_CUSTOM_DOMAIN = f"{vndlpftgnsrnnslzwfcb}.supabase.co/storage/v1/object/public/{media}"
+
+AWS_S3_FILE_OVERWRITE = False
+AWS_QUERYSTRING_AUTH = False  # Generate clean public URLs for images
+
+
+# Storage Configuration (Django 4.2+)
 STORAGES = {
     "default": {
-        "BACKEND": "django.core.files.storage.FileSystemStorage",
+        "BACKEND": "storages.backends.s3boto3.S3Boto3Storage",
     },
     "staticfiles": {
         "BACKEND": "whitenoise.storage.CompressedStaticFilesStorage",
     },
 }
 
+# Legacy Compatibility Backends
+DEFAULT_FILE_STORAGE = "storages.backends.s3boto3.S3Boto3Storage"
+STATICFILES_STORAGE = "whitenoise.storage.CompressedStaticFilesStorage"
 
-# Media Files (Local Uploads)
-MEDIA_URL = '/media/'
+MEDIA_URL = f"https://{AWS_S3_CUSTOM_DOMAIN}/" if SUPABASE_PROJECT_ID else '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
 
 

@@ -118,18 +118,20 @@ WHITENOISE_MANIFEST_STRICT = False
 
 
 # Supabase Storage (S3 Protocol) Configuration
-SUPABASE_PROJECT_ID = os.environ.get('vndlpftgnsrnnslzwfcb', '')
+# Supabase Storage (S3 Protocol) Configuration
+SUPABASE_PROJECT_ID = os.environ.get('SUPABASE_PROJECT_ID', 'vndlpftgnsrnnslzwfcb')
 
-AWS_ACCESS_KEY_ID = os.environ.get('fb87820540f85e04ca81ba05d7ce3141', '')
-AWS_SECRET_ACCESS_KEY = os.environ.get('53862ea251df04cee488fc892a570966c090cdf6f872a72abd0e87e3aef5e3bb', '')
-AWS_STORAGE_BUCKET_NAME = os.environ.get('media', 'media')
-AWS_S3_REGION_NAME = os.environ.get('ap-south-1', 'global')
+AWS_ACCESS_KEY_ID = os.environ.get('AWS_ACCESS_KEY_ID', 'fb87820540f85e04ca81ba05d7ce3141')
+AWS_SECRET_ACCESS_KEY = os.environ.get('AWS_SECRET_ACCESS_KEY', '53862ea251df04cee488fc892a570966c090cdf6f872a72abd0e87e3aef5e3bb')
+AWS_STORAGE_BUCKET_NAME = os.environ.get('AWS_STORAGE_BUCKET_NAME', 'media')
+AWS_S3_REGION_NAME = os.environ.get('AWS_S3_REGION_NAME', 'ap-south-1')
 
-AWS_S3_ENDPOINT_URL = f"https://{vndlpftgnsrnnslzwfcb}.supabase.co/storage/v1/s3"
-AWS_S3_CUSTOM_DOMAIN = f"{vndlpftgnsrnnslzwfcb}.supabase.co/storage/v1/object/public/{media}"
+# Correct variable reference inside the f-string:
+AWS_S3_ENDPOINT_URL = f"https://{SUPABASE_PROJECT_ID}.supabase.co/storage/v1/s3"
+AWS_S3_CUSTOM_DOMAIN = f"{SUPABASE_PROJECT_ID}.supabase.co/storage/v1/object/public/{AWS_STORAGE_BUCKET_NAME}"
 
 AWS_S3_FILE_OVERWRITE = False
-AWS_QUERYSTRING_AUTH = False  # Generate clean public URLs for images
+AWS_QUERYSTRING_AUTH = False  # Public URLs for images
 
 
 # Storage Configuration (Django 4.2+)

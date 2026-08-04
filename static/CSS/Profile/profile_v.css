@@ -1,0 +1,339 @@
+/* ==========================================================================
+   PROFILE PAGE SPECIFIC STYLES
+   ========================================================================== */
+
+/* Main Container Layout */
+.page-container {
+  max-width: 1000px;
+  margin: 2rem auto;
+  padding: 0 1.5rem;
+  box-sizing: border-box;
+}
+
+/* --------------------------------------------------------------------------
+   1. Profile Header Box
+   -------------------------------------------------------------------------- */
+.profile-header-card {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 16px;
+  padding: 2rem;
+  margin-bottom: 2rem;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+}
+
+.profile-header-main {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  gap: 2rem;
+  margin-bottom: 1.5rem;
+}
+
+/* Avatar Image Lock */
+.profile-header-main img.user-avatar,
+.user-avatar {
+  width: 110px !important;
+  height: 110px !important;
+  border-radius: 50% !important;
+  object-fit: cover !important;
+  border: 3px solid #ffffff;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  flex-shrink: 0;
+}
+
+.profile-info {
+  flex: 1;
+}
+
+.profile-info .username {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #0f172a;
+  margin: 0 0 0.25rem 0;
+}
+
+.profile-info .role-title {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #2563eb;
+  margin: 0 0 0.5rem 0;
+}
+
+.profile-info .join-date {
+  font-size: 0.875rem;
+  color: #64748b;
+  margin: 0 0 1rem 0;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+/* Toggle Details Button */
+.toggle-details-btn {
+  background: #f1f5f9;
+  border: 1px solid #cbd5e1;
+  color: #475569;
+  padding: 0.4rem 0.9rem;
+  border-radius: 6px;
+  font-size: 0.85rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.toggle-details-btn:hover {
+  background: #e2e8f0;
+  color: #0f172a;
+}
+
+/* Collapsible Social Links & Extra Details */
+.social-section {
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 1px dashed #e2e8f0;
+}
+
+.social-links-list {
+  list-style: none !important;
+  padding: 0 !important;
+  margin: 0.5rem 0 1rem 0 !important;
+}
+
+.social-links-list li {
+  list-style: none !important;
+  margin-bottom: 0.4rem;
+}
+
+.social-links-list a {
+  color: #2563eb;
+  text-decoration: none;
+  font-size: 0.9rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.social-links-list a:hover {
+  text-decoration: underline;
+}
+
+/* Edit Profile Button */
+.edit-profile-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  background-color: #2563eb;
+  color: #ffffff !important;
+  padding: 0.5rem 1.1rem;
+  border-radius: 8px;
+  font-size: 0.875rem;
+  font-weight: 600;
+  text-decoration: none !important;
+  transition: background 0.2s ease;
+}
+
+.edit-profile-btn:hover {
+  background-color: #1d4ed8;
+}
+
+/* --------------------------------------------------------------------------
+   2. Counter Row
+   -------------------------------------------------------------------------- */
+.stats-row {
+  display: flex;
+  gap: 2rem;
+  padding: 1rem 0 0 0;
+  border-top: 1px solid #f1f5f9;
+}
+
+.stat-item {
+  display: flex;
+  align-items: baseline;
+  gap: 0.4rem;
+  font-size: 0.95rem;
+  color: #475569;
+}
+
+.stat-item strong {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #0f172a;
+}
+
+/* --------------------------------------------------------------------------
+   3. Tab Buttons Navigation
+   -------------------------------------------------------------------------- */
+.tabs-navigation {
+  display: flex;
+  gap: 0.75rem;
+  border-bottom: 2px solid #e2e8f0;
+  margin: 1.5rem 0;
+  padding-bottom: 0.5rem;
+}
+
+.tab-btn {
+  background: #ffffff;
+  border: 1px solid #cbd5e1;
+  padding: 0.55rem 1.25rem;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #475569;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  transition: all 0.2s ease;
+}
+
+.tab-btn.active,
+.tab-btn:hover {
+  background: #215732; /* Matches header green theme */
+  color: #ffffff;
+  border-color: #215732;
+}
+
+/* --------------------------------------------------------------------------
+   4. Card Grid & Media Lock
+   -------------------------------------------------------------------------- */
+.card-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 1.5rem;
+  margin-top: 1.5rem;
+}
+
+.grid-card {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.grid-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.08);
+}
+
+.card-media {
+  width: 100% !important;
+  height: 180px !important;
+  max-height: 180px !important;
+  overflow: hidden !important;
+  background-color: #f1f5f9;
+  position: relative !important;
+}
+
+.card-media img {
+  width: 100% !important;
+  height: 180px !important;
+  object-fit: cover !important;
+  display: block !important;
+  transition: transform 0.3s ease;
+}
+
+.grid-card:hover .card-media img {
+  transform: scale(1.04);
+}
+
+.card-body {
+  padding: 1.25rem;
+  flex-grow: 1;
+}
+
+.card-title {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #0f172a;
+  margin: 0 0 0.5rem 0;
+  line-height: 1.3;
+}
+
+.card-title a {
+  color: inherit;
+  text-decoration: none;
+}
+
+.card-title a:hover {
+  color: #215732;
+}
+
+.card-meta {
+  font-size: 0.85rem;
+  color: #64748b;
+  margin-bottom: 0.5rem;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+/* Status & Rarity Badges */
+.badge {
+  padding: 0.25rem 0.65rem;
+  border-radius: 20px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  display: inline-block;
+  white-space: nowrap;
+}
+
+.badge.status-rare,
+.badge.Rare {
+  background-color: #e0e7ff;
+  color: #4338ca;
+}
+
+.badge.status-pending {
+  background-color: #fef3c7;
+  color: #d97706;
+}
+
+.badge.status-approved,
+.badge.status-resolved {
+  background-color: #dcfce7;
+  color: #15803d;
+}
+
+/* --------------------------------------------------------------------------
+   5. Delete Modal Fix
+   -------------------------------------------------------------------------- */
+#deleteModal,
+.modal {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(15, 23, 42, 0.6);
+  z-index: 10000;
+}
+
+#deleteModal.show,
+.modal.show {
+  display: flex !important;
+  align-items: center;
+  justify-content: center;
+}
+
+/* --------------------------------------------------------------------------
+   6. Responsive Layout Adjustments
+   -------------------------------------------------------------------------- */
+@media screen and (max-width: 640px) {
+  .profile-header-main {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+
+  .stats-row {
+    flex-direction: column;
+    gap: 0.5rem;
+    align-items: center;
+  }
+}

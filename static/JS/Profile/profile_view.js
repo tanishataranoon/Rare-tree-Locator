@@ -1,65 +1,130 @@
-// Tab switching
-function showTab(tabId, event) {
-    document.querySelectorAll(".tab-content").forEach(div => div.classList.remove("active"));
-    document.querySelectorAll(".tabs button").forEach(btn => btn.classList.remove("active"));
-    const tab = document.getElementById(tabId);
-    if (tab) tab.classList.add("active");
-    if (event) event.currentTarget.classList.add("active");
-}
+/**
+ * Profile Page Interactivity
+ * Path: static/JS/Profile/profile_view.js
+ */
 
-document.addEventListener("DOMContentLoaded", () => {
-    // Default tab
-    const defaultTab = document.querySelector(".tabs button.active");
-    if (defaultTab) defaultTab.click();
+document.addEventListener("DOMContentLoaded", function () {
+    // --------------------------------------------------------------------------
+    // 1. Tab Switching Functionality
+    // --------------------------------------------------------------------------
+    window.showTab = function (tabId, event) {
+        if (event) {
+            event.preventDefault();
+        }
 
-    // Delete modal
-    const deleteButtons = document.querySelectorAll(".delete-btn");
-    const modal = document.getElementById("deleteModal");
-    if (modal) {
-        const closeBtn = modal.querySelector(".close");
-        const cancelBtn = modal.querySelector(".cancel-btn");
-        const deleteForm = document.getElementById("deleteForm");
-        const modalText = document.getElementById("modal-text");
-        const modalHeading = modal.querySelector("h2");
+        // Hide all tab content panes
+        const tabContents = document.querySelectorAll(".tab-content");
+        tabContents.forEach((content) => {
+            content.classList.remove("active");
+            content.style.display = "none";
+        });
 
-        deleteButtons.forEach(button => {
-            button.addEventListener("click", () => {
-                const type = button.dataset.type;
-                const id = button.dataset.id;
-                const title = button.dataset.title || (type === "post" ? "Post" : "Request");
+        // Deactivate all tab buttons
+        const tabButtons = document.querySelectorAll(".tab-btn");
+        tabButtons.forEach((btn) => {
+            btn.classList.remove("active");
+        });
 
-                modalHeading.textContent = type === "post" ? "Delete Post" : "Delete Request";
-                modalText.textContent = `Are you sure you want to delete "${title}"?`;
-                deleteForm.action = type === "post" ? `/blog_delete/${id}/` : `/requests/${id}/delete/`;
-                modal.classList.add("show");
+        // Show selected tab content
+        const targetTab = document.getElementById(tabId);
+        if (targetTab) {
+            targetTab.classList.add("active");
+            targetTab.style.display = "block";
+        }
+
+        // Highlight the clicked button
+        if (event && event.currentTarget) {
+            event.currentTarget.classList.add("active");
+        }
+    };
+
+    // Initialize display state for default active tab on page load
+    const initialActiveTab = document.querySelector(".tab-content.active");
+    if (initialActiveTab) {
+        initialActiveTab.style.display = "block";
+    }
+
+    // --------------------------------------------------------------------------
+    // 2. Toggle Extra Profile Details (Phone, Social Links)
+    // --------------------------------------------------------------------------
+    const toggleDetailsBtn = document.querySelector(".toggle-details-btn");
+    const extraDetails = document.getElementById("extra-details");
+
+    if (toggleDetailsBtn && extraDetails) {
+        // Hide details by default
+        extraDetails.style.display = "none";
+
+        toggleDetailsBtn.addEventListener("click", function () {
+            const isHidden = extraDetails.style.display === "none";
+
+            if (isHidden) {
+                extraDetails.style.display = "block";
+                toggleDetailsBtn.textContent = "Hide Details";
+            } else {
+                extraDetails.style.display = "none";
+                toggleDetailsBtn.textContent = "Show More Details";
+            }
+        });
+    }
+
+    // --------------------------------------------------------------------------
+    // 3. "See More" Card Expansion Handler
+    // --------------------------------------------------------------------------
+    const seeMoreButtons = document.querySelectorAll(".see-more-btn");
+
+    seeMoreButtons.forEach((button) => {
+        button.addEventListener("click", function () {
+            // Find parent tab content block
+            const currentTab = this.closest(".tab-content");
+            if (!currentTab) return;
+
+            // Reveal all hidden cards inside this tab
+            const hiddenCards = currentTab.querySelectorAll(".hidden-card");
+            hiddenCards.forEach((card) => {
+                card.classList.remove("hidden-card");
             });
-        });
 
-        const closeModal = () => modal.classList.remove("show");
-        closeBtn.addEventListener("click", closeModal);
-        cancelBtn.addEventListener("click", closeModal);
-        window.addEventListener("click", e => { if (e.target === modal) closeModal(); });
+            // Hide the "See More" button once expanded
+            this.style.display = "none";
+        });
+    });
+
+    // --------------------------------------------------------------------------
+    // 4. Modal Handler (Prepared for comment-enabled delete modal)
+    // --------------------------------------------------------------------------
+    const deleteModal = document.getElementById("deleteModal");
+    const closeModalBtn = document.querySelector("#deleteModal .close");
+    const cancelModalBtn = document.querySelector("#deleteModal .cancel-btn");
+
+    window.openDeleteModal = function (postTitle, deleteUrl) {
+        if (!deleteModal) return;
+
+        const modalText = document.getElementById("modal-text");
+        const deleteForm = document.getElementById("deleteForm");
+
+        if (modalText) {
+            modalText.textContent = `Are you sure you want to delete "${postTitle}"?`;
+        }
+        if (deleteForm) {
+            deleteForm.action = deleteUrl;
+        }
+
+        deleteModal.classList.add("show");
+        deleteModal.style.display = "flex";
+    };
+
+    function closeDeleteModal() {
+        if (!deleteModal) return;
+        deleteModal.classList.remove("show");
+        deleteModal.style.display = "none";
     }
 
-    // Toggle Show More Details
-    const toggleBtn = document.querySelector(".toggle-details-btn");
-    if (toggleBtn) {
-        toggleBtn.addEventListener("click", () => {
-            const details = document.getElementById("extra-details");
-            if (!details) return;
-            details.classList.toggle("show");
-            toggleBtn.textContent = details.classList.contains("show") ? "Hide Details" : "Show More Details";
-        });
-    }
+    if (closeModalBtn) closeModalBtn.addEventListener("click", closeDeleteModal);
+    if (cancelModalBtn) cancelModalBtn.addEventListener("click", closeDeleteModal);
 
-    // See More Cards
-    const seeMoreBtns = document.querySelectorAll("#see-more-btn");
-    seeMoreBtns.forEach(btn => {
-        btn.addEventListener("click", () => {
-            const tab = btn.closest(".tab-content");
-            const hiddenCards = tab.querySelectorAll(".hidden-card");
-            hiddenCards.forEach(c => c.classList.toggle("show-card"));
-            btn.textContent = btn.textContent === "See More" ? "See Less" : "See More";
-        });
+    window.addEventListener("click", function (event) {
+        if (event.target === deleteModal) {
+            closeDeleteModal();
+        }
     });
 });

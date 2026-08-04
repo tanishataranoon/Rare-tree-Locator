@@ -1,310 +1,507 @@
 /* ==========================================================================
-   Profile Header & Avatar Enhancements
+   PROFILE PAGE SPECIFIC STYLES
+   Scoped under .main-content .profile-card
    ========================================================================== */
 
-/* Keep the Profile Avatar properly sized & round */
-.profile-pic {
-    width: 120px !important;
-    height: 120px !important;
-    border-radius: 50% !important;
-    object-fit: cover !important;
-    border: 4px solid #ffffff;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+/* Main Container Layout */
+.main-content .profile-card {
+  max-width: 1000px;
+  width: 100%;
+  margin: 2rem auto;
+  padding: 5rem;
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 16px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+  box-sizing: border-box;
 }
 
-.header {
-    display: flex;
-    gap: 1.5rem;
-    align-items: center;
+/* --------------------------------------------------------------------------
+   1. Profile Header Section
+   -------------------------------------------------------------------------- */
+.main-content .profile-card .header {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  gap: 2rem;
+  margin-bottom: 1.5rem;
+  padding-bottom: 1.5rem;
+  border-bottom: 1px solid #f1f5f9;
 }
 
-/* ==========================================================================
-   Profile & Grid Layout Enhancements
-   ========================================================================== */
-
-/* Card Grid layout */
-.card-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-    gap: 1.5rem;
-    margin-top: 1.5rem;
+.main-content .profile-card .profile-left {
+  flex-shrink: 0;
 }
 
-/* Base Card Styling */
-.grid-card {
-    background: #ffffff;
-    border: 1px solid #e2e8f0;
-    border-radius: 12px;
-    overflow: hidden;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
+/* Avatar Styling */
+.main-content .profile-card .profile-pic {
+  width: 110px !important;
+  height: 110px !important;
+  border-radius: 50% !important;
+  object-fit: cover !important;
+  border: 3px solid #ffffff;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  display: block;
 }
 
-.grid-card:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.08);
+.main-content .profile-card .profile-right {
+  flex: 1;
 }
 
-.hidden-card {
-    display: none !important;
+.main-content .profile-card .profile-name {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #0f172a;
+  margin: 0 0 0.25rem 0;
 }
 
-/* Media/Image Containers for Grid Items */
-.card-media {
-    width: 100%;
-    height: 180px; /* Fixed container height */
-    max-height: 180px;
-    overflow: hidden;
-    background-color: #f1f5f9;
-    border-top-left-radius: 12px;
-    border-top-right-radius: 12px;
-    position: relative;
+.main-content .profile-card .username {
+  font-size: 0.95rem;
+  font-weight: 500;
+  color: #64748b;
+  margin: 0 0 0.5rem 0;
 }
 
-/* Ensures card images fill the top section cleanly without distorting */
-.card-media img {
-    width: 100% !important;
-    height: 100% !important;
-    object-fit: cover !important;
-    object-position: center !important;
-    display: block !important;
-    transition: transform 0.3s ease;
+.main-content .profile-card .profession {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #2563eb;
+  margin: 0 0 0.5rem 0;
 }
 
-.grid-card:hover .card-media img {
-    transform: scale(1.05);
+.main-content .profile-card .bio {
+  font-size: 0.925rem;
+  font-style: italic;
+  color: #334155;
+  margin: 0 0 0.75rem 0;
+  line-height: 1.4;
 }
 
-/* Card Body & Content */
-.card-body {
-    padding: 1.25rem;
-    flex-grow: 1;
+.main-content .profile-card .joined {
+  font-size: 0.875rem;
+  color: #64748b;
+  margin: 0 0 1rem 0;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
 }
 
-/* Optional inline body images */
-.card-body img {
-    max-width: 100%;
-    height: auto;
-    border-radius: 8px;
+/* Toggle Details Button & Collapsible Container */
+.main-content .profile-card .toggle-details-btn {
+  background: #f1f5f9;
+  border: 1px solid #cbd5e1;
+  color: #475569;
+  padding: 0.4rem 0.9rem;
+  border-radius: 6px;
+  font-size: 0.85rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  margin-bottom: 0.75rem;
 }
 
-.card-header-flex {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    gap: 0.75rem;
-    margin-bottom: 0.5rem;
+.main-content .profile-card .toggle-details-btn:hover {
+  background: #e2e8f0;
+  color: #0f172a;
 }
 
-.card-title {
-    font-size: 1.1rem;
-    font-weight: 600;
-    color: #1e293b;
-    margin: 0;
-    line-height: 1.3;
+.main-content .profile-card #extra-details.extra-details {
+  margin-top: 0.75rem;
+  padding-top: 0.75rem;
 }
 
-.card-title a {
-    color: inherit;
-    text-decoration: none;
-    transition: color 0.2s ease;
+.main-content .profile-card .extra-details hr {
+  border: 0;
+  border-top: 1px dashed #e2e8f0;
+  margin-bottom: 1rem;
 }
 
-.card-title a:hover {
-    color: #2563eb;
+.main-content .profile-card .extra-details h4 {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #1e293b;
+  margin: 0.75rem 0 0.25rem 0;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
 }
 
-.card-subtitle {
-    font-size: 0.875rem;
-    color: #64748b;
-    margin-top: 0.25rem;
-    margin-bottom: 0.75rem;
+.main-content .profile-card .extra-details p {
+  font-size: 0.875rem;
+  color: #475569;
+  margin: 0 0 0.5rem 0;
 }
 
-.card-text {
-    font-size: 0.9rem;
-    color: #475569;
-    line-height: 1.5;
-    margin-top: 0.5rem;
+.main-content .profile-card .social-links-list {
+  list-style: none !important;
+  padding: 0 !important;
+  margin: 0.5rem 0 1rem 0 !important;
 }
 
-.card-meta {
-    font-size: 0.85rem;
-    color: #64748b;
-    margin-top: 0.75rem;
+.main-content .profile-card .social-links-list li {
+  margin-bottom: 0.4rem;
 }
 
-.card-meta p {
-    margin: 0.25rem 0;
+.main-content .profile-card .social-links-list a {
+  color: #2563eb;
+  text-decoration: none;
+  font-size: 0.875rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
 }
 
-/* Card Footer & Action Links */
-.card-footer {
-    padding: 0.875rem 1.25rem;
-    background-color: #f8fafc;
-    border-top: 1px solid #f1f5f9;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
+.main-content .profile-card .social-links-list a:hover {
+  text-decoration: underline;
 }
 
-.meta-date {
-    color: #94a3b8;
-    font-size: 0.8rem;
+/* Edit Button */
+.main-content .profile-card .edit-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  background-color: #2563eb;
+  color: #ffffff !important;
+  padding: 0.5rem 1.1rem;
+  border-radius: 8px;
+  font-size: 0.875rem;
+  font-weight: 600;
+  text-decoration: none !important;
+  transition: background 0.2s ease;
+  margin-top: 0.5rem;
 }
 
-.btn-link {
-    color: #2563eb;
-    font-weight: 500;
-    font-size: 0.875rem;
-    text-decoration: none;
-    display: inline-flex;
-    align-items: center;
-    gap: 0.35rem;
-    transition: gap 0.2s ease;
+.main-content .profile-card .edit-btn:hover {
+  background-color: #1d4ed8;
 }
 
-.btn-link:hover {
-    gap: 0.6rem;
+/* --------------------------------------------------------------------------
+   2. Counter Stats Bar
+   -------------------------------------------------------------------------- */
+.main-content .profile-card .stats {
+  display: flex;
+  justify-content: center; /* Centers the stat items horizontally */
+  align-items: center;     /* Aligns items vertically */
+  gap: 2rem;               /* Controls spacing between items */
+  padding: 0.5rem 0 1.25rem 0;
+  width: 100%;             /* Ensures container spans the full card width */
 }
 
-/* Status Badges */
-.badge {
-    padding: 0.25rem 0.6rem;
-    border-radius: 20px;
-    font-size: 0.75rem;
-    font-weight: 600;
-    text-transform: capitalize;
-    display: inline-block;
+.main-content .profile-card .stat-item {
+  display: flex;
+  flex-direction: column;  /* Stack number over label, or keep horizontal with baseline */
+  align-items: center;      /* Centers number and label relative to each other */
+  text-align: center;
+  font-size: 0.95rem;
+  color: #475569;
 }
 
-.status-badge {
-    background-color: #e2e8f0;
-    color: #475569;
+.main-content .profile-card .stat-num {
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: #0f172a;
 }
 
-/* Django Status-driven Dynamic Styles */
-.status-pending,
-.status-in_progress {
-    background-color: #fef3c7;
-    color: #d97706;
+.main-content .profile-card .stat-label {
+  font-weight: 500;
 }
 
-.status-resolved,
-.status-approved,
-.status-completed {
-    background-color: #dcfce7;
-    color: #15803d;
+/* --------------------------------------------------------------------------
+   3. Tab Navigation
+   -------------------------------------------------------------------------- */
+.main-content .profile-card .tabs {
+  display: flex;
+  justify-content: center; /* Centers the tab buttons horizontally */
+  align-items: center;     /* Vertically aligns buttons if heights vary */
+  gap: 0.75rem;
+  border-bottom: 2px solid #e2e8f0;
+  margin: 1rem 0 1.5rem 0;
+  padding-bottom: 0.5rem;
+  flex-wrap: wrap;         /* Ensures tabs wrap neatly on mobile screens */
+  width: 100%;             /* Ensures container takes full width */
 }
 
-.status-rejected,
-.status-cancelled {
-    background-color: #fee2e2;
-    color: #b91c1c;
+.main-content .profile-card .tab-btn {
+  background: #ffffff;
+  border: 1px solid #35373b;
+  padding: 0.55rem 1.25rem;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #475569;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  transition: all 0.2s ease;
 }
 
-.badge-rarity {
-    background-color: #e0e7ff;
-    color: #4338ca;
+.main-content .profile-card .tab-btn.active,
+.main-content .profile-card .tab-btn:hover {
+  background: #215732;
+  color: #ffffff;
+  border-color: #215732;
+}
+
+/* Tab Panels Toggle */
+.main-content .profile-card .tab-content {
+  display: none;
+}
+
+.main-content .profile-card .tab-content.active {
+  display: block;
+}
+
+/* --------------------------------------------------------------------------
+   4. Grid Layout & Card Styles
+   -------------------------------------------------------------------------- */
+.main-content .profile-card .card-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 1.5rem;
+  margin-top: 1rem;
+}
+
+.main-content .profile-card .grid-card {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.main-content .profile-card .grid-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.08);
+}
+
+.main-content .profile-card .grid-card.hidden-card {
+  display: none; /* Controlled via JS for See More pagination */
+}
+
+/* Media & Image Container */
+.main-content .profile-card .card-media {
+  width: 100% !important;
+  height: 180px !important;
+  overflow: hidden !important;
+  background-color: #f1f5f9;
+  position: relative !important;
+}
+
+.main-content .profile-card .card-media img {
+  width: 100% !important;
+  height: 180px !important;
+  object-fit: cover !important;
+  display: block !important;
+  transition: transform 0.3s ease;
+}
+
+.main-content .profile-card .grid-card:hover .card-media img {
+  transform: scale(1.04);
+}
+
+/* Card Content Area */
+.main-content .profile-card .card-body {
+  padding: 1.25rem;
+  flex-grow: 1;
+}
+
+.main-content .profile-card .card-header-flex {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.main-content .profile-card .card-title {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: #0f172a;
+  margin: 0 0 0.4rem 0;
+  line-height: 1.3;
+}
+
+.main-content .profile-card .card-title a {
+  color: inherit;
+  text-decoration: none;
+}
+
+.main-content .profile-card .card-title a:hover {
+  color: #215732;
+}
+
+.main-content .profile-card .card-subtitle {
+  font-size: 0.875rem;
+  color: #64748b;
+  margin: 0 0 0.75rem 0;
+}
+
+.main-content .profile-card .card-text {
+  font-size: 0.875rem;
+  color: #334155;
+  line-height: 1.5;
+  margin: 0 0 0.75rem 0;
+}
+
+.main-content .profile-card .card-meta {
+  font-size: 0.85rem;
+  color: #64748b;
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  margin-top: 0.5rem;
+}
+
+.main-content .profile-card .card-meta p {
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+/* Card Footer */
+.main-content .profile-card .card-footer {
+  padding: 0.85rem 1.25rem;
+  background-color: #f8fafc;
+  border-top: 1px solid #f1f5f9;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.85rem;
+}
+
+.main-content .profile-card .meta-date {
+  color: #64748b;
+}
+
+/* Badges & Status */
+.main-content .profile-card .badge {
+  padding: 0.25rem 0.65rem;
+  border-radius: 20px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  display: inline-block;
+  white-space: nowrap;
+}
+
+.main-content .profile-card .badge-rarity {
+  background-color: #e0e7ff;
+  color: #4338ca;
+}
+
+.main-content .profile-card .status-pending {
+  background-color: #fef3c7;
+  color: #d97706;
+}
+
+.main-content .profile-card .status-approved,
+.main-content .profile-card .status-resolved {
+  background-color: #dcfce7;
+  color: #15803d;
 }
 
 /* Buttons */
-.btn-outline-primary {
-    border: 1px solid #2563eb;
-    color: #2563eb;
-    background: transparent;
-    padding: 0.35rem 0.75rem;
-    border-radius: 6px;
-    font-size: 0.85rem;
-    font-weight: 500;
-    text-decoration: none;
-    transition: all 0.2s ease;
+.main-content .profile-card .see-more-btn {
+  margin: 1.5rem auto 0 auto;
+  display: block;
+  background: #f1f5f9;
+  border: 1px solid #cbd5e1;
+  color: #334155;
+  padding: 0.5rem 1.5rem;
+  border-radius: 6px;
+  font-weight: 600;
+  cursor: pointer;
 }
 
-.btn-outline-primary:hover {
-    background: #2563eb;
-    color: #ffffff;
+.main-content .profile-card .see-more-btn:hover {
+  background: #e2e8f0;
 }
 
-.see-more-btn {
-    display: block;
-    margin: 1.5rem auto 0 auto;
-    padding: 0.5rem 1.5rem;
-    background-color: #f1f5f9;
-    color: #334155;
-    border: 1px solid #cbd5e1;
-    border-radius: 6px;
-    cursor: pointer;
-    font-weight: 500;
-    transition: background 0.2s ease;
+.main-content .profile-card .btn-link {
+  color: #2563eb;
+  text-decoration: none;
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
 }
 
-.see-more-btn:hover {
-    background-color: #e2e8f0;
+.main-content .profile-card .btn-link:hover {
+  text-decoration: underline;
 }
 
-/* Empty State Placeholder */
-.empty-state {
+/* Empty State Component */
+.main-content .profile-card .empty-state {
+  text-align: center;
+  padding: 3rem 1rem;
+  color: #64748b;
+}
+
+.main-content .profile-card .empty-icon {
+  font-size: 2.5rem;
+  margin-bottom: 0.75rem;
+  color: #94a3b8;
+}
+
+.main-content .profile-card .empty-state p {
+  margin: 0;
+  font-size: 0.95rem;
+}
+
+/* --------------------------------------------------------------------------
+   5. Modal Styles (If Enabled)
+   -------------------------------------------------------------------------- */
+#deleteModal.modal {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(15, 23, 42, 0.6);
+  z-index: 10000;
+  align-items: center;
+  justify-content: center;
+}
+
+#deleteModal .modal-content {
+  background: #ffffff;
+  padding: 2rem;
+  border-radius: 12px;
+  max-width: 450px;
+  width: 90%;
+  position: relative;
+}
+
+#deleteModal .close {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  font-size: 1.5rem;
+  cursor: pointer;
+}
+
+/* --------------------------------------------------------------------------
+   6. Responsive Layout Adjustments
+   -------------------------------------------------------------------------- */
+@media screen and (max-width: 640px) {
+  .main-content .profile-card .header {
+    flex-direction: column;
+    align-items: center;
     text-align: center;
-    padding: 3rem 1rem;
-    color: #94a3b8;
-}
+  }
 
-.empty-icon {
-    font-size: 2.5rem;
-    margin-bottom: 0.75rem;
-    color: #cbd5e1;
-}
+  .main-content .profile-card .joined {
+    justify-content: center;
+  }
 
-.empty-state p {
-    font-size: 0.95rem;
-    margin: 0;
-}
-
-/* Stats Styling Refresh */
-.stats {
-    display: flex;
-    justify-content: space-around;
-    padding: 1rem;
-    background: #f8fafc;
-    border-radius: 8px;
-    margin: 1.5rem 0;
-}
-
-.stat-item {
-    text-align: center;
-}
-
-.stat-num {
-    display: block;
-    font-size: 1.25rem;
-    font-weight: 700;
-    color: #0f172a;
-}
-
-.stat-label {
-    font-size: 0.85rem;
-    color: #64748b;
-}
-
-/* Social links list */
-.social-links-list {
-    list-style: none;
-    padding: 0;
-    margin: 0.5rem 0;
-    display: flex;
+  .main-content .profile-card .stats {
+    justify-content: center;
     flex-wrap: wrap;
-    gap: 0.75rem;
-}
-
-.social-links-list a {
-    color: #475569;
-    text-decoration: none;
-    font-size: 0.9rem;
-}
-
-.social-links-list a:hover {
-    color: #2563eb;
+    gap: 1rem;
+  }
 }

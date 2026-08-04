@@ -6,8 +6,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{{ profile_user.username }} - Profile</title>
-    <!-- FontAwesome Icons for UI Metadata -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">   
     <link rel="stylesheet" href="{% static 'CSS/Profile/profile_view.css' %}">
     <script src="{% static 'JS/Profile/profile_view.js' %}" defer></script>
 </head>
@@ -15,18 +15,13 @@
 <body>
     {% include "Common/header.html" %}
 
-    <div class="falling-lights">
-        <span></span><span></span><span></span><span></span><span></span>
-        <span></span><span></span><span></span><span></span><span></span>
-    </div>
-
     <main class="main-content">
         <div class="profile-card">
             
             <!-- Header: profile picture + info -->
             <div class="header">
                 <div class="profile-left">
-                    <img src="{% if profile.profile_pic %}{{ profile.profile_pic.url }}{% else %}{{ MEDIA_URL }}default_profile.png{% endif %}"
+                    <img src="{% if profile.profile_pic %}{{ profile.profile_pic.url }}{% else %}{% static 'images/default_profile.png' %}{% endif %}"
                         alt="Profile Picture" class="profile-pic">
                 </div>
 
@@ -54,11 +49,10 @@
                         {% endif %}
                     </div>
                     {% endif %}
-
-                    {% if request.user == profile_user %}
-                    <a href="{% url 'edit_profile' %}" class="btn edit-btn"><i class="fas fa-user-edit"></i> Edit Profile</a>
-                    {% endif %}
                 </div>
+                {% if request.user == profile_user %}
+                    <a href="{% url 'edit_profile' %}" class="btn edit-btn"><i class="fas fa-user-edit"></i> Edit Profile</a>
+                {% endif %}
             </div>
 
             <!-- Stats -->
@@ -85,183 +79,183 @@
                 {% endif %}
             </div>
 
-           <!-- Contributor Tab Contents -->
-{% if profile_user.user_type == "contributor" %}
-    
-    <!-- Trees -->
-    <div id="trees" class="tab-content active">
-        {% if my_trees %}
-        <div class="card-grid">
-            {% for tree in my_trees %}
-                <div class="grid-card {% if forloop.counter > 3 %}hidden-card{% endif %}">
-                    {% if tree.image %}
-                    <div class="card-media" style="width: 100%; height: 200px; background-color: #0f172a; display: flex; align-items: center; justify-content: center; overflow: hidden; border-radius: 12px 12px 0 0;">
-                        <img src="{{ tree.image.url }}" alt="{{ tree.street_name }}" style="max-width: 100% !important; max-height: 100% !important; width: auto !important; height: auto !important; object-fit: contain !important; margin: auto !important; display: block !important;">
+            <!-- Contributor Tab Contents -->
+            {% if profile_user.user_type == "contributor" %}
+                
+                <!-- Trees -->
+                <div id="trees" class="tab-content active">
+                    {% if my_trees %}
+                    <div class="card-grid">
+                        {% for tree in my_trees %}
+                            <div class="grid-card {% if forloop.counter > 3 %}hidden-card{% endif %}">
+                                {% if tree.image %}
+                                <div class="card-media">
+                                    <img src="{{ tree.image.url }}" alt="{{ tree.street_name }}">
+                                </div>
+                                {% endif %}
+                                <div class="card-body">
+                                    <h3 class="card-title">{{ tree.street_name }}</h3>
+                                    <p class="card-subtitle"><em>{{ tree.scientific_name }}</em></p>
+                                    <div class="card-meta">
+                                        <p><i class="fas fa-map-marker-alt"></i> {{ tree.latitude|floatformat:4 }}, {{ tree.longitude|floatformat:4 }}</p>
+                                        <p><i class="fas fa-shield-alt"></i> <span class="badge badge-rarity">{{ tree.rarity_status }}</span></p>
+                                    </div>
+                                </div>
+                                <div class="card-footer">
+                                    <small><i class="far fa-clock"></i> {{ tree.created_at|date:"M d, Y" }}</small>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                    {% if my_trees|length > 3 %}<button class="btn see-more-btn">See More</button>{% endif %}
+                    {% else %}
+                    <div class="empty-state">
+                        <i class="fas fa-tree empty-icon"></i>
+                        <p>No tree contributions added yet.</p>
                     </div>
                     {% endif %}
-                    <div class="card-body">
-                        <h3 class="card-title">{{ tree.street_name }}</h3>
-                        <p class="card-subtitle"><em>{{ tree.scientific_name }}</em></p>
-                        <div class="card-meta">
-                            <p><i class="fas fa-map-marker-alt"></i> {{ tree.latitude|floatformat:4 }}, {{ tree.longitude|floatformat:4 }}</p>
-                            <p><i class="fas fa-shield-alt"></i> <span class="badge badge-rarity">{{ tree.rarity_status }}</span></p>
-                        </div>
-                    </div>
-                    <div class="card-footer">
-                        <small><i class="far fa-clock"></i> {{ tree.created_at|date:"M d, Y" }}</small>
-                    </div>
                 </div>
-            {% endfor %}
-        </div>
-        {% if my_trees|length > 3 %}<button class="btn see-more-btn">See More</button>{% endif %}
-        {% else %}
-        <div class="empty-state">
-            <i class="fas fa-tree empty-icon"></i>
-            <p>No tree contributions added yet.</p>
-        </div>
-        {% endif %}
-    </div>
 
-    <!-- Posts -->
-    <div id="posts" class="tab-content">
-        {% if posts %}
-        <div class="card-grid">
-            {% for post in posts %}
-                <div class="grid-card post-card {% if forloop.counter > 3 %}hidden-card{% endif %}">
-                    {% if post.image %}
-                    <div class="card-media" style="width: 100%; height: 200px; background-color: #0f172a; display: flex; align-items: center; justify-content: center; overflow: hidden; border-radius: 12px 12px 0 0;">
-                        <img src="{{ post.image.url }}" alt="{{ post.title }}" style="max-width: 100% !important; max-height: 100% !important; width: auto !important; height: auto !important; object-fit: contain !important; margin: auto !important; display: block !important;">
+                <!-- Posts -->
+                <div id="posts" class="tab-content">
+                    {% if posts %}
+                    <div class="card-grid">
+                        {% for post in posts %}
+                            <div class="grid-card post-card {% if forloop.counter > 3 %}hidden-card{% endif %}">
+                                {% if post.image %}
+                                <div class="card-media">
+                                    <img src="{{ post.image.url }}" alt="{{ post.title }}">
+                                </div>
+                                {% endif %}
+                                <div class="card-body">
+                                    <h3 class="card-title"><a href="{% url 'blog_detail' post.id %}">{{ post.title }}</a></h3>
+                                    <p class="card-text">{{ post.content|truncatewords:18 }}</p>
+                                </div>
+                                <div class="card-footer">
+                                    <small><i class="far fa-calendar"></i> {{ post.date_posted|date:"M d, Y" }}</small>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                    {% if posts|length > 3 %}<button class="btn see-more-btn">See More</button>{% endif %}
+                    {% else %}
+                    <div class="empty-state">
+                        <i class="fas fa-newspaper empty-icon"></i>
+                        <p>No blog posts published yet.</p>
                     </div>
                     {% endif %}
-                    <div class="card-body">
-                        <h3 class="card-title"><a href="{% url 'blog_detail' post.id %}">{{ post.title }}</a></h3>
-                        <p class="card-text">{{ post.content|truncatewords:18 }}</p>
-                    </div>
-                    <div class="card-footer">
-                        <small><i class="far fa-calendar"></i> {{ post.date_posted|date:"M d, Y" }}</small>
-                    </div>
                 </div>
-            {% endfor %}
-        </div>
-        {% if posts|length > 3 %}<button class="btn see-more-btn">See More</button>{% endif %}
-        {% else %}
-        <div class="empty-state">
-            <i class="fas fa-newspaper empty-icon"></i>
-            <p>No blog posts published yet.</p>
-        </div>
-        {% endif %}
-    </div>
 
-    <!-- Answers -->
-    <div id="answers" class="tab-content">
-        {% if requests %}
-        <div class="card-grid">
-            {% for answer in requests %}
-                <div class="grid-card answer-card {% if forloop.counter > 3 %}hidden-card{% endif %}">
-                    {% if answer.reference_image %}
-                    <div class="card-media" style="width: 100%; height: 200px; background-color: #0f172a; display: flex; align-items: center; justify-content: center; overflow: hidden; border-radius: 12px 12px 0 0;">
-                        <img src="{{ answer.reference_image.url }}" alt="Answer Reference" style="max-width: 100% !important; max-height: 100% !important; width: auto !important; height: auto !important; object-fit: contain !important; margin: auto !important; display: block !important;">
+                <!-- Answers -->
+                <div id="answers" class="tab-content">
+                    {% if requests %}
+                    <div class="card-grid">
+                        {% for answer in requests %}
+                            <div class="grid-card answer-card {% if forloop.counter > 3 %}hidden-card{% endif %}">
+                                {% if answer.reference_image %}
+                                <div class="card-media">
+                                    <img src="{{ answer.reference_image.url }}" alt="Answer Reference">
+                                </div>
+                                {% endif %}
+                                <div class="card-body">
+                                    <h3 class="card-title">{{ answer.tree_request.title|default:"Tree Request" }}</h3>
+                                    <p class="card-text">{{ answer.response_text|truncatewords:18 }}</p>
+                                </div>
+                                <div class="card-footer">
+                                    <small><i class="far fa-clock"></i> {{ answer.created_at|date:"M d, Y" }}</small>
+                                    <a href="{% url 'answer_request' answer.tree_request.id %}" class="btn-link">View Answer <i class="fas fa-arrow-right"></i></a>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                    {% if requests|length > 3 %}<button class="btn see-more-btn">See More</button>{% endif %}
+                    {% else %}
+                    <div class="empty-state">
+                        <i class="fas fa-comment-slash empty-icon"></i>
+                        <p>No answers submitted yet.</p>
                     </div>
                     {% endif %}
-                    <div class="card-body">
-                        <h3 class="card-title">{{ answer.tree_request.title|default:"Tree Request" }}</h3>
-                        <p class="card-text">{{ answer.response_text|truncatewords:18 }}</p>
-                    </div>
-                    <div class="card-footer">
-                        <small><i class="far fa-clock"></i> {{ answer.created_at|date:"M d, Y" }}</small>
-                        <a href="{% url 'answer_request' answer.tree_request.id %}" class="btn-link">View Answer <i class="fas fa-arrow-right"></i></a>
-                    </div>
                 </div>
-            {% endfor %}
-        </div>
-        {% if requests|length > 3 %}<button class="btn see-more-btn">See More</button>{% endif %}
-        {% else %}
-        <div class="empty-state">
-            <i class="fas fa-comment-slash empty-icon"></i>
-            <p>No answers submitted yet.</p>
-        </div>
-        {% endif %}
-    </div>
 
-{% else %}
-    <!-- Regular User Tab Contents -->
+            {% else %}
+                <!-- Regular User Tab Contents -->
 
-    <!-- Requests Tab -->
-    <div id="requests" class="tab-content active">
-        {% if requests %}
-        <div class="card-grid">
-            {% for req in requests %}
-                <div class="grid-card request-card {% if forloop.counter > 3 %}hidden-card{% endif %}">
-                    {% if req.image %}
-                    <div class="card-media" style="width: 100%; height: 200px; background-color: #0f172a; display: flex; align-items: center; justify-content: center; overflow: hidden; border-radius: 12px 12px 0 0;">
-                        <img src="{{ req.image.url }}" alt="Request Image" style="max-width: 100% !important; max-height: 100% !important; width: auto !important; height: auto !important; object-fit: contain !important; margin: auto !important; display: block !important;">
+                <!-- Requests Tab -->
+                <div id="requests" class="tab-content active">
+                    {% if requests %}
+                    <div class="card-grid">
+                        {% for req in requests %}
+                            <div class="grid-card request-card {% if forloop.counter > 3 %}hidden-card{% endif %}">
+                                {% if req.image %}
+                                <div class="card-media">
+                                    <img src="{{ req.image.url }}" alt="Request Image">
+                                </div>
+                                {% endif %}
+                                <div class="card-body">
+                                    <div class="card-header-flex">
+                                        <h3 class="card-title">{{ req.title|default:"Tree Request" }}</h3>
+                                        <span class="badge status-badge status-{{ req.status|slugify }}">
+                                            {{ req.get_status_display }}
+                                        </span>
+                                    </div>
+                                    <p class="card-text">{{ req.description|truncatewords:18 }}</p>
+                                </div>
+                                <div class="card-footer">
+                                    <small class="meta-date"><i class="far fa-clock"></i> {{ req.created_at|date:"M d, Y" }}</small>
+                                    <a href="{% url 'request_list' %}" class="btn btn-outline-primary btn-sm">View Details</a>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                    {% if requests|length > 3 %}<button class="btn see-more-btn">See More</button>{% endif %}
+                    {% else %}
+                    <div class="empty-state">
+                        <i class="fas fa-folder-open empty-icon"></i>
+                        <p>You haven't created any requests yet.</p>
                     </div>
                     {% endif %}
-                    <div class="card-body">
-                        <div class="card-header-flex">
-                            <h3 class="card-title">{{ req.title|default:"Tree Request" }}</h3>
-                            <span class="badge status-badge status-{{ req.status|slugify }}">
-                                {{ req.get_status_display }}
-                            </span>
-                        </div>
-                        <p class="card-text">{{ req.description|truncatewords:18 }}</p>
-                    </div>
-                    <div class="card-footer">
-                        <small class="meta-date"><i class="far fa-clock"></i> {{ req.created_at|date:"M d, Y" }}</small>
-                        <a href="{% url 'request_list' %}" class="btn btn-outline-primary btn-sm">View Details</a>
-                    </div>
                 </div>
-            {% endfor %}
-        </div>
-        {% if requests|length > 3 %}<button class="btn see-more-btn">See More</button>{% endif %}
-        {% else %}
-        <div class="empty-state">
-            <i class="fas fa-folder-open empty-icon"></i>
-            <p>You haven't created any requests yet.</p>
-        </div>
-        {% endif %}
-    </div>
 
-    <!-- Bookmarked Posts Tab -->
-    <div id="bookmarks" class="tab-content">
-        {% if posts %}
-        <div class="card-grid">
-            {% for post in posts %}
-                <div class="grid-card bookmark-card {% if forloop.counter > 3 %}hidden-card{% endif %}">
-                    {% if post.image %}
-                    <div class="card-media" style="width: 100%; height: 200px; background-color: #0f172a; display: flex; align-items: center; justify-content: center; overflow: hidden; border-radius: 12px 12px 0 0;">
-                        <img src="{{ post.image.url }}" alt="Post Image" style="max-width: 100% !important; max-height: 100% !important; width: auto !important; height: auto !important; object-fit: contain !important; margin: auto !important; display: block !important;">
+                <!-- Bookmarked Posts Tab -->
+                <div id="bookmarks" class="tab-content">
+                    {% if posts %}
+                    <div class="card-grid">
+                        {% for post in posts %}
+                            <div class="grid-card bookmark-card {% if forloop.counter > 3 %}hidden-card{% endif %}">
+                                {% if post.image %}
+                                <div class="card-media">
+                                    <img src="{{ post.image.url }}" alt="Post Image">
+                                </div>
+                                {% endif %}
+                                <div class="card-body">
+                                    <h3 class="card-title">
+                                        <a href="{% url 'blog_detail' post.id %}">{{ post.title }}</a>
+                                    </h3>
+                                    <p class="card-text">{{ post.content|truncatewords:18 }}</p>
+                                </div>
+                                <div class="card-footer">
+                                    <small class="meta-date"><i class="far fa-calendar-alt"></i> {{ post.date_posted|date:"M d, Y" }}</small>
+                                    <a href="{% url 'blog_detail' post.id %}" class="btn-link">Read Post <i class="fas fa-chevron-right"></i></a>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                    {% if posts|length > 3 %}<button class="btn see-more-btn">See More</button>{% endif %}
+                    {% else %}
+                    <div class="empty-state">
+                        <i class="far fa-bookmark empty-icon"></i>
+                        <p>No bookmarked posts saved yet.</p>
                     </div>
                     {% endif %}
-                    <div class="card-body">
-                        <h3 class="card-title">
-                            <a href="{% url 'blog_detail' post.id %}">{{ post.title }}</a>
-                        </h3>
-                        <p class="card-text">{{ post.content|truncatewords:18 }}</p>
-                    </div>
-                    <div class="card-footer">
-                        <small class="meta-date"><i class="far fa-calendar-alt"></i> {{ post.date_posted|date:"M d, Y" }}</small>
-                        <a href="{% url 'blog_detail' post.id %}" class="btn-link">Read Post <i class="fas fa-chevron-right"></i></a>
-                    </div>
                 </div>
-            {% endfor %}
-        </div>
-        {% if posts|length > 3 %}<button class="btn see-more-btn">See More</button>{% endif %}
-        {% else %}
-        <div class="empty-state">
-            <i class="far fa-bookmark empty-icon"></i>
-            <p>No bookmarked posts saved yet.</p>
-        </div>
-        {% endif %}
-    </div>
 
-{% endif %}
+            {% endif %}
 
         </div> <!-- profile-card -->
     </main>
 
     <!-- Modal -->
-    <div id="deleteModal" class="modal">
+    <!-- <div id="deleteModal" class="modal">
         <div class="modal-content">
             <span class="close">&times;</span>
             <h2>Delete Post</h2>
@@ -272,7 +266,7 @@
                 <button type="button" class="btn cancel-btn">Cancel</button>
             </form>
         </div>
-    </div>
+    </div> -->
 
     <footer>
         {% include "Common/footer.html" %}

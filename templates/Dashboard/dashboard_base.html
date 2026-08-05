@@ -47,7 +47,7 @@
                             <span class="link-text">Tree Requests</span>
                         </a>
                     </li>
-                    <li class="{% if request.resolver_match.url_name == 'donation_history' %}active{% endif %}">
+                    <li class="{% if request.resolver_match.url_name == 'donation_history_dashboard' %}active{% endif %}">
                         <a href="{% url 'donation_history_dashboard' %}" data-tooltip="Donation History">
                             <i data-feather="dollar-sign" class="nav-icon"></i>
                             <span class="link-text">Donation History</span>
